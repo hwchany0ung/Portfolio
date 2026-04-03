@@ -10,6 +10,45 @@
 
   // ── Project Data ────────────────────────────────────────────────
   const PROJECTS = {
+    'devnavi': {
+      type: 'AI / Fullstack / AWS Serverless',
+      badge: 'personal',
+      period: '2026. 03 ~ 진행 중',
+      title: 'DevNavi — AI 커리어 로드맵 생성 서비스',
+      subtitle:
+        'IT 취업 준비생이 목표 직군·기간·현재 수준을 입력하면 Claude AI가 주차별 학습 체크리스트를 자동 생성하는 풀스택 AI 서비스입니다.',
+      roles: [
+        'AWS Lambda(서버리스) + FastAPI + Mangum 백엔드 아키텍처 설계 및 구현',
+        'Claude API SSE 스트리밍 — Pure ASGI 미들웨어 기반 실시간 응답 출력',
+        '태스크별 AI Q&A + 동적 팔로업 질문 3개 자동 생성 (claude-haiku)',
+        'Supabase PostgreSQL + JWT + Google OAuth 인증 시스템 구현',
+        'Terraform IaC로 AWS 인프라(Lambda, CloudFront, SSM) 전체 코드화',
+        'GitHub Actions 4-job CI/CD (unit/integration/frontend/e2e, 80% 커버리지 강제)',
+        '멀티 에이전트 오케스트레이션으로 설계~배포 전 사이클 자동화',
+      ],
+      achievements: [
+        { value: '9종', label: '지원 직군' },
+        { value: 'SSE', label: '실시간 스트리밍' },
+        { value: '188', label: '테스트 통과' },
+        { value: 'LIVE', label: 'devnavi.kr' },
+      ],
+      tags: [
+        'Claude API',
+        'React + Vite',
+        'FastAPI',
+        'AWS Lambda',
+        'CloudFront',
+        'Supabase',
+        'Terraform',
+        'GitHub Actions',
+        'Tailwind CSS',
+      ],
+      diagram: 'devnavi',
+      links: {
+        github: 'https://github.com/hwchany0ung/DevNavi',
+        live: 'https://devnavi.kr',
+      },
+    },
     'motion-webcam': {
       type: 'Cloud / AWS Serverless / Container',
       badge: 'personal',
@@ -118,6 +157,105 @@
 
   // ── SVG Architecture Diagram (Inline) ────────────────────────────
   const DIAGRAMS = {
+    'devnavi': `
+      <svg viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-height:320px;">
+        <defs>
+          <linearGradient id="devGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#7b2ff7" stop-opacity="0.15"/>
+          </linearGradient>
+          <marker id="dArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#00d4ff" opacity="0.6"/>
+          </marker>
+          <marker id="dArrowP" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#a78bfa" opacity="0.6"/>
+          </marker>
+        </defs>
+
+        <rect x="5" y="5" width="790" height="350" rx="12" fill="#111" stroke="#2a2a2a"/>
+
+        <!-- User -->
+        <rect x="20" y="140" width="110" height="80" rx="8" fill="#161616" stroke="#2a2a2a"/>
+        <text x="75" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#606060">User</text>
+        <text x="75" y="195" text-anchor="middle" font-size="22">👤</text>
+        <text x="75" y="214" text-anchor="middle" font-family="Noto Sans KR,sans-serif" font-size="8" fill="#404040">취업준비생</text>
+
+        <!-- Arrow User -> CloudFront -->
+        <line x1="130" y1="180" x2="175" y2="180" stroke="#00d4ff" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#dArrow)"/>
+
+        <!-- Frontend CloudFront -->
+        <rect x="175" y="50" width="540" height="280" rx="10" fill="url(#devGrad)" stroke="#00d4ff" stroke-opacity="0.25" stroke-dasharray="6,4"/>
+        <text x="195" y="72" font-family="JetBrains Mono,monospace" font-size="10" fill="#00d4ff" opacity="0.6">AWS Cloud (ap-northeast-2)</text>
+
+        <!-- CloudFront Frontend -->
+        <rect x="195" y="90" width="120" height="55" rx="8" fill="#0d0d20" stroke="#7b2ff7" stroke-opacity="0.5"/>
+        <text x="255" y="114" text-anchor="middle" font-size="16">🌐</text>
+        <text x="255" y="132" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#a78bfa" text-anchor="middle">CloudFront</text>
+        <text x="255" y="143" font-family="JetBrains Mono,monospace" font-size="7" fill="#404060" text-anchor="middle">devnavi.kr</text>
+
+        <!-- S3 Frontend -->
+        <rect x="195" y="170" width="120" height="55" rx="8" fill="#1a1500" stroke="#ff9900" stroke-opacity="0.4"/>
+        <text x="255" y="194" text-anchor="middle" font-size="16">📦</text>
+        <text x="255" y="212" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#ff9900" text-anchor="middle">S3</text>
+        <text x="255" y="223" font-family="JetBrains Mono,monospace" font-size="7" fill="#604000" text-anchor="middle">React + Vite</text>
+
+        <!-- CF -> S3 -->
+        <line x1="255" y1="145" x2="255" y2="170" stroke="#a78bfa" stroke-width="1.2" stroke-opacity="0.4" marker-end="url(#dArrowP)"/>
+
+        <!-- CF Frontend -> CF API -->
+        <line x1="315" y1="117" x2="375" y2="117" stroke="#00d4ff" stroke-width="1.2" stroke-opacity="0.4" marker-end="url(#dArrow)"/>
+
+        <!-- CloudFront API -->
+        <rect x="375" y="90" width="120" height="55" rx="8" fill="#0d0d20" stroke="#7b2ff7" stroke-opacity="0.5"/>
+        <text x="435" y="114" text-anchor="middle" font-size="16">⚡</text>
+        <text x="435" y="132" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#a78bfa" text-anchor="middle">CloudFront</text>
+        <text x="435" y="143" font-family="JetBrains Mono,monospace" font-size="7" fill="#404060" text-anchor="middle">api.devnavi.kr</text>
+
+        <!-- Lambda -->
+        <rect x="375" y="170" width="120" height="55" rx="8" fill="#1a0a2e" stroke="#7b2ff7" stroke-opacity="0.5"/>
+        <text x="435" y="194" text-anchor="middle" font-size="16">λ</text>
+        <text x="435" y="212" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#a78bfa" text-anchor="middle">Lambda</text>
+        <text x="435" y="223" font-family="JetBrains Mono,monospace" font-size="7" fill="#6040a0" text-anchor="middle">FastAPI + Mangum</text>
+
+        <!-- CF API -> Lambda -->
+        <line x1="435" y1="145" x2="435" y2="170" stroke="#a78bfa" stroke-width="1.2" stroke-opacity="0.4" marker-end="url(#dArrowP)"/>
+
+        <!-- Claude API -->
+        <rect x="555" y="90" width="120" height="55" rx="8" fill="#1a0800" stroke="#f5a623" stroke-opacity="0.5"/>
+        <text x="615" y="114" text-anchor="middle" font-size="16">🤖</text>
+        <text x="615" y="132" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#f5a623" text-anchor="middle">Claude API</text>
+        <text x="615" y="143" font-family="JetBrains Mono,monospace" font-size="7" fill="#7a5010" text-anchor="middle">Sonnet + Haiku SSE</text>
+
+        <!-- Lambda -> Claude -->
+        <line x1="495" y1="197" x2="555" y2="117" stroke="#f5a623" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#dArrow)"/>
+
+        <!-- Supabase -->
+        <rect x="555" y="170" width="120" height="55" rx="8" fill="#0d1117" stroke="#28ca41" stroke-opacity="0.4"/>
+        <text x="615" y="194" text-anchor="middle" font-size="16">🗄️</text>
+        <text x="615" y="212" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#28ca41" text-anchor="middle">Supabase</text>
+        <text x="615" y="223" font-family="JetBrains Mono,monospace" font-size="7" fill="#1a6040" text-anchor="middle">PostgreSQL + Auth</text>
+
+        <!-- Lambda -> Supabase -->
+        <line x1="495" y1="207" x2="555" y2="207" stroke="#28ca41" stroke-width="1.2" stroke-opacity="0.4" marker-end="url(#dArrow)"/>
+
+        <!-- SSM -->
+        <rect x="555" y="253" width="120" height="50" rx="8" fill="#161616" stroke="#00d4ff" stroke-opacity="0.25"/>
+        <text x="615" y="275" text-anchor="middle" font-size="14">🔑</text>
+        <text x="615" y="292" font-family="JetBrains Mono,monospace" font-size="8" fill="#404060" text-anchor="middle">SSM Parameter</text>
+
+        <!-- Lambda -> SSM -->
+        <line x1="435" y1="225" x2="435" y2="265" stroke="#00d4ff" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="3,3"/>
+        <line x1="435" y1="265" x2="555" y2="278" stroke="#00d4ff" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="3,3" marker-end="url(#dArrow)"/>
+
+        <!-- GitHub Actions label -->
+        <rect x="195" y="255" width="160" height="45" rx="6" fill="rgba(40,202,65,0.04)" stroke="#28ca41" stroke-opacity="0.2"/>
+        <text x="275" y="274" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#28ca41" text-anchor="middle">GitHub Actions CI/CD</text>
+        <text x="275" y="290" font-family="Noto Sans KR,sans-serif" font-size="8" fill="#28ca41" text-anchor="middle" opacity="0.6">Terraform IaC · 4-job Pipeline</text>
+
+        <!-- Title -->
+        <text x="400" y="342" font-family="JetBrains Mono,monospace" font-size="9" fill="#404040" text-anchor="middle">DevNavi — AI Career Roadmap (AWS Serverless Architecture)</text>
+      </svg>
+    `,
     'smartscan-hub': `
       <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-height:350px;">
         <defs>
