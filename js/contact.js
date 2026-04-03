@@ -11,9 +11,9 @@
   // ── EmailJS Configuration ──────────────────────────────────────
   // These IDs are safe to expose client-side (EmailJS design).
   // Rate limiting is handled by EmailJS dashboard settings.
-  const EMAILJS_PUBLIC_KEY = ''; // Set your EmailJS public key
-  const EMAILJS_SERVICE_ID = ''; // Set your EmailJS service ID
-  const EMAILJS_TEMPLATE_ID = ''; // Set your EmailJS template ID
+  const EMAILJS_PUBLIC_KEY = 'BPkeG_f8sVQKTAumE';
+  const EMAILJS_SERVICE_ID = 'service_j6wi1ff';
+  const EMAILJS_TEMPLATE_ID = 'template_laj0rel';
 
   // ── Form Validation ────────────────────────────────────────────
   function validateEmail(email) {
