@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components/modal.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
   <style>
     .projects-container {
       max-width: 1200px;
@@ -356,7 +358,7 @@
       <div class="projects-grid stagger-children">
 
         <!-- ── Project 1: Motion-WebCam (Featured) ── -->
-        <div class="project-card featured-wide reveal" data-category="cloud container">
+        <div class="project-card featured-wide reveal" data-category="cloud container" data-project="motion-webcam">
           <div class="project-thumb aws">
             <span class="project-thumb-icon">📷</span>
             <span class="project-badge personal">개인 프로젝트</span>
@@ -392,7 +394,7 @@
         </div>
 
         <!-- ── Project 2: IoT 소지품 체크 ── -->
-        <div class="project-card reveal" data-category="iot">
+        <div class="project-card reveal" data-category="iot" data-project="iot-smartscan">
           <div class="project-thumb iot diagram-thumb" onclick="openLightbox('images/iot-diagram.png','IoT 프로젝트 전체 구조도')" title="클릭해서 크게 보기">
             <img src="images/iot-diagram.png" alt="IoT 프로젝트 전체 구조도" class="diagram-img">
             <span class="diagram-expand-hint">🔍 클릭해서 크게 보기</span>
@@ -425,7 +427,7 @@
         </div>
 
         <!-- ── Project 3: 포트폴리오 AWS 배포 ── -->
-        <div class="project-card reveal" data-category="cloud">
+        <div class="project-card reveal" data-category="cloud" data-project="portfolio-aws">
           <div class="project-thumb cloud">
             <span class="project-thumb-icon">☁️</span>
             <span class="project-badge personal">개인 프로젝트</span>
@@ -476,6 +478,7 @@
 
   </div>
   <script src="js/main.js"></script>
+  <script src="js/modal.js"></script>
 
   <!-- Lightbox -->
   <div id="lightbox" onclick="closeLightbox()">

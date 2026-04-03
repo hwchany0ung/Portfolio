@@ -1,0 +1,100 @@
+# Portfolio CI/CD Pipeline
+# Deploys to AWS S3 + CloudFront on push to main branch
+#
+# Required GitHub Secrets:
+#   AWS_ACCESS_KEY_ID     — IAM user access key (with S3 & CloudFront permissions)
+#   AWS_SECRET_ACCESS_KEY — IAM user secret key
+#   AWS_S3_BUCKET         — S3 bucket name (e.g., hwchanyoung.dev)
+#   CLOUDFRONT_DISTRIBUTION_ID — CloudFront distribution ID
+
+name: Deploy Portfolio to AWS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Prevent concurrent deployments
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to S3 + CloudFront
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync . s3://${{ secrets.AWS_S3_BUCKET }} \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude ".claude/*" \
+            --exclude ".bkit/*" \
+            --exclude ".playwright-mcp/*" \
+            --exclude "docs/*" \
+            --exclude "mockup.html" \
+            --exclude "*.md" \
+            --exclude ".gitignore" \
+            --cache-control "public, max-age=86400"
+
+      # Set longer cache for static assets
+      - name: Set cache headers for CSS/JS
+        run: |
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/css/ \
+            s3://${{ secrets.AWS_S3_BUCKET }}/css/ \
+            --recursive \
+            --cache-control "public, max-age=604800" \
+            --content-type "text/css" \
+            --metadata-directive REPLACE
+
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/js/ \
+            s3://${{ secrets.AWS_S3_BUCKET }}/js/ \
+            --recursive \
+            --cache-control "public, max-age=604800" \
+            --content-type "application/javascript" \
+            --metadata-directive REPLACE
+
+      # Set shorter cache for HTML (to pick up changes quickly)
+      - name: Set cache headers for HTML
+        run: |
+          for file in index.html skills.html projects.html roadmap.html; do
+            if [ -f "$file" ]; then
+              aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/$file \
+                s3://${{ secrets.AWS_S3_BUCKET }}/$file \
+                --cache-control "public, max-age=300, s-maxage=3600" \
+                --content-type "text/html; charset=utf-8" \
+                --metadata-directive REPLACE
+            fi
+          done
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      - name: Deployment summary
+        run: |
+          echo "## Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Site**: https://hwchanyoung.dev" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 Bucket**: ${{ secrets.AWS_S3_BUCKET }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **CloudFront**: Invalidation created" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY

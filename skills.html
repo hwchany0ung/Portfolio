@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components/chart.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
   <style>
     .skills-container {
       max-width: 1200px;
@@ -505,6 +507,29 @@
         </div>
       </div>
 
+      <!-- ── Skill Radar Chart ── -->
+      <div class="skill-category chart-section reveal">
+        <div class="skill-category-header">
+          <span class="skill-category-icon">📊</span>
+          <span class="skill-category-title">기술 숙련도</span>
+        </div>
+        <div class="chart-wrapper">
+          <div class="chart-container">
+            <canvas id="skills-radar-chart" aria-label="기술 숙련도 레이더 차트"></canvas>
+          </div>
+          <div class="chart-legend-custom">
+            <div class="chart-legend-item">
+              <span class="chart-legend-dot" style="background:#00d4ff;"></span>
+              현재 숙련도
+            </div>
+            <div class="chart-legend-item">
+              <span class="chart-legend-dot" style="background:#7b2ff7;border:1px dashed #7b2ff7;"></span>
+              목표 (6개월)
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ── Certifications ── -->
       <div class="skill-category reveal">
         <div class="skill-category-header">
@@ -567,5 +592,7 @@
 
   </div>
   <script src="js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/charts.js"></script>
 </body>
 </html>

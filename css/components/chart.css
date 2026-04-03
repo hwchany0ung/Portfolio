@@ -1,0 +1,81 @@
+/* ========================
+   Skills Radar Chart
+   ======================== */
+.chart-section {
+  margin-bottom: 3.5rem;
+}
+
+.chart-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  transition: border-color var(--transition);
+}
+
+.chart-wrapper:hover {
+  border-color: var(--border-accent);
+}
+
+.chart-container {
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.chart-legend-custom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.chart-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    padding: 1.5rem;
+  }
+
+  .chart-container {
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    padding: 1rem;
+  }
+
+  .chart-container {
+    max-width: 280px;
+  }
+
+  .chart-legend-custom {
+    gap: 0.6rem;
+  }
+
+  .chart-legend-item {
+    font-size: 0.7rem;
+  }
+}
