@@ -71,14 +71,14 @@ jobs:
             --content-type "application/javascript" \
             --metadata-directive REPLACE
 
-      # Set shorter cache for HTML (to pick up changes quickly)
+      # HTML은 캐시 안 함 — 항상 최신 버전 제공
       - name: Set cache headers for HTML
         run: |
           for file in index.html skills.html projects.html roadmap.html ai.html; do
             if [ -f "$file" ]; then
               aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/$file \
                 s3://${{ secrets.AWS_S3_BUCKET }}/$file \
-                --cache-control "public, max-age=300, s-maxage=3600" \
+                --cache-control "no-cache, no-store, must-revalidate" \
                 --content-type "text/html; charset=utf-8" \
                 --metadata-directive REPLACE
             fi
