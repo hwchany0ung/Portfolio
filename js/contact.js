@@ -96,6 +96,11 @@
 
   // ── Initialize ─────────────────────────────────────────────────
   function init() {
+    // Initialize EmailJS SDK
+    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY) {
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    }
+
     const form = document.getElementById('contact-form');
     if (!form) return;
 
