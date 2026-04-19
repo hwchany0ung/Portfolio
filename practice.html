@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Docker · Linux · Cisco IOS · Kubernetes 브라우저 실습 터미널 — 가상 환경에서 명령어를 직접 실행해 보세요" />
+  <title>Practice | 황찬영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/sandbox.css" />
+  <link rel="stylesheet" href="css/practice.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">&lt;CY /&gt;</a>
+      <ul class="nav-links">
+        <li><a href="index.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="skills.html"><span class="nav-icon">⚡</span> Skills</a></li>
+        <li><a href="projects.html"><span class="nav-icon">🚀</span> Projects</a></li>
+        <li><a href="ai.html"><span class="nav-icon">🤖</span> AI</a></li>
+        <li><a href="roadmap.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="notes.html"><span class="nav-icon">📚</span> Notes</a></li>
+        <li><a href="practice.html" class="active"><span class="nav-icon">🕹️</span> Practice</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="practice-page">
+    <div class="practice-inner">
+
+      <div class="practice-header">
+        <h1>🕹️ 실습 터미널</h1>
+        <p>브라우저에서 바로 실행되는 가상 환경입니다. 탭을 전환해 Docker · Linux · Cisco IOS · Kubernetes 명령어를 연습해 보세요.</p>
+      </div>
+
+      <div class="practice-tabs" role="tablist">
+        <button class="practice-tab active" data-tab="docker" role="tab"><span class="tab-ico">🐳</span> Docker</button>
+        <button class="practice-tab" data-tab="linux" role="tab"><span class="tab-ico">🐧</span> Linux</button>
+        <button class="practice-tab" data-tab="cisco" role="tab"><span class="tab-ico">🌐</span> Cisco IOS</button>
+        <button class="practice-tab" data-tab="k8s" role="tab"><span class="tab-ico">☸️</span> Kubernetes</button>
+      </div>
+
+      <div class="practice-desc" id="practice-desc">
+        <strong>🐳 Docker</strong> — <code>docker run</code>, <code>ps</code>, <code>images</code>, <code>network</code>, <code>volume</code> 등을 시뮬레이션. <kbd>Tab</kbd>으로 자동완성, <kbd>↑/↓</kbd>로 히스토리 탐색.
+      </div>
+
+      <div id="practice-sandbox"></div>
+
+    </div>
+  </main>
+
+  <!-- Sandbox 코어 + 4개 설정 -->
+  <script src="js/sandbox.js"></script>
+  <script src="js/sandbox-configs/docker.js"></script>
+  <script src="js/sandbox-configs/linux.js"></script>
+  <script src="js/sandbox-configs/cisco.js"></script>
+  <script src="js/sandbox-configs/k8s.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+  (function () {
+    const DESCRIPTIONS = {
+      docker: '<strong>🐳 Docker</strong> — <code>docker run</code>, <code>ps</code>, <code>images</code>, <code>network</code>, <code>volume</code> 등을 시뮬레이션. <kbd>Tab</kbd>으로 자동완성, <kbd>↑/↓</kbd>로 히스토리 탐색.',
+      linux:  '<strong>🐧 Linux</strong> — 가상 파일시스템 위에서 <code>ls</code>, <code>cd</code>, <code>cat</code>, <code>chmod</code>, <code>systemctl</code> 등을 실습. SSH 키 퍼미션·서비스 제어를 체험해 보세요.',
+      cisco:  '<strong>🌐 Cisco IOS</strong> — User/Privileged/Global/Interface/VLAN 모드 전환. <code>enable → conf t → interface fa0/1 → ip address ...</code> 실전 흐름을 연습할 수 있습니다.',
+      k8s:    '<strong>☸️ Kubernetes</strong> — kubectl 가상 클러스터. <code>get pods</code>, <code>create deployment</code>, <code>scale</code>, <code>expose</code>, <code>rollout restart</code> 등을 실습.'
+    };
+    const root = document.getElementById('practice-sandbox');
+    const desc = document.getElementById('practice-desc');
+    const tabs = document.querySelectorAll('.practice-tab');
+
+    function mount(key) {
+      const cfg = (window.SBX_CONFIGS || {})[key];
+      if (!cfg) { root.innerHTML = '<div style="color:#ff4757;padding:1rem">설정을 찾을 수 없습니다: ' + key + '</div>'; return; }
+      window.Sandbox.mount(root, cfg);
+      desc.innerHTML = DESCRIPTIONS[key] || '';
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === key));
+      // URL 해시 동기화
+      if (location.hash.slice(1) !== key) history.replaceState(null, '', '#' + key);
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => mount(t.dataset.tab)));
+
+    // 초기 탭: URL 해시 우선
+    const initial = (location.hash.slice(1) || 'docker');
+    mount(['docker','linux','cisco','k8s'].includes(initial) ? initial : 'docker');
+  })();
+  </script>
+</body>
+</html>

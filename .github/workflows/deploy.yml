@@ -74,7 +74,7 @@ jobs:
       # HTML은 캐시 안 함 — 항상 최신 버전 제공
       - name: Set cache headers for HTML
         run: |
-          for file in index.html skills.html projects.html roadmap.html ai.html notes.html; do
+          for file in index.html skills.html projects.html roadmap.html ai.html notes.html practice.html; do
             if [ -f "$file" ]; then
               aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/$file \
                 s3://${{ secrets.AWS_S3_BUCKET }}/$file \

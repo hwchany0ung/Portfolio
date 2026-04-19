@@ -15,6 +15,16 @@
 
   const ROOT_ID = 'sandbox-root';
 
+  // 외부 API: 다른 페이지(예: practice.html)에서 탭 전환 시 재마운트
+  window.Sandbox = {
+    mount(rootEl, cfg) {
+      if (!rootEl || !cfg) return;
+      rootEl.innerHTML = '';
+      rootEl.className = '';
+      initSandbox(rootEl, cfg);
+    }
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     const root = document.getElementById(ROOT_ID);
     const cfg = window.SANDBOX_CONFIG;
