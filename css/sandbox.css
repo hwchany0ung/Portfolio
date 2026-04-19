@@ -1,0 +1,136 @@
+/* sandbox.css — 실습 터미널 UI */
+
+.sb-wrap {
+  margin: 32px 0;
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #0a0e1a 0%, #060912 100%);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.sb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #0d1220;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.sb-title { display: flex; align-items: center; gap: 8px; }
+.sb-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.sb-dot.r { background: #ff5f56; }
+.sb-dot.y { background: #ffbd2e; }
+.sb-dot.g { background: #27c93f; }
+.sb-titletxt { margin-left: 8px; color: #9aa5b8; font-size: 13px; font-weight: 600; }
+
+.sb-actions { display: flex; gap: 6px; }
+.sb-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.sb-btn:hover { background: rgba(0, 212, 255, 0.12); border-color: rgba(0, 212, 255, 0.35); color: #e0f2ff; }
+.sb-btn.primary { background: rgba(0, 212, 255, 0.15); border-color: rgba(0, 212, 255, 0.45); color: #00d4ff; }
+
+.sb-body {
+  padding: 14px 18px;
+  font-family: 'JetBrains Mono', 'D2Coding', Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #d6e1f0;
+  min-height: 340px;
+  max-height: 520px;
+  overflow-y: auto;
+  cursor: text;
+}
+.sb-output { white-space: normal; }
+.sb-ln { margin-top: 4px; }
+.sb-p { color: #4ade80; font-weight: 700; }
+.sb-c { color: #fafafa; }
+
+.sb-o {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 4px 0 10px 0;
+  color: #bcd0ea;
+  font-family: inherit;
+  font-size: 13px;
+  background: transparent;
+  padding: 0;
+  border: 0;
+}
+.sb-o.err { color: #ff6b6b; }
+.sb-o.ok { color: #4ade80; }
+.sb-o.info { color: #00d4ff; }
+.sb-o.task { color: #e2b714; }
+.sb-o.banner { color: #9aa5b8; border-left: 3px solid #00d4ff; padding-left: 10px; }
+
+.sb-line { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.sb-prompt { color: #4ade80; font-weight: 700; }
+.sb-input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: #fafafa;
+  font-family: inherit;
+  font-size: 13px;
+  caret-color: #00d4ff;
+}
+
+.sb-challenge {
+  padding: 12px 16px;
+  background: rgba(226, 183, 20, 0.06);
+  border-top: 1px solid rgba(226, 183, 20, 0.2);
+}
+.sb-ch-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.sb-ch-label { color: #e2b714; font-weight: 700; font-size: 13px; }
+.sb-ch-title { color: #e0e7ef; font-size: 13px; flex: 1; }
+.sb-ch-status { font-size: 12px; color: #9aa5b8; padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,0.05); }
+.sb-ch-status.ok { color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+.sb-ch-status.run { color: #00d4ff; background: rgba(0, 212, 255, 0.1); }
+.sb-ch-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.sb-ch-hint {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(0, 212, 255, 0.08);
+  border-left: 3px solid #00d4ff;
+  border-radius: 4px;
+  color: #bcd0ea;
+  font-size: 12.5px;
+}
+
+.sb-links {
+  padding: 14px 16px;
+  background: rgba(123, 47, 247, 0.05);
+  border-top: 1px solid rgba(123, 47, 247, 0.2);
+}
+.sb-links-title { color: #bfa6ff; font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+.sb-links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.sb-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(123, 47, 247, 0.25);
+  border-radius: 8px;
+  text-decoration: none;
+  color: #e0e7ef;
+  transition: all 0.15s;
+}
+.sb-link:hover { background: rgba(123, 47, 247, 0.12); border-color: rgba(123, 47, 247, 0.5); transform: translateY(-1px); }
+.sb-link strong { color: #cfbaff; font-size: 13px; }
+.sb-link span { color: #9aa5b8; font-size: 12px; }
+
+@media (max-width: 640px) {
+  .sb-body { font-size: 12px; padding: 12px; min-height: 280px; }
+  .sb-links-grid { grid-template-columns: 1fr; }
+}
