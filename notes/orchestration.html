@@ -1054,6 +1054,39 @@ kubectl get secret db-secret -o yaml</code></pre>
         { goal: '6) 마무리로 `web` Deployment 를 삭제하세요.', hint: '`kubectl delete deploy web`', check: (cmd, s) => !s.deployments.some(d => d.name === 'web'), praise: '연관 ReplicaSet·Pod 도 cascade 로 함께 삭제됩니다.' }
       ],
 
+      complete: function (token, line, s) {
+        const words = line.trim().split(/\s+/);
+        const first = words[0] || '';
+        const second = words[1] || '';
+        const third = words[2] || '';
+        const hasSpaceEnd = /\s$/.test(line);
+        const wc = hasSpaceEnd ? words.length + 1 : words.length;
+        if (wc <= 1) return ['kubectl','minikube','help','clear','reset','history'];
+        if (first === 'kubectl' && wc === 2) return ['get','describe','create','apply','delete','logs','exec','scale','expose','rollout','config','cluster-info','version'];
+        if (first === 'minikube' && wc === 2) return ['status','start','stop','dashboard'];
+        if (first === 'kubectl' && second === 'get' && wc === 3) return ['pods','pod','deploy','deployments','svc','services','nodes','ns','all','rs','configmap','secret'];
+        if (first === 'kubectl' && second === 'describe' && wc === 3) return ['pod','deploy','svc','node'];
+        if (first === 'kubectl' && second === 'describe' && third === 'pod' && wc === 4) return (s.pods||[]).map(p=>p.name);
+        if (first === 'kubectl' && (second === 'logs' || second === 'exec') && wc === 3) return (s.pods||[]).map(p=>p.name);
+        if (first === 'kubectl' && second === 'delete' && wc === 3) return ['pod','deploy','deployment','svc','service'];
+        if (first === 'kubectl' && second === 'delete' && third === 'pod' && wc === 4) return (s.pods||[]).map(p=>p.name);
+        if (first === 'kubectl' && second === 'delete' && /deploy/.test(third) && wc === 4) return (s.deployments||[]).map(d=>d.name);
+        if (first === 'kubectl' && second === 'delete' && /svc|service/.test(third) && wc === 4) return (s.services||[]).map(sv=>sv.name);
+        if (first === 'kubectl' && second === 'scale' && wc === 3) return ['deploy','deployment'];
+        if (first === 'kubectl' && second === 'scale' && /deploy/.test(third) && wc === 4) return (s.deployments||[]).map(d=>d.name);
+        if (first === 'kubectl' && second === 'expose' && wc === 3) return ['deploy','deployment'];
+        if (first === 'kubectl' && second === 'expose' && /deploy/.test(third) && wc === 4) return (s.deployments||[]).map(d=>d.name);
+        if (first === 'kubectl' && second === 'rollout' && wc === 3) return ['restart','status','undo'];
+        if (first === 'kubectl' && second === 'rollout' && wc === 4) return ['deploy','deployment'];
+        if (first === 'kubectl' && second === 'rollout' && wc === 5) return (s.deployments||[]).map(d=>d.name);
+        if (first === 'kubectl' && second === 'config' && wc === 3) return ['current-context','get-contexts','use-context'];
+        if (first === 'kubectl' && second === 'apply' && wc === 3) return ['-f'];
+        // 옵션
+        if (token.startsWith('--')) return ['--image=','--replicas=','--port=','--type=','--namespace=','--all-namespaces'];
+        if (token === '-' || token.startsWith('-')) return ['-A','-o','-n','-f','--image=','--replicas=','--port=','--type='];
+        return [];
+      },
+
       links: [
         { name: 'Killercoda — Kubernetes', href: 'https://killercoda.com/kubernetes', desc: '브라우저 실제 K8s 실습' },
         { name: 'Play with Kubernetes', href: 'https://labs.play-with-k8s.com/', desc: '4시간 무료 클러스터' },

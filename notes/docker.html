@@ -1429,6 +1429,31 @@ docker builder prune               # BuildKit 캐시</code></pre>
         }
       ],
 
+      complete: function (token, line, s) {
+        const words = line.trim().split(/\s+/);
+        const first = words[0] || '';
+        const second = words[1] || '';
+        const hasSpaceEnd = /\s$/.test(line);
+        const wc = hasSpaceEnd ? words.length + 1 : words.length;
+        if (wc <= 1) return ['docker', 'docker-compose', 'help', 'clear', 'reset', 'history', 'kubectl'];
+        if (first === 'docker' && wc === 2) {
+          return ['ps','images','run','stop','start','restart','rm','rmi','pull','logs','exec','build','network','volume','inspect','system','version','info'];
+        }
+        if (first === 'docker-compose' && wc === 2) return ['up','down','ps','logs','restart'];
+        if (first === 'docker' && second === 'network' && wc === 3) return ['ls','create','inspect','rm'];
+        if (first === 'docker' && second === 'volume' && wc === 3) return ['ls','create','inspect','rm'];
+        if (first === 'docker' && second === 'system' && wc === 3) return ['prune','df','info'];
+        if (first === 'docker' && ['stop','start','restart','rm','logs','inspect','exec'].includes(second) && wc === 3) return (s.containers||[]).map(c=>c.name).concat((s.containers||[]).map(c=>c.id.slice(0,12)));
+        if (first === 'docker' && second === 'rmi' && wc === 3) return (s.images||[]).map(i=>`${i.repo}:${i.tag}`);
+        if (first === 'docker' && second === 'pull' && wc === 3) return ['nginx','alpine','redis','postgres','mysql','node','ubuntu','python','golang'];
+        if (first === 'docker' && second === 'run') {
+          // 옵션/이미지 힌트
+          if (token.startsWith('-')) return ['-d','-it','-p','--name','--rm','--network','--env','-v'];
+          return ['nginx','alpine','redis','postgres','mysql','node','ubuntu'];
+        }
+        return [];
+      },
+
       links: [
         { name: 'Play with Docker', href: 'https://labs.play-with-docker.com/', desc: '무료 4시간 Docker 환경 (로그인 필요)' },
         { name: 'Killercoda — Docker', href: 'https://killercoda.com/docker', desc: '브라우저 인터랙티브 실습' },

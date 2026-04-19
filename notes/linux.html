@@ -1472,6 +1472,33 @@ curl http://localhost/</code></pre>
         { goal: '5) 디스크 사용량과 메모리를 사람이 읽기 쉽게 확인하세요.', hint: '`df -h` 그리고 `free -h`', answer: /^(df|free)\s+-h$/, praise: '-h 는 human-readable. MB/GB 단위로 표시됩니다.' }
       ],
 
+      complete: function (token, line, s) {
+        const words = line.trim().split(/\s+/);
+        const first = words[0] || '';
+        const hasSpaceEnd = /\s$/.test(line);
+        const wc = hasSpaceEnd ? words.length + 1 : words.length;
+        if (wc <= 1) return ['pwd','ls','cd','cat','echo','whoami','id','hostname','uname','uptime','free','df','ip','ps','systemctl','useradd','userdel','passwd','chmod','chown','mkdir','touch','rm','grep','nslookup','ping','history','help','clear','reset'];
+        if (first === 'systemctl' && wc === 2) return ['status','start','stop','restart','reload','list-units'];
+        if (first === 'systemctl' && wc >= 3) return Object.keys(s.services || {});
+        if (first === 'passwd' || first === 'userdel' || first === 'chown') return (s.users || []);
+        if (['cd','ls','cat','rm','chmod','touch','mkdir','grep'].includes(first)) {
+          // 경로 자동완성 (간이)
+          const tok = token;
+          const slashIdx = tok.lastIndexOf('/');
+          const dir = slashIdx >= 0 ? tok.slice(0, slashIdx + 1) : (tok.startsWith('~') ? '' : './');
+          const partial = slashIdx >= 0 ? tok.slice(slashIdx + 1) : tok;
+          const baseDir = dir === './' ? (s.cwd || '/') : dir.replace(/^~/, '/home/chany').replace(/\/$/, '') || '/';
+          const FS = window.__SBX_LINUX_FS__; // optional access
+          const map = (window.__SBX_LINUX_FS__) || null;
+          // 간단 후보: 현재 디렉토리 목록에서 추출 (노출용 FS가 sandbox 내 클로저라 여기선 일반 후보만 제공)
+          return ['/etc/','/home/chany/','/home/chany/.ssh/','/var/log/','/proc/','passwd','hosts','hostname','resolv.conf','fstab','id_rsa','authorized_keys','notes.txt','todo.md'].filter(p => p.startsWith(partial) || p.startsWith(tok));
+        }
+        if (first === 'ip' && wc === 2) return ['a','addr','route','link'];
+        if (first === 'free' && token.startsWith('-')) return ['-h','-m','-g'];
+        if (first === 'df' && token.startsWith('-')) return ['-h','-T','-i'];
+        return [];
+      },
+
       links: [
         { name: 'Killercoda — Linux', href: 'https://killercoda.com/playgrounds/scenario/ubuntu', desc: '무료 Ubuntu 샌드박스' },
         { name: 'OverTheWire: Bandit', href: 'https://overthewire.org/wargames/bandit/', desc: 'Linux 쉘 CTF로 실전 학습' },

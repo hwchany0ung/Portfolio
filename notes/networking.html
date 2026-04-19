@@ -736,6 +736,39 @@ R1(config-router)# redistribute ospf 1 metric 5
         { goal: '5) 인터페이스 상태 요약을 확인하세요.', hint: '`show ip interface brief`', answer: /^show\s+ip\s+interface\s+brief$/, praise: '실무에서 가장 자주 치는 확인 명령입니다.' }
       ],
 
+      complete: function (token, line, s) {
+        const words = line.trim().split(/\s+/);
+        const first = words[0] || '';
+        const second = words[1] || '';
+        const hasSpaceEnd = /\s$/.test(line);
+        const wc = hasSpaceEnd ? words.length + 1 : words.length;
+
+        // 모드별 1번째 토큰 후보
+        if (wc <= 1) {
+          const base = ['help','clear','reset','history'];
+          if (s.mode === 'user') return [...base,'enable','show','ping','exit'];
+          if (s.mode === 'priv') return [...base,'configure','disable','show','write','copy','ping'];
+          if (s.mode === 'global') return [...base,'hostname','interface','vlan','no','exit','end'];
+          if (s.mode === 'if' || s.mode === 'vlan') return [...base,'ip','description','no','shutdown','switchport','name','exit','end'];
+          return base;
+        }
+        if (first === 'configure' && wc === 2) return ['terminal'];
+        if (first === 'show' && wc === 2) return ['running-config','ip','vlan','version','interface'];
+        if (first === 'show' && second === 'ip' && wc === 3) return ['interface'];
+        if (first === 'show' && second === 'ip' && words[2] === 'interface' && wc === 4) return ['brief'];
+        if (first === 'show' && second === 'vlan' && wc === 3) return ['brief'];
+        if (first === 'interface' && wc === 2) return Object.keys(s.interfaces || {}).concat(['FastEthernet0/1','GigabitEthernet0/0']);
+        if (first === 'switchport' && wc === 2) return ['mode','access','trunk'];
+        if (first === 'switchport' && second === 'mode' && wc === 3) return ['access','trunk'];
+        if (first === 'switchport' && second === 'access' && wc === 3) return ['vlan'];
+        if (first === 'no' && wc === 2) return ['shutdown'];
+        if (first === 'vlan' && wc === 2) return ['10','20','30','100'];
+        if (first === 'ip' && wc === 2) return ['address'];
+        if (first === 'copy' && wc === 2) return ['run'];
+        if (first === 'copy' && second === 'run' && wc === 3) return ['start'];
+        return [];
+      },
+
       links: [
         { name: 'Cisco Packet Tracer', href: 'https://www.netacad.com/cisco-packet-tracer', desc: '공식 시뮬레이터 (NetAcad 가입 무료)' },
         { name: 'GNS3', href: 'https://www.gns3.com/', desc: '실제 IOS 이미지 구동 에뮬레이터' },

@@ -218,8 +218,70 @@
       box.hidden = false;
     });
 
+    // Tab 자동완성
+    function defaultCandidates(line, token, s) {
+      // 1) 라인 맨 앞 단어: helpList 의 첫 단어
+      const before = line.slice(0, line.length - token.length);
+      if (!before.trim()) {
+        const firstWords = (cfg.helpList || []).map(h => (h.split(/\s+/)[0] || '').replace(/[^\w\-]/g, ''));
+        const builtins = ['help', 'clear', 'reset', 'history'];
+        return Array.from(new Set([...builtins, ...firstWords])).filter(Boolean);
+      }
+      return [];
+    }
+    function handleTab() {
+      const v = input.value;
+      const pos = input.selectionStart || v.length;
+      const left = v.slice(0, pos);
+      const right = v.slice(pos);
+      const tm = left.match(/(\S*)$/);
+      const token = tm ? tm[1] : '';
+      const prefix = left.slice(0, left.length - token.length);
+
+      let cands = [];
+      if (typeof cfg.complete === 'function') {
+        try { cands = cfg.complete(token, left, state.state) || []; } catch (_) { cands = []; }
+      }
+      if (!cands.length) cands = defaultCandidates(left, token, state.state);
+
+      const seen = new Set();
+      const matches = cands.filter(c => c && c.startsWith(token) && !seen.has(c) && seen.add(c));
+      if (!matches.length) return;
+      if (matches.length === 1) {
+        const done = matches[0];
+        const suffix = right.startsWith(' ') || right === '' ? ' ' : '';
+        input.value = prefix + done + suffix + right;
+        const np = (prefix + done + suffix).length;
+        input.selectionStart = input.selectionEnd = np;
+        return;
+      }
+      // 공통 prefix 까지 확장
+      const lcp = longestCommonPrefix(matches);
+      if (lcp.length > token.length) {
+        input.value = prefix + lcp + right;
+        const np = (prefix + lcp).length;
+        input.selectionStart = input.selectionEnd = np;
+      }
+      // 후보 목록 표시
+      writePrompt(input.value);
+      writeOut(matches.slice(0, 40).join('  ') + (matches.length > 40 ? `  ... +${matches.length - 40}` : ''), 'info');
+    }
+    function longestCommonPrefix(arr) {
+      if (!arr.length) return '';
+      let p = arr[0];
+      for (let i = 1; i < arr.length; i++) {
+        while (arr[i].indexOf(p) !== 0) { p = p.slice(0, -1); if (!p) return ''; }
+      }
+      return p;
+    }
+
     // 입력 핸들링
     input.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        handleTab();
+        return;
+      }
       if (e.key === 'Enter') {
         e.preventDefault();
         const v = input.value;
