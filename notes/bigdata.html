@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="빅데이터 프로그래밍 1~8주차 — Git·Python·NumPy·Pandas" />
+  <title>빅데이터 프로그래밍 | Notes | 황찬영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <style>
+    .hot-box{background:rgba(255,71,87,.08);border:1px solid #ff4757;border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+    .hot-box strong{color:#ff4757}
+    .week-section{padding:1.2rem 1.4rem;margin:2rem 0;border-left:4px solid #7b2ff7;background:linear-gradient(90deg,rgba(123,47,247,.08),transparent);border-radius:6px}
+    .week-section > h2{color:#b69cff;margin-top:.2rem;border-bottom:1px solid rgba(123,47,247,.3);padding-bottom:.5rem}
+    .week-section.w8{border-left-color:#e2b714;background:linear-gradient(90deg,rgba(226,183,20,.08),transparent)}
+    .week-section.w8 > h2{color:#e2b714;border-bottom-color:rgba(226,183,20,.3)}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">&lt;CY /&gt;</a>
+      <ul class="nav-links">
+        <li><a href="../index.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="../skills.html"><span class="nav-icon">⚡</span> Skills</a></li>
+        <li><a href="../projects.html"><span class="nav-icon">🚀</span> Projects</a></li>
+        <li><a href="../ai.html"><span class="nav-icon">🤖</span> AI</a></li>
+        <li><a href="../roadmap.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="../notes.html" class="active"><span class="nav-icon">📚</span> Notes</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="notes-page">
+    <div class="notes-page-inner">
+
+      <aside class="notes-sidebar">
+        <nav class="notes-sidebar-nav">
+          <a href="../notes.html" class="sidebar-back">← 목록으로</a>
+          <div class="sidebar-title">목차</div>
+          <a href="#overview" class="sidebar-chapter active">📝 개요</a>
+          <a href="#w1" class="sidebar-chapter">📅 1주차 · 환경설정</a>
+          <a href="#w2" class="sidebar-chapter">📅 2주차 · Git 기본·평균</a>
+          <a href="#w3" class="sidebar-chapter">📅 3주차 · NumPy/Pandas</a>
+          <a href="#w4" class="sidebar-chapter">📅 4주차 · 통계·reset</a>
+          <a href="#w5" class="sidebar-chapter">📅 5주차 · 브랜치·매표소</a>
+          <a href="#w6" class="sidebar-chapter">📅 6주차 · NumPy 7가지</a>
+          <a href="#w7" class="sidebar-chapter">📅 7주차 · 벡터화</a>
+          <a href="#w8" class="sidebar-chapter">📝 8주차 · 중간고사 정리</a>
+        </nav>
+      </aside>
+
+      <main class="notes-content">
+        <div class="notes-content-header">
+          <h1>📝 빅데이터 프로그래밍 — 1~8주차 정리</h1>
+          <div class="notes-breadcrumb">
+            <a href="../notes.html">Notes</a>
+            <span>/</span>
+            <span>3학년1학기</span>
+            <span>/</span>
+            <span>빅데이터 프로그래밍</span>
+            <span style="margin-left:auto;">
+              <span class="status-badge done">중간고사 대비</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="notes-body">
+
+          <section id="overview">
+            <h2>📝 개요</h2>
+            <div class="callout">
+              <strong>빅데이터 프로그래밍 3학년 1학기 — 1~8주차 전체 정리</strong><br>
+              Closed Book · 깃허브 명령어 6문 + 파이썬(NumPy) 4문 출제 예고
+            </div>
+          </section>
+
+          <!-- ==================== 1주차 ==================== -->
+          <section id="w1" class="week-section">
+            <h2>📅 1주차 — 강의 환경 설정</h2>
+            <p style="color:#aaa">개발 도구 설치, Shell 사용, 파일 권한 개념, 평가 방식</p>
+
+            <h3>🛠️ 설치 도구</h3>
+            <ul>
+              <li><strong>Git Bash</strong> — Windows용 Bash Shell 환경 (git 명령 + 기본 Unix 명령)</li>
+              <li><strong>PyCharm</strong> — Python 통합 개발 환경 (JetBrains)</li>
+              <li><strong>Python 3.x</strong>, <strong>GitHub 계정</strong></li>
+            </ul>
+
+            <h3>🐚 Shell 기초</h3>
+<pre><code class="language-bash">pwd           # 현재 위치
+ls -al        # 숨김 포함 상세 목록
+cd folder     # 이동
+mkdir new     # 폴더 생성
+touch a.txt   # 빈 파일 생성</code></pre>
+
+            <h3>🔒 파일 권한 rwx × 3 주체</h3>
+            <table>
+              <thead><tr><th>주체</th><th>의미</th></tr></thead>
+              <tbody>
+                <tr><td>Owner</td><td>소유자</td></tr>
+                <tr><td>Group</td><td>소유 그룹</td></tr>
+                <tr><td>Others</td><td>그 외 모든 사용자</td></tr>
+              </tbody>
+            </table>
+            <p>각 주체에 <code>r</code>(읽기) · <code>w</code>(쓰기) · <code>x</code>(실행) 권한 부여. 예: <code>-rwxr-xr--</code></p>
+
+            <h3>📊 평가</h3>
+            <p>지필고사(중간·기말) 중심 + 출석</p>
+          </section>
+
+          <!-- ==================== 2주차 ==================== -->
+          <section id="w2" class="week-section">
+            <h2>📅 2주차 — Git 기본 & 평균 계산</h2>
+            <p style="color:#aaa">Git 로컬 명령어, vi 에디터, 평균 구하는 3가지 Python 버전</p>
+
+            <h3>📦 Git 로컬 명령어</h3>
+<pre><code class="language-bash">git init                  # 현재 폴더를 Git 저장소로 초기화
+git status                # 작업 디렉토리/스테이징 상태
+git add [파일]             # 스테이징
+git add .                 # 전체 스테이징
+git reset                 # 스테이징 취소
+git commit -m "메시지"    # 버전 기록
+git log                   # 히스토리
+git checkout [커밋ID]     # 특정 커밋으로 이동</code></pre>
+
+            <h3>📝 vi 에디터</h3>
+            <ul>
+              <li><code>i</code> — 입력 모드 진입</li>
+              <li><code>ESC</code> — 명령 모드 복귀</li>
+              <li><code>:w</code> 저장 · <code>:q</code> 종료 · <code>:wq</code> 저장+종료 · <code>:q!</code> 저장 없이 강제 종료</li>
+            </ul>
+
+            <h3>🧮 평균 계산 3가지 방법</h3>
+<pre><code class="language-python"># v0.1 — for문으로 직접 합산
+scores = [100, 97, 88, 91]
+hap, count = 0, 0
+for score in scores:
+    hap = hap + score
+    count = count + 1
+average = hap / count
+print(average)   # 94.0</code></pre>
+
+<pre><code class="language-python"># v0.2 — 내장 함수 sum(), len() 사용
+scores = [100, 87, 97, 82]
+average = sum(scores) / len(scores)
+print(average)   # 91.5</code></pre>
+
+<pre><code class="language-python"># v0.3 — statistics 모듈 사용
+import statistics
+scores = [100, 87, 97, 82]
+average = statistics.mean(scores)
+print(average)   # 91.5</code></pre>
+          </section>
+
+          <!-- ==================== 3주차 ==================== -->
+          <section id="w3" class="week-section">
+            <h2>📅 3주차 — NumPy · Pandas · 원격 저장소</h2>
+            <p style="color:#aaa">Python 속도 한계, NumPy/Pandas 필요성, git remote push/pull</p>
+
+            <h3>⚡ Python vs C/C++</h3>
+            <ul>
+              <li>Python은 인터프리터 언어로 C/C++ 대비 매우 느림</li>
+              <li>대용량 수치 계산 → <strong>NumPy</strong>(C 구현, 벡터화)로 해결</li>
+              <li>표(CSV) 형태 데이터 → <strong>Pandas</strong>로 전처리·그룹화</li>
+            </ul>
+
+            <h3>📊 statistics vs NumPy vs Pandas</h3>
+            <table>
+              <thead><tr><th>라이브러리</th><th>용도</th><th>특징</th></tr></thead>
+              <tbody>
+                <tr><td>statistics</td><td>기초 통계</td><td>Python 표준 · 작은 데이터</td></tr>
+                <tr><td>NumPy</td><td>배열 수치 계산</td><td>C 구현 · 빠름 · ndarray</td></tr>
+                <tr><td>Pandas</td><td>표 데이터 분석</td><td>DataFrame · CSV 처리 · 그룹화</td></tr>
+              </tbody>
+            </table>
+
+            <h3>🌐 Git 원격 저장소</h3>
+<pre><code class="language-bash">git remote add origin &lt;URL&gt;   # 원격 저장소 등록 (최초 1회)
+git push -u origin main       # 로컬 → 원격 업로드 (최초 -u로 연결)
+git pull                      # 원격 → 로컬 (가져오기 + 병합)</code></pre>
+
+            <h3>📊 NumPy / Pandas 평균</h3>
+<pre><code class="language-python">import numpy as np
+scores = [100, 87, 97, 82]
+print(np.mean(scores))                  # 91.5
+
+import pandas as pd
+print(pd.Series(scores).mean())         # 91.5</code></pre>
+          </section>
+
+          <!-- ==================== 4주차 ==================== -->
+          <section id="w4" class="week-section">
+            <h2>📅 4주차 — Pandas 통계 & git reset</h2>
+            <p style="color:#aaa">Series 통계 함수, mean vs median, git reset 3모드</p>
+
+            <h3>📈 Pandas Series 통계</h3>
+<pre><code class="language-python">import pandas as pd
+s = pd.Series([100, 87, 97, 82])
+print(s.mean())    # 평균: 91.5
+print(s.median())  # 중앙값: 92.0
+print(s.sum())     # 366
+print(s.max())     # 100
+print(s.min())     # 82</code></pre>
+            <blockquote>
+              <strong>mean vs median</strong>: 이상치(outlier)가 있을 때 median이 더 대표값에 적합.<br>
+              예) [10, 10, 10, 1000] → mean=257.5 / median=10
+            </blockquote>
+
+            <h3>↩️ git fetch vs pull</h3>
+            <table>
+              <thead><tr><th>명령</th><th>동작</th></tr></thead>
+              <tbody>
+                <tr><td><code>git fetch</code></td><td>원격 변경사항 가져오기만 (병합 X)</td></tr>
+                <tr><td><code>git pull</code></td><td>fetch + merge 한 번에</td></tr>
+                <tr><td><code>git clone &lt;URL&gt;</code></td><td>원격 저장소 최초 복제</td></tr>
+              </tbody>
+            </table>
+
+            <h3>🔄 git reset 3 모드 ⭐</h3>
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 720 240" style="max-width:100%;height:auto">
+                <text x="280" y="28" fill="#fff" font-size="15" font-weight="700">git reset — 3 모드 비교</text>
+                <g font-size="12" font-weight="700">
+                  <rect x="40" y="55" width="180" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80"/>
+                  <text x="55" y="78" fill="#4ade80">--soft</text>
+                  <text x="55" y="95" fill="#aaa" font-size="11">커밋만 취소 · staged 유지</text>
+                  <rect x="260" y="55" width="180" height="50" rx="6" fill="rgba(226,183,20,.15)" stroke="#e2b714"/>
+                  <text x="275" y="78" fill="#e2b714">--mixed (기본)</text>
+                  <text x="275" y="95" fill="#aaa" font-size="11">커밋+스테이징 취소</text>
+                  <rect x="480" y="55" width="180" height="50" rx="6" fill="rgba(255,71,87,.15)" stroke="#ff4757"/>
+                  <text x="495" y="78" fill="#ff4757">--hard</text>
+                  <text x="495" y="95" fill="#aaa" font-size="11">커밋+파일 모두 삭제 (위험)</text>
+                  <rect x="40" y="140" width="180" height="16" fill="#4ade80" opacity=".4"/>
+                  <text x="50" y="175" fill="#4ade80" font-size="11">HEAD만 이동</text>
+                  <rect x="260" y="140" width="180" height="16" fill="#e2b714" opacity=".4"/>
+                  <rect x="260" y="160" width="180" height="16" fill="#e2b714" opacity=".4"/>
+                  <text x="270" y="195" fill="#e2b714" font-size="11">HEAD + Index</text>
+                  <rect x="480" y="140" width="180" height="16" fill="#ff4757" opacity=".4"/>
+                  <rect x="480" y="160" width="180" height="16" fill="#ff4757" opacity=".4"/>
+                  <rect x="480" y="180" width="180" height="16" fill="#ff4757" opacity=".4"/>
+                  <text x="490" y="215" fill="#ff4757" font-size="11">HEAD + Index + Working Dir</text>
+                </g>
+              </svg>
+            </div>
+
+            <h3>📝 week04.py min() 예제</h3>
+<pre><code class="language-python">import pandas as pd
+scores = [88, 76, 92, 59, 81]
+s = pd.Series(scores)
+print("최저점:", s.min())</code></pre>
+          </section>
+
+          <!-- ==================== 5주차 ==================== -->
+          <section id="w5" class="week-section">
+            <h2>📅 5주차 — Git 브랜치 & 매표소 프로그램</h2>
+            <p style="color:#aaa">충돌 시나리오, 협업 Role, 브랜치 명령, 모듈화 실습</p>
+
+            <h3>⚠️ Git 충돌 시나리오 2가지</h3>
+            <ul>
+              <li><strong>동시 push 충돌</strong>: A, B가 같은 파일 동일 라인을 각자 수정 후 push → 후발 push는 pull 필요</li>
+              <li><strong>브랜치 병합 충돌</strong>: 서로 다른 브랜치에서 같은 파일 수정 후 merge → <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 마커 발생</li>
+            </ul>
+
+            <h3>👥 1인분 Role (협업 규칙)</h3>
+            <p>각자 자신의 브랜치에서 작업 · commit 단위 의미 부여 · PR/merge로 통합 · main은 항상 deployable 상태 유지</p>
+
+            <h3>🌿 Git 브랜치 명령어 ⭐</h3>
+<pre><code class="language-bash">git branch [이름]         # 브랜치 생성
+git branch                # 브랜치 목록 (* 현재)
+git switch [이름]         # 브랜치 이동 (checkout 대체)
+git checkout -b [이름]    # 생성 + 이동 동시
+git push -u origin [이름] # 로컬 브랜치를 원격에 처음 올릴 때
+git branch -m [이름]      # 브랜치 이름 변경
+git branch -d [이름]      # 병합된 브랜치 삭제
+git branch -D [이름]      # 강제 삭제</code></pre>
+
+            <h3>🎫 매표소 프로그램 — 모듈화 실습</h3>
+<pre><code class="language-python"># week05.py — Dev01: 입출력 담당
+import ticket   # Dev02가 만든 요금 계산 모듈 불러오기
+
+humans = int(input("몇 명? "))
+ages = list()
+for i in range(humans):
+    age = int(input("나이? "))
+    ages.append(age)
+
+print(f"총 요금은 {ticket.entrance_fee(ages)}원 입니다.")</code></pre>
+
+<pre><code class="language-python"># ticket.py — Dev02: 로직 담당 (모듈화)
+def entrance_fee(ages: list) -> int:
+    """방문자 나이 목록을 받아 총 입장 요금을 계산한다.
+    Args: ages (list): 방문자 나이 리스트
+    Returns: int: 총 입장 요금
+    """
+    kid, adult, senior = 5000, 10000, 7000
+    total_fee = 0
+    for age in ages:
+        if age >= 65:        # 65세 이상: 시니어
+            total_fee += senior
+        elif age >= 19:      # 19세 이상: 성인
+            total_fee += adult
+        else:                # 그 외: 어린이
+            total_fee += kid
+    return total_fee</code></pre>
+            <blockquote>
+              핵심: <code>import 모듈명</code>으로 다른 .py 파일의 함수를 불러올 수 있다.<br>
+              Docstring(<code>""" """</code>)과 Type Hinting(<code>ages: list</code>)으로 코드 문서화.
+            </blockquote>
+          </section>
+
+          <!-- ==================== 6주차 ==================== -->
+          <section id="w6" class="week-section">
+            <h2>📅 6주차 — NumPy 배열 생성 7가지</h2>
+            <p style="color:#aaa">ndarray 생성 함수, 배열 속성(shape/dtype/ndim/size/T)</p>
+
+            <h3>🔢 NumPy 배열 생성 7가지 ⭐</h3>
+<pre><code class="language-python">import numpy as np
+
+# 1) 리스트 → ndarray 변환
+array01 = np.array([1, 2, 3])          # [1 2 3]
+
+# 2) 연속 값 — arange(start, stop, step)  (stop 미포함)
+array02 = np.arange(0, 10, 2)          # [0 2 4 6 8]
+
+# 3) 0으로 채워진 배열
+array03 = np.zeros((2, 3))             # 2행 3열, 모두 0.0
+
+# 4) 1로 채워진 배열
+array04 = np.ones((2, 3))              # 2행 3열, 모두 1.0
+
+# 5) 지정값으로 채워진 배열
+array05 = np.full((2, 3), 9)           # 2행 3열, 모두 9
+
+# 6) 균일분포 난수 배열 (0.0 이상 1.0 미만)
+array06 = np.random.rand(2, 3)
+
+# 7) 균등 간격 값 — linspace(start, stop, 개수)  (stop 포함)
+array07 = np.linspace(0, 10, 3)        # [0.  5. 10.]</code></pre>
+
+            <h3>🔍 배열 속성</h3>
+<pre><code class="language-python">array08 = np.random.random((2, 3, 3))
+print(array08.shape)   # (2, 3, 3) — 형태
+print(array08.dtype)   # float64 — 데이터 타입
+print(array08.ndim)    # 3 — 차원 수
+print(array08.size)    # 18 — 전체 원소 개수 (2×3×3)
+print(array08.T)       # 전치(Transpose): 행↔열 교환</code></pre>
+
+            <blockquote>
+              <strong>arange vs linspace</strong>: arange는 step(간격) 지정 · stop 미포함 / linspace는 개수 지정 · stop 포함
+            </blockquote>
+
+            <h3>🌳 브랜치 흐름 시각화</h3>
+<pre><code class="language-bash">git log --oneline --graph --all</code></pre>
+          </section>
+
+          <!-- ==================== 7주차 ==================== -->
+          <section id="w7" class="week-section">
+            <h2>📅 7주차 — 벡터화 & 시험 예고</h2>
+            <p style="color:#aaa">NumPy 통계 함수, 벡터화 vs 루프, 시험 범위 공지</p>
+
+            <div class="hot-box">
+              <strong>시험 출제 예고 (7주차 기준)</strong><br>
+              Git 6문제 + NumPy 4문제. 지필고사 Closed Book.
+            </div>
+
+            <h3>📝 week07.py — 통계 함수 & 벡터화</h3>
+<pre><code class="language-python">import numpy as np
+import random
+
+# 연속 정수 배열
+array02 = np.arange(1, 10)   # [1 2 3 4 5 6 7 8 9]
+
+# 통계 함수
+print(np.mean(array02))    # 평균: 5.0
+print(np.median(array02))  # 중앙값: 5.0
+print(np.max(array02))     # 최댓값: 9
+print(np.min(array02))     # 최솟값: 1
+print(np.var(array02))     # 분산: 6.666...
+print(np.std(array02))     # 표준편차: 2.581...
+
+# random.random(): 0.0 이상 1.0 미만 난수
+l2 = []
+for i in range(3):
+    l2.append(random.random())
+
+# 리스트 방식 vs NumPy 벡터화 비교
+l3 = []
+for item in l2:
+    l3.append(item * 10)   # for문으로 하나씩 처리 (느림)
+
+array04 = np.array(l2)
+print(array04 * 10)        # 배열 전체에 한 번에 연산 (벡터화, 빠름)
+print(array04 > 0.5)       # 조건 비교 → True/False Boolean 배열 반환
+
+# copy(): 원본과 독립적인 새 배열 생성
+array05 = array04.copy()</code></pre>
+
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 720 220" style="max-width:100%;height:auto">
+                <text x="40" y="30" fill="#ff4757" font-size="14" font-weight="700">for 루프 (느림)</text>
+                <text x="420" y="30" fill="#4ade80" font-size="14" font-weight="700">NumPy 벡터화 (빠름)</text>
+                <g font-family="JetBrains Mono,monospace" font-size="13" font-weight="700">
+                  <rect x="40" y="50" width="40" height="40" fill="rgba(255,71,87,.2)" stroke="#ff4757"/><text x="52" y="76" fill="#ff4757">1</text>
+                  <rect x="40" y="95" width="40" height="40" fill="rgba(255,71,87,.2)" stroke="#ff4757"/><text x="52" y="121" fill="#ff4757">2</text>
+                  <rect x="40" y="140" width="40" height="40" fill="rgba(255,71,87,.2)" stroke="#ff4757"/><text x="52" y="166" fill="#ff4757">3</text>
+                  <text x="100" y="76" fill="#aaa">× 10 → 10</text>
+                  <text x="100" y="121" fill="#aaa">× 10 → 20</text>
+                  <text x="100" y="166" fill="#aaa">× 10 → 30</text>
+                  <rect x="420" y="95" width="150" height="40" fill="rgba(74,222,128,.2)" stroke="#4ade80"/>
+                  <text x="435" y="121" fill="#4ade80">[1, 2, 3]</text>
+                  <text x="580" y="121" fill="#aaa">× 10</text>
+                  <rect x="420" y="160" width="150" height="40" fill="rgba(74,222,128,.2)" stroke="#4ade80"/>
+                  <text x="425" y="186" fill="#4ade80">[10, 20, 30]</text>
+                </g>
+                <circle r="6" fill="#00d4ff">
+                  <animateMotion dur="2s" repeatCount="indefinite" path="M 495 135 L 495 160"/>
+                </circle>
+              </svg>
+            </div>
+
+            <h3>🔧 NumPy dtype</h3>
+            <table>
+              <thead><tr><th>dtype</th><th>설명</th></tr></thead>
+              <tbody>
+                <tr><td><code>int32</code> / <code>int64</code></td><td>정수형</td></tr>
+                <tr><td><code>float32</code> / <code>float64</code></td><td>실수형 (기본값)</td></tr>
+                <tr><td><code>bool</code></td><td>불리언 (조건 비교 결과)</td></tr>
+                <tr><td><code>object</code></td><td>혼합 타입 (문자열+숫자)</td></tr>
+              </tbody>
+            </table>
+
+            <h3>↩️ 커밋 수정/되돌리기</h3>
+<pre><code class="language-bash">git commit --amend            # 가장 최근 커밋 수정 (메시지/파일)
+git reset --soft HEAD~1       # 커밋만 취소, 파일은 staged 유지
+git reset HEAD~1              # --mixed 기본값: 커밋+스테이징 취소
+git reset --hard HEAD~2       # 최근 2개 커밋+파일 모두 삭제
+git branch -d [이름]          # 병합된 브랜치 삭제</code></pre>
+          </section>
+
+          <!-- ==================== 8주차 ==================== -->
+          <section id="w8" class="week-section w8">
+            <h2>📝 8주차 — 중간고사 정리</h2>
+            <p style="color:#aaa">Closed Book · Git 6문 + Python/NumPy 4문</p>
+
+            <h3>⚠️ 시험 출제 유력 항목</h3>
+            <div class="hot-box">
+              <strong>Git 명령어 6문 + Python(NumPy) 4문 — 총 10문</strong>
+            </div>
+
+            <h3>📦 Git — 핵심 암기</h3>
+            <ul>
+              <li><code>git commit --amend</code> : 가장 최근 커밋 메시지 수정 또는 파일 추가</li>
+              <li><code>git reset --soft HEAD~N</code> : 커밋만 취소, 파일은 staged 유지</li>
+              <li><code>git reset --hard HEAD~N</code> : 커밋 + 파일 모두 삭제 (복구 불가)</li>
+              <li><code>git branch -d 브랜치명</code> : 병합된 브랜치 삭제 / <code>-D</code> : 강제 삭제</li>
+              <li><code>git log --oneline --graph --all</code> : 브랜치 흐름 시각화</li>
+              <li><code>git fetch</code> vs <code>git pull</code> : fetch=가져오기만 · pull=fetch+merge</li>
+            </ul>
+
+            <h3>🐍 Python/NumPy — 핵심 암기</h3>
+            <ul>
+              <li>NumPy 사용 목적 (ndarray, 벡터화, 빠른 수치 계산)</li>
+              <li>NumPy dtype (int32, float64 등)</li>
+              <li>NumPy 배열 생성 7가지 (<code>array</code>, <code>arange</code>, <code>zeros</code>, <code>ones</code>, <code>full</code>, <code>rand</code>, <code>linspace</code>)</li>
+              <li>NumPy 통계 함수 (<code>mean</code>, <code>median</code>, <code>max</code>, <code>min</code>, <code>var</code>, <code>std</code>)</li>
+              <li>배열 속성: shape, dtype, ndim, size, T</li>
+              <li>벡터화: <code>array * 10</code>이 for 루프보다 빠른 이유 (C 레벨 일괄 연산)</li>
+            </ul>
+
+            <h3>🔥 git reset 3 모드 재확인</h3>
+            <table>
+              <thead><tr><th>모드</th><th>HEAD</th><th>Index</th><th>Working Dir</th></tr></thead>
+              <tbody>
+                <tr><td>--soft</td><td>이동</td><td>유지</td><td>유지</td></tr>
+                <tr><td>--mixed (기본)</td><td>이동</td><td>초기화</td><td>유지</td></tr>
+                <tr><td>--hard</td><td>이동</td><td>초기화</td><td>초기화 ⚠️</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/notes-sidebar.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="IoT 프로그래밍 1~8주차 — 개론·라즈베리파이·리눅스·전자기초" />
+  <title>IoT 프로그래밍 | Notes | 황찬영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <style>
+    details.qa{background:rgba(0,212,255,.05);border-left:3px solid #00d4ff;padding:.8rem 1rem;margin:.6rem 0;border-radius:4px}
+    details.qa summary{cursor:pointer;font-weight:700;color:#00d4ff;outline:none}
+    details.qa[open] summary{margin-bottom:.5rem}
+    details.qa .ans{padding-left:1rem;color:#4ade80;font-weight:700}
+    .formula-box{background:rgba(226,183,20,.08);border:1px solid #e2b714;border-radius:8px;padding:1rem 1.2rem;margin:1rem 0;font-family:'JetBrains Mono',monospace;font-size:1.05em;line-height:1.8}
+    .formula-box strong{color:#e2b714}
+    .week-section{padding:1.2rem 1.4rem;margin:2rem 0;border-left:4px solid #7b2ff7;background:linear-gradient(90deg,rgba(123,47,247,.08),transparent);border-radius:6px}
+    .week-section > h2{color:#b69cff;margin-top:.2rem;border-bottom:1px solid rgba(123,47,247,.3);padding-bottom:.5rem}
+    .week-section.w8{border-left-color:#e2b714;background:linear-gradient(90deg,rgba(226,183,20,.08),transparent)}
+    .week-section.w8 > h2{color:#e2b714;border-bottom-color:rgba(226,183,20,.3)}
+    .week-section.empty{border-left-color:#666;background:rgba(100,100,100,.05)}
+    .week-section.empty > h2{color:#888}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">&lt;CY /&gt;</a>
+      <ul class="nav-links">
+        <li><a href="../index.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="../skills.html"><span class="nav-icon">⚡</span> Skills</a></li>
+        <li><a href="../projects.html"><span class="nav-icon">🚀</span> Projects</a></li>
+        <li><a href="../ai.html"><span class="nav-icon">🤖</span> AI</a></li>
+        <li><a href="../roadmap.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="../notes.html" class="active"><span class="nav-icon">📚</span> Notes</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="notes-page">
+    <div class="notes-page-inner">
+
+      <aside class="notes-sidebar">
+        <nav class="notes-sidebar-nav">
+          <a href="../notes.html" class="sidebar-back">← 목록으로</a>
+          <div class="sidebar-title">목차</div>
+          <a href="#overview" class="sidebar-chapter active">📝 개요</a>
+          <a href="#w1" class="sidebar-chapter">📅 1주차 · IoT 개론</a>
+          <a href="#w2" class="sidebar-chapter">📅 2~3주차 · 라즈베리파이</a>
+          <a href="#w4" class="sidebar-chapter">📅 4주차 · 리눅스 기초</a>
+          <a href="#w5" class="sidebar-chapter">📅 5주차 · AWS IoT Core</a>
+          <a href="#w6" class="sidebar-chapter">📅 6주차 · 전자 기초</a>
+          <a href="#w7" class="sidebar-chapter">📅 7주차 · 중간고사 대비</a>
+          <a href="#w8" class="sidebar-chapter">📝 8주차 · 중간고사 정리</a>
+        </nav>
+      </aside>
+
+      <main class="notes-content">
+        <div class="notes-content-header">
+          <h1>📝 IoT 프로그래밍 — 1~8주차 정리</h1>
+          <div class="notes-breadcrumb">
+            <a href="../notes.html">Notes</a>
+            <span>/</span>
+            <span>3학년1학기</span>
+            <span>/</span>
+            <span>IoT 프로그래밍</span>
+            <span style="margin-left:auto;">
+              <span class="status-badge done">중간고사 대비</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="notes-body">
+
+          <section id="overview">
+            <h2>📝 개요 & 핵심 공식</h2>
+            <div class="callout">
+              <strong>IoT 프로그래밍 3학년 1학기 — 1~8주차 전체 정리</strong><br>
+              IoT 개론 · 라즈베리파이 · 리눅스 · AWS IoT Core · 전자기초 · LED 회로
+            </div>
+            <div class="formula-box">
+              <strong>V = I × R</strong> &nbsp;(옴의 법칙) &nbsp;|&nbsp; <strong>KCL</strong>: ΣI_in = ΣI_out &nbsp;|&nbsp; <strong>KVL</strong>: 전압강하의 합 = 전원전압<br>
+              <strong>LED 저항</strong>: R = (전원전압 − VF) / IF
+            </div>
+          </section>
+
+          <!-- ==================== 1주차 ==================== -->
+          <section id="w1" class="week-section">
+            <h2>📅 1주차 — IoT 개론</h2>
+            <p style="color:#aaa">사물인터넷 개념, 구성요소, 발전 배경, 한계점, 평가 기준</p>
+
+            <h3>🌐 IoT(Internet of Things)란?</h3>
+            <ul>
+              <li>4차 산업혁명: <strong>물리적(physical) 세계와 기술적 세계의 경계를 허물어가는(blurring) 흐름</strong></li>
+              <li>IoT = 사물에 <strong>센서</strong>와 통신 기능을 내장하여 인터넷에 연결하는 기술</li>
+              <li>연결된 사물들이 <strong>데이터</strong>를 수집·분석하고 학습한다</li>
+              <li>외부 환경 제어를 위한 <strong>controller</strong>가 필요</li>
+            </ul>
+
+            <h3>🚀 IoT 발전 배경 3가지</h3>
+            <ul>
+              <li><strong>Cheap sensors</strong> — 센서 가격의 급격한 하락</li>
+              <li><strong>Cheap processing</strong> — 지난 10년간 처리용량 기준 컴퓨팅 비용 60배 하락</li>
+              <li><strong>Cheap bandwidth</strong> — 통신 비용 하락으로 대용량 데이터 전송 가능</li>
+            </ul>
+
+            <h3>⚠️ IoT의 Challenges (한계점)</h3>
+            <ul>
+              <li><strong>보안 이슈</strong>: 사물이 해킹의 대상이 될 수 있음</li>
+              <li><strong>IP 주소 부족</strong>: 모든 사물에 유일한 IP 필요 → IP 고갈</li>
+              <li><strong>표준 부재</strong>: IoT 프로토콜·플랫폼 표준 부재로 회사 간 경쟁/호환성 문제</li>
+            </ul>
+
+            <h3>📊 평가 기준</h3>
+            <ul>
+              <li>수행평가 1, 수행평가 2</li>
+              <li>중간고사 / 기말고사 각 30점</li>
+              <li>출석 20점</li>
+            </ul>
+          </section>
+
+          <!-- ==================== 2~3주차 ==================== -->
+          <section id="w2" class="week-section">
+            <h2>📅 2~3주차 — 라즈베리파이 & 네트워크</h2>
+            <p style="color:#aaa">라즈베리파이 하드웨어, SBC 개념, Wi-Fi/Cellular, 공유기 구조</p>
+
+            <h3>🍓 라즈베리파이 개요</h3>
+            <ul>
+              <li>SBC(Single Board Computer) — CPU, RAM, I/O가 단일 기판 위에 통합된 소형 컴퓨터</li>
+              <li>라즈베리파이 3부터 <strong>와이파이, 블루투스</strong> 기본 내장</li>
+              <li>라즈베리파이 4는 <strong>듀얼 모니터</strong> 연결 및 최대 <strong>4GB RAM</strong> 지원</li>
+              <li>하드웨어 구성: CPU, RAM/ROM, GPIO, HDMI, USB, 네트워크</li>
+            </ul>
+
+            <h3>💡 SBC vs PC 차이</h3>
+            <ul>
+              <li>SBC: 단일 보드, 저전력, 임베디드·IoT용. 저장장치는 SD카드</li>
+              <li>PC: 메인보드 + 주변장치 조합, 고성능, 범용 데스크톱</li>
+            </ul>
+
+            <h3>📡 무선 네트워크 — 2.4GHz vs 5GHz</h3>
+            <table>
+              <thead><tr><th>대역</th><th>장점</th><th>단점</th></tr></thead>
+              <tbody>
+                <tr><td>2.4 GHz</td><td>도달 거리 길고 장애물 투과 우수</td><td>속도 낮고 간섭 많음</td></tr>
+                <tr><td>5 GHz</td><td>고속, 간섭 적음</td><td>거리 짧고 장애물에 약함</td></tr>
+              </tbody>
+            </table>
+
+            <h3>📱 Cellular Network & 테더링</h3>
+            <ul>
+              <li>Cellular Network: 3G/4G/5G 기반 이동통신망 — 기지국(cell) 단위 커버리지</li>
+              <li>테더링: 스마트폰의 셀룰러 연결을 Wi-Fi/USB/Bluetooth로 다른 기기에 공유</li>
+            </ul>
+
+            <h3>🏠 공유기(Router)의 역할 5가지</h3>
+            <ul>
+              <li><strong>Switch</strong>: 유선 단자 간 패킷 전달 (L2)</li>
+              <li><strong>AP (Access Point)</strong>: 무선 기기 Wi-Fi 접속</li>
+              <li><strong>Router</strong>: 내부망 ↔ 외부망 패킷 라우팅 (L3)</li>
+              <li><strong>NAT</strong>: 사설 IP ↔ 공인 IP 변환</li>
+              <li><strong>DHCP</strong>: 내부 기기에 사설 IP 자동 할당</li>
+            </ul>
+
+            <h3>🔦 LED 실습 개념</h3>
+            <p>GPIO 핀으로 디지털 HIGH/LOW 출력 → LED 점등 제어. 과전류 방지 위해 직렬 저항 필수.</p>
+          </section>
+
+          <!-- ==================== 4주차 ==================== -->
+          <section id="w4" class="week-section">
+            <h2>📅 4주차 — ch02 리눅스 기초</h2>
+            <p style="color:#aaa">OS 개념, VNC/PuTTY, 리눅스 파일시스템, 명령어, 권한, 패키지 관리</p>
+
+            <h3>💻 운영체제 & 원격접속</h3>
+            <ul>
+              <li>OS = 하드웨어 추상화 <strong>계층(Layer)</strong>을 제공하는 시스템 소프트웨어. 시스템 프로그램 + 응용 프로그램</li>
+              <li>Debian 계열 → <strong>Ubuntu</strong>, 라즈베리파이 OS</li>
+              <li><strong>VNC</strong>: 원격 GUI 접속 / <strong>PuTTY</strong>: SSH 기반 원격 CLI 접속</li>
+            </ul>
+
+            <h3>📁 리눅스 파일시스템 (FHS)</h3>
+            <table>
+              <thead><tr><th>디렉터리</th><th>역할</th></tr></thead>
+              <tbody>
+                <tr><td>/bin</td><td>기본 명령어 바이너리</td></tr>
+                <tr><td>/etc</td><td>시스템 설정 파일</td></tr>
+                <tr><td>/home</td><td>사용자 홈 디렉터리</td></tr>
+                <tr><td>/root</td><td>root 사용자 홈</td></tr>
+                <tr><td>/usr</td><td>사용자 프로그램, 라이브러리</td></tr>
+                <tr><td>/var</td><td>로그, 가변 데이터</td></tr>
+                <tr><td>/tmp</td><td>임시 파일</td></tr>
+                <tr><td>/dev</td><td>장치 파일</td></tr>
+                <tr><td>/proc</td><td>프로세스/커널 정보 (가상)</td></tr>
+                <tr><td>/mnt, /media</td><td>마운트 포인트</td></tr>
+              </tbody>
+            </table>
+
+            <h3>⌨️ 주요 명령어</h3>
+<pre><code class="language-bash"># 시스템
+date           # 현재 날짜/시간
+hostname       # 호스트명
+clear          # 화면 지우기
+passwd         # 비밀번호 변경
+
+# 탐색/파일
+ls -al         # 숨김파일 포함 상세 목록
+pwd            # 현재 경로
+cd ~           # 홈으로 이동
+mkdir dir      # 폴더 생성
+touch file     # 빈 파일 생성
+cat / head / tail file  # 내용 보기
+
+# 복사/이동/삭제
+cp src dst
+mv src dst
+rm -rf dir
+
+# 탐색
+which cmd      # 실행 파일 경로
+whereis cmd
+find / -name "*.txt"
+
+# 권한
+chmod 755 file
+chown user:group file
+
+# IO 재지정
+cmd &gt; out.log   # stdout 저장
+cmd 2&gt; err.log  # stderr 저장
+cmd | cmd2      # 파이프
+
+# 패키지/네트워크
+wget URL
+apt-get install pkg
+git clone URL
+tar -czvf archive.tar.gz dir   # 압축
+tar -xzvf archive.tar.gz       # 해제</code></pre>
+
+            <h3>🔑 시험 포인트 키워드</h3>
+            <ul>
+              <li>OS 정의 — 하드웨어 추상화 계층</li>
+              <li>파일시스템 주요 디렉터리 의미</li>
+              <li>ls, pwd, cd, cat, mkdir 기능</li>
+              <li>chmod 숫자 권한, IO 재지정 기호</li>
+            </ul>
+          </section>
+
+          <!-- ==================== 5주차 ==================== -->
+          <section id="w5" class="week-section">
+            <h2>📅 5주차 — AWS IoT Core (수행평가 1)</h2>
+            <p style="color:#aaa">발표 수행평가 — AWS IoT Core 기능·아키텍처·활용 사례</p>
+
+            <h3>📢 발표 스크립트 요약 (5슬라이드)</h3>
+            <ol>
+              <li><strong>개요</strong>: AWS IoT Core는 수많은 IoT 기기를 AWS 클라우드에 안전하게 연결·관리하는 관리형 서비스</li>
+              <li><strong>주요 기능</strong>: 디바이스 게이트웨이, 메시지 브로커(MQTT/HTTP), 디바이스 섀도우, 룰 엔진, 디바이스 관리</li>
+              <li><strong>아키텍처</strong>: 디바이스 → MQTT/TLS → IoT Core → 룰 엔진 → AWS 서비스(S3, Lambda, DynamoDB 등)</li>
+              <li><strong>보안</strong>: X.509 인증서 기반 상호 인증, IAM 정책, TLS 암호화</li>
+              <li><strong>활용 사례</strong>: 스마트홈, 제조업 IoT, 커넥티드카, 농업 모니터링</li>
+            </ol>
+
+            <h3>❓ 예상 Q&A 5개</h3>
+            <details class="qa"><summary>Q1. AWS IoT Core에서 사용되는 주요 통신 프로토콜은?</summary>
+              <div class="ans">MQTT (경량 pub/sub), HTTPS, LoRaWAN. MQTT는 저전력·저대역폭 IoT에 최적화</div></details>
+            <details class="qa"><summary>Q2. 디바이스 섀도우(Device Shadow)란?</summary>
+              <div class="ans">디바이스의 현재/원하는 상태를 JSON으로 클라우드에 저장 → 오프라인 상태에서도 상태 조회/변경 가능</div></details>
+            <details class="qa"><summary>Q3. 룰 엔진(Rule Engine)은 어떤 역할?</summary>
+              <div class="ans">수신된 MQTT 메시지를 SQL 기반 규칙으로 필터링·변환 → 다른 AWS 서비스(S3, Lambda 등)로 라우팅</div></details>
+            <details class="qa"><summary>Q4. IoT Core의 보안 방식은?</summary>
+              <div class="ans">X.509 인증서 기반 상호 TLS 인증 + IAM/IoT 정책으로 액세스 제어</div></details>
+            <details class="qa"><summary>Q5. IoT Core의 대표적인 활용 사례는?</summary>
+              <div class="ans">스마트홈(원격 제어), 산업 IoT(예측 정비), 커넥티드카, 스마트 농업</div></details>
+          </section>
+
+          <!-- ==================== 6주차 ==================== -->
+          <section id="w6" class="week-section">
+            <h2>📅 6주차 — ch04 전자 기초</h2>
+            <p style="color:#aaa">옴의 법칙, KCL/KVL, 브레드보드, 저항·LED·콘덴서·트랜지스터·다이오드</p>
+
+            <h3>⚡ 회로 기초</h3>
+            <ul>
+              <li><strong>닫힌 회로</strong>: 전류가 흐를 수 있는 경로가 완성된 상태 / <strong>열린 회로</strong>: 끊어진 상태</li>
+              <li><strong>V</strong>(전압) — 전류를 흐르게 하는 힘(압력)</li>
+              <li><strong>I</strong>(전류) — 전선을 통해 흐르는 전기의 양</li>
+              <li><strong>R</strong>(저항) — 전기 흐름을 방해하는 정도</li>
+            </ul>
+
+            <h3>📐 옴의 법칙 — 예제 4.1</h3>
+            <div class="formula-box"><strong>V = I × R</strong> → I = V / R, R = V / I</div>
+            <p>예) 5V 전원, 250Ω 저항 → I = 5 / 250 = 0.02 A = <strong>20mA</strong></p>
+
+            <h3>📐 KCL · KVL — 예제 4.2</h3>
+            <ul>
+              <li><strong>KCL</strong>: 접속점으로 들어오는 전류의 합 = 나가는 전류의 합 → ΣI_in = ΣI_out</li>
+              <li><strong>KVL</strong>: 폐회로에서 전압강하의 합 = 전원전압 → Σ전압강하 = 전원전압</li>
+            </ul>
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 700 280" style="max-width:100%;height:auto">
+                <defs><marker id="arrK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4ade80"/></marker></defs>
+                <circle cx="350" cy="140" r="10" fill="#e2b714" stroke="#fff" stroke-width="2"/>
+                <text x="340" y="100" fill="#e2b714" font-size="14" font-weight="700">노드 N</text>
+                <line x1="80" y1="60" x2="340" y2="130" stroke="#4ade80" stroke-width="2" marker-end="url(#arrK)"/>
+                <text x="100" y="50" fill="#4ade80" font-size="13" font-weight="700">I₁ = 2A (in)</text>
+                <line x1="80" y1="220" x2="340" y2="150" stroke="#4ade80" stroke-width="2" marker-end="url(#arrK)"/>
+                <text x="100" y="240" fill="#4ade80" font-size="13" font-weight="700">I₂ = 3A (in)</text>
+                <line x1="360" y1="140" x2="620" y2="140" stroke="#ff4757" stroke-width="2" marker-end="url(#arrK)"/>
+                <text x="500" y="130" fill="#ff4757" font-size="13" font-weight="700">I₃ = 5A (out)</text>
+                <text x="180" y="275" fill="#00d4ff" font-size="15" font-weight="700">KCL: ΣI_in (2+3) = ΣI_out (5) ✓</text>
+              </svg>
+            </div>
+
+            <h3>🔌 브레드보드 & 저항 컬러코드</h3>
+            <ul>
+              <li>브레드보드 안쪽은 <strong>5칸씩</strong> 연결. 전원 레일은 세로로 이어짐</li>
+              <li>저항 컬러코드: <strong>4밴드</strong>(2자리+승수+오차) / <strong>5밴드</strong>(3자리+승수+오차)</li>
+              <li>예) 갈-검-빨-금 = 10 × 10² = 1000Ω = 1kΩ (±5%)</li>
+            </ul>
+
+            <h3>💡 LED + 저항 회로 — 예제 계산</h3>
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 700 220" style="max-width:100%;height:auto">
+                <defs><marker id="arrI" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e2b714"/></marker></defs>
+                <line x1="80" y1="60" x2="80" y2="100" stroke="#e2b714" stroke-width="4"/>
+                <line x1="70" y1="70" x2="90" y2="70" stroke="#e2b714" stroke-width="6"/>
+                <line x1="60" y1="85" x2="100" y2="85" stroke="#e2b714" stroke-width="3"/>
+                <text x="45" y="135" fill="#e2b714" font-size="14" font-weight="700">5V</text>
+                <line x1="80" y1="60" x2="620" y2="60" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrI)"/>
+                <rect x="260" y="48" width="100" height="24" fill="rgba(123,47,247,.2)" stroke="#7b2ff7" stroke-width="2"/>
+                <text x="285" y="65" fill="#b69cff" font-size="12" font-weight="700">R=150Ω</text>
+                <polygon points="500,48 500,72 525,60" fill="#ff4757" stroke="#ff4757"/>
+                <line x1="525" y1="48" x2="525" y2="72" stroke="#ff4757" stroke-width="3"/>
+                <text x="480" y="90" fill="#ff4757" font-size="12" font-weight="700">LED (VF=2V)</text>
+                <line x1="620" y1="60" x2="620" y2="180" stroke="#00d4ff" stroke-width="2"/>
+                <line x1="620" y1="180" x2="80" y2="180" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrI)"/>
+                <line x1="80" y1="180" x2="80" y2="100" stroke="#00d4ff" stroke-width="2"/>
+                <circle r="5" fill="#4ade80">
+                  <animateMotion dur="3s" repeatCount="indefinite" path="M 80 60 L 620 60 L 620 180 L 80 180 L 80 60"/>
+                </circle>
+                <text x="260" y="210" fill="#4ade80" font-size="13" font-weight="700">IF = 20mA → R = (5V−2V)/0.02A = 150Ω</text>
+              </svg>
+            </div>
+
+            <h3>🔧 전자 부품</h3>
+            <ul>
+              <li><strong>콘덴서</strong>: 직류 연결 시 일정 시간 <strong>충전</strong>되다가 전류 차단 → 회로에 연결하면 <strong>방전</strong></li>
+              <li><strong>트랜지스터</strong> (B/C/E — 베이스/컬렉터/이미터): 전자 신호·전력을 <strong>증폭</strong>하거나 스위칭</li>
+              <li><strong>다이오드</strong>: 한쪽 방향으로만 전류를 흘리는 <strong>정류</strong> 작용. 순방향 전압강하·항복전압 개념</li>
+              <li><strong>LED 극성</strong>: 긴 다리 = +(Anode), 짧은 다리 = −(Cathode)</li>
+            </ul>
+          </section>
+
+          <!-- ==================== 7주차 ==================== -->
+          <section id="w7" class="week-section empty">
+            <h2>📅 7주차 — 중간고사 대비 주간</h2>
+            <p style="color:#888">본 주차는 별도 진도 없이 <strong>1~6주차 복습 및 중간고사 준비</strong>로 운영되었습니다. 핵심 내용은 8주차 중간고사 정리 섹션 참고.</p>
+          </section>
+
+          <!-- ==================== 8주차 ==================== -->
+          <section id="w8" class="week-section w8">
+            <h2>📝 8주차 — 중간고사 정리</h2>
+            <p style="color:#aaa">Closed Book · 빈칸 32문 + 주관식 14문</p>
+
+            <h3>🌐 IoT 개론 — 빈칸 Q1~Q8</h3>
+            <details class="qa"><summary>Q1. 4차 산업혁명: blurring the ___ world with the technological world</summary><div class="ans">→ physical</div></details>
+            <details class="qa"><summary>Q2. IoT: 사물에 ___ 와 통신 기능을 내장하여 인터넷에 연결하는 기술</summary><div class="ans">→ 센서</div></details>
+            <details class="qa"><summary>Q3. 연결된 사물들이 ___ 를 수집, 분석하고 학습한다.</summary><div class="ans">→ 데이터</div></details>
+            <details class="qa"><summary>Q4. 외부 환경 제어를 위한 ___ 가 필요하다.</summary><div class="ans">→ controller</div></details>
+            <details class="qa"><summary>Q5. Cheap ___ : 지난 10년 간 처리 용량 기준 가격 60배 하락</summary><div class="ans">→ processing (컴퓨팅)</div></details>
+            <details class="qa"><summary>Q6. 사물이 ___ 의 대상이 될 수 있어 보안 이슈가 발생한다.</summary><div class="ans">→ 해킹</div></details>
+            <details class="qa"><summary>Q7. 자신을 구별할 수 있는 유일한 ___ 를 가지고 인터넷에 연결되어야 한다.</summary><div class="ans">→ IP 주소</div></details>
+            <details class="qa"><summary>Q8. IoT 프로토콜 및 플랫폼 ___ 의 부재로 회사 간 경쟁이 발생한다.</summary><div class="ans">→ 표준</div></details>
+
+            <h3>🍓 라즈베리파이 — 빈칸 Q9~Q12</h3>
+            <details class="qa"><summary>Q9. 라즈베리파이 3부터 *** 와 *** 가 기본 내장되어 있다.</summary><div class="ans">→ 와이파이, 블루투스</div></details>
+            <details class="qa"><summary>Q10. 라즈베리파이 4는 듀얼 ___ 연결이 가능하다.</summary><div class="ans">→ 모니터</div></details>
+            <details class="qa"><summary>Q11. 라즈베리파이는 최대 4GB의 ___ 을 지원한다.</summary><div class="ans">→ RAM</div></details>
+            <details class="qa"><summary>Q12. 라즈베리파이는 ___ (Single Board Computer) 이다.</summary><div class="ans">→ SBC</div></details>
+
+            <h3>🐧 리눅스 — 빈칸 Q13~Q18</h3>
+            <details class="qa"><summary>Q13. 운영체제란 하드웨어 추상화 ___ 을 제공하는 시스템 소프트웨어이다.</summary><div class="ans">→ 계층 (Layer)</div></details>
+            <details class="qa"><summary>Q14. Debian 계열 =&gt; ___ 운영체제</summary><div class="ans">→ Ubuntu</div></details>
+            <details class="qa"><summary>Q15. 운영체제는 시스템 프로그램과 ___ 프로그램으로 구성된다.</summary><div class="ans">→ 응용</div></details>
+            <details class="qa"><summary>Q16. ___ 명령어: 현재 디렉터리 안에 존재하는 모든 것을 확인한다.</summary><div class="ans">→ ls</div></details>
+            <details class="qa"><summary>Q17. ___ 명령어: 현재 작업 디렉터리를 보여준다.</summary><div class="ans">→ pwd</div></details>
+            <details class="qa"><summary>Q18. ___ 명령어: 파일의 내용을 화면에 바로 출력한다.</summary><div class="ans">→ cat</div></details>
+
+            <h3>⚡ 전자 기초 — 빈칸 Q19~Q32</h3>
+            <details class="qa"><summary>Q19. 전류가 흐를 때의 힘(압력)을 나타내는 물리량은?</summary><div class="ans">→ 전압 (V)</div></details>
+            <details class="qa"><summary>Q20. 전선을 통해 흐르는 전기의 양을 나타내는 물리량은?</summary><div class="ans">→ 전류 (I)</div></details>
+            <details class="qa"><summary>Q21. 전기의 흐름을 방해하는 정도를 나타내는 물리량은?</summary><div class="ans">→ 저항 (R)</div></details>
+            <details class="qa"><summary>Q22. 전압이 높을수록, ___ 이 작을수록 전류가 많아진다.</summary><div class="ans">→ 저항</div></details>
+            <details class="qa"><summary>Q23. KCL: 접속점에 들어오는 전류와 나가는 전류의 ___ 은 같다.</summary><div class="ans">→ 합</div></details>
+            <details class="qa"><summary>Q24. 전압강하란 전류가 전선을 타고 이동할 때 저항을 만나 ___ 의 크기가 낮아지는 현상이다.</summary><div class="ans">→ 전압</div></details>
+            <details class="qa"><summary>Q25. 브레드보드 안쪽은 ___ 칸씩 연결되어 있다.</summary><div class="ans">→ 5</div></details>
+            <details class="qa"><summary>Q26. 옴의 법칙에 따라서 R = V / I = 3V / 0.02A = ___ Ω</summary><div class="ans">→ 150 (그러므로 저항은 150~220Ω)</div></details>
+            <details class="qa"><summary>Q27. 콘덴서에 직류전원을 연결하면 일정 시간 ___ 되다가 전류가 흐르지 않는다.</summary><div class="ans">→ 충전</div></details>
+            <details class="qa"><summary>Q28. 충전된 콘덴서를 회로에 연결하면 ___ 이 발생한다.</summary><div class="ans">→ 방전</div></details>
+            <details class="qa"><summary>Q29. 트랜지스터는 전자 신호 및 전력을 ___ 하거나 스위칭하는 반도체 소자이다.</summary><div class="ans">→ 증폭</div></details>
+            <details class="qa"><summary>Q30. 다이오드는 한쪽 방향으로만 전류가 흐르는 ___ 작용을 한다.</summary><div class="ans">→ 정류</div></details>
+            <details class="qa"><summary>Q31. 다이오드에 순방향으로 전류가 흐를 때 전압이 낮아지는 현상은?</summary><div class="ans">→ 순방향 전압강하</div></details>
+            <details class="qa"><summary>Q32. 다이오드에 역방향으로 매우 큰 전압이 걸려 역전류가 흐르게 되는 전압은?</summary><div class="ans">→ 항복(Breakdown) 전압</div></details>
+
+            <h3>✏️ 주관식 14문</h3>
+            <details class="qa"><summary>[주관1] IoT(사물인터넷)의 정의를 서술하시오.</summary>
+              <div class="ans">사물에 센서와 통신 기능을 내장하여 인터넷에 연결하고, 수집된 데이터를 분석·학습하여 서비스를 제공하는 기술. 각 사물은 유일한 IP 주소를 가져야 한다.</div></details>
+            <details class="qa"><summary>[주관2] IoT가 빠르게 발전할 수 있었던 3가지 배경을 서술하시오.</summary>
+              <div class="ans">① Cheap sensors — 센서 가격 급락<br>② Cheap processing — 컴퓨팅 비용 60배 하락<br>③ Cheap bandwidth — 통신 비용 하락</div></details>
+            <details class="qa"><summary>[주관3] IoT의 문제점(한계) 3가지를 서술하시오.</summary>
+              <div class="ans">① 보안 이슈(해킹) ② IP 주소 부족 ③ 표준 부재</div></details>
+            <details class="qa"><summary>[주관4] SBC가 무엇인지 설명하고, 라즈베리파이가 SBC인 이유를 서술하시오.</summary>
+              <div class="ans">SBC는 CPU·RAM·저장·I/O가 단일 기판에 통합된 소형 컴퓨터. 라즈베리파이는 하나의 보드에 모든 기능이 통합되어 있어 SBC에 해당.</div></details>
+            <details class="qa"><summary>[주관5] 라즈베리파이 3과 4의 주요 차이점 2가지 이상.</summary>
+              <div class="ans">① 4는 듀얼 모니터 지원 ② 4는 최대 4GB RAM ③ 둘 다 Wi-Fi·블루투스 내장</div></details>
+            <details class="qa"><summary>[주관6] 운영체제(OS)의 역할을 설명하시오.</summary>
+              <div class="ans">하드웨어 추상화 계층을 제공하는 시스템 SW. 시스템·응용 프로그램 구성. 자원 관리 + 인터페이스 제공.</div></details>
+            <details class="qa"><summary>[주관7] 리눅스 명령어 ls, pwd, cd, cat, mkdir 기능 설명.</summary>
+              <div class="ans"><code>ls</code> 목록 · <code>pwd</code> 절대경로 · <code>cd</code> 이동 · <code>cat</code> 내용 출력 · <code>mkdir</code> 폴더 생성</div></details>
+            <details class="qa"><summary>[주관8] Debian 계열 대표 배포판과 특징.</summary>
+              <div class="ans">Ubuntu. apt 패키지 관리자 사용. 라즈베리파이 OS도 Debian 기반. 안정적·사용자 친화적.</div></details>
+            <details class="qa"><summary>[주관9] 옴의 법칙을 설명하고 공식을 쓰시오.</summary>
+              <div class="ans">V = I × R. 전압↑·저항↓ → 전류↑</div></details>
+            <details class="qa"><summary>[주관10] KCL과 KVL을 정의하고 식으로 표현.</summary>
+              <div class="ans">KCL: ΣI_in = ΣI_out · KVL: Σ전압강하 = 전원전압</div></details>
+            <details class="qa"><summary>[주관11] 5V, VF=2V, IF=20mA일 때 직렬 저항값.</summary>
+              <div class="ans">R = (5−2) / 0.02 = <strong>150Ω</strong> (실무 150~220Ω)</div></details>
+            <details class="qa"><summary>[주관12] 전압강하 개념.</summary>
+              <div class="ans">전류가 저항을 만나 전압 크기가 낮아지는 현상. R·I 클수록 크게 발생.</div></details>
+            <details class="qa"><summary>[주관13] 트랜지스터의 역할.</summary>
+              <div class="ans">전자 신호·전력을 증폭하거나 스위칭하는 반도체 소자. 소량의 베이스 전류로 대량의 컬렉터-이미터 전류를 제어.</div></details>
+            <details class="qa"><summary>[주관14] 다이오드의 역할 · 순방향 전압강하 · 항복전압.</summary>
+              <div class="ans">역할: 정류(한 방향 전류). 순방향 전압강하: 순방향 흐를 때 전압 감소(LED VF). 항복전압: 역방향 거대 전압에서 역전류 급증 시작.</div></details>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/notes-sidebar.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

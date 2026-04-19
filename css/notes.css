@@ -1,0 +1,649 @@
+/* ========================
+   Notes Pages — Redesigned
+   참고: Vercel Docs, Linear, GitBook 스타일
+   ======================== */
+
+/* ========================
+   1. 허브 레이아웃
+   ======================== */
+.notes-hub {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: calc(var(--nav-height) + 4rem) 2rem 5rem;
+}
+
+.notes-hub-header {
+  margin-bottom: 3rem;
+}
+
+.notes-hub-header h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.notes-hub-header h1 span {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.notes-hub-header p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* ========================
+   2. 뷰 탭
+   ======================== */
+.notes-view-tabs {
+  display: inline-flex;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 2.5rem;
+}
+
+.view-tab {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.view-tab:hover {
+  color: var(--text-primary);
+}
+
+.view-tab.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* ========================
+   3. Gallery View
+   ======================== */
+.notes-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.notes-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.notes-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.notes-card:hover {
+  border-color: rgba(0, 212, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 212, 255, 0.1);
+  transform: translateY(-3px);
+  color: var(--text-primary);
+}
+
+.notes-card:hover::before {
+  opacity: 1;
+}
+
+.notes-card-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.notes-card-body {
+  flex: 1;
+}
+
+.notes-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.01em;
+}
+
+.notes-card-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.notes-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.25rem;
+}
+
+.notes-card-arrow {
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.notes-card:hover .notes-card-arrow {
+  color: var(--accent-cyan);
+  transform: translateX(3px);
+}
+
+/* ========================
+   4. Table View
+   ======================== */
+.notes-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.notes-table thead {
+  background: var(--bg-secondary);
+}
+
+.notes-table th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.85rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.notes-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.notes-table td strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.notes-table tr:last-child td {
+  border-bottom: none;
+}
+
+.notes-table tbody tr {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.notes-table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+/* ========================
+   5. 상태 배지
+   ======================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-badge.done {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+.status-badge.done::before { background: #4ade80; }
+
+.status-badge.in-progress {
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+.status-badge.in-progress::before { background: var(--accent-cyan); }
+
+.status-badge.not-started {
+  background: rgba(100, 100, 100, 0.12);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.status-badge.not-started::before { background: var(--text-muted); }
+
+/* ========================
+   6. 개별 페이지 — 레이아웃
+   ======================== */
+.notes-page {
+  padding-top: var(--nav-height);
+  min-height: 100vh;
+}
+
+.notes-page-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+/* ========================
+   7. 사이드바
+   ======================== */
+.notes-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  padding-top: 2.5rem;
+}
+
+.notes-sidebar-nav {
+  position: sticky;
+  top: calc(var(--nav-height) + 1.5rem);
+  max-height: calc(100vh - var(--nav-height) - 3rem);
+  overflow-y: auto;
+  padding-bottom: 2rem;
+}
+
+.notes-sidebar-nav::-webkit-scrollbar {
+  width: 3px;
+}
+
+.sidebar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.75rem;
+  text-decoration: none;
+  transition: color 0.2s;
+  padding: 0.3rem 0;
+}
+
+.sidebar-back:hover { color: var(--accent-cyan); }
+
+.sidebar-section-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.sidebar-chapter {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  border-left: 2px solid transparent;
+  text-decoration: none;
+  transition: all 0.15s;
+  border-radius: 0 6px 6px 0;
+  line-height: 1.4;
+  margin-bottom: 1px;
+}
+
+.sidebar-chapter:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.04);
+}
+
+.sidebar-chapter.active {
+  color: var(--accent-cyan);
+  border-left-color: var(--accent-cyan);
+  background: rgba(0, 212, 255, 0.07);
+  font-weight: 500;
+}
+
+/* ========================
+   8. 본문 콘텐츠
+   ======================== */
+.notes-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 780px;
+  padding: 2.5rem 0 5rem;
+}
+
+.notes-content-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.notes-content-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.notes-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+
+.notes-breadcrumb a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.notes-breadcrumb a:hover { color: var(--accent-cyan); }
+
+.notes-breadcrumb .sep {
+  color: var(--text-muted);
+}
+
+/* ========================
+   9. 본문 타이포그래피
+   ======================== */
+.notes-body {
+  font-size: 0.97rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.notes-body section {
+  margin-bottom: 0.5rem;
+}
+
+.notes-body h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 3rem 0 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.01em;
+  scroll-margin-top: calc(var(--nav-height) + 1rem);
+}
+
+.notes-body h2:first-child { margin-top: 0; }
+
+.notes-body h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 2rem 0 0.75rem;
+  scroll-margin-top: calc(var(--nav-height) + 1rem);
+}
+
+.notes-body h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 1.25rem 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.notes-body p {
+  margin-bottom: 1.1rem;
+  color: var(--text-primary);
+}
+
+.notes-body em {
+  color: var(--text-secondary);
+  font-style: normal;
+  font-size: 0.85rem;
+}
+
+.notes-body ul,
+.notes-body ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.1rem;
+  color: var(--text-primary);
+}
+
+.notes-body li {
+  margin-bottom: 0.4rem;
+  line-height: 1.7;
+}
+
+.notes-body .diagram {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.notes-body .diagram svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.notes-body .diagram figcaption {
+  margin-top: 1rem;
+  color: var(--text-tertiary, #888);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.notes-body .callout {
+  border-left: 3px solid var(--accent-cyan);
+  padding: 0.9rem 1.2rem;
+  margin: 1.5rem 0;
+  background: rgba(0, 212, 255, 0.07);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+}
+
+.notes-body .callout strong {
+  color: var(--accent-cyan);
+}
+
+.notes-body blockquote {
+  border-left: 3px solid var(--accent-purple);
+  padding: 0.9rem 1.2rem;
+  margin: 1.5rem 0;
+  background: rgba(123, 47, 247, 0.07);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+}
+
+.notes-body blockquote strong {
+  color: var(--text-primary);
+}
+
+.notes-body code {
+  background: var(--bg-secondary);
+  color: #e2b714;
+  font-family: var(--font-mono);
+  font-size: 0.83em;
+  border-radius: 4px;
+  padding: 0.15em 0.5em;
+  border: 1px solid var(--border);
+}
+
+.notes-body pre {
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.4rem 1.5rem;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  position: relative;
+}
+
+.notes-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.notes-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.notes-body th {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.notes-body td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.notes-body tr:last-child td { border-bottom: none; }
+
+.notes-body tbody tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.notes-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+/* ========================
+   10. 모바일
+   ======================== */
+@media (max-width: 900px) {
+  .notes-page-inner {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .notes-sidebar {
+    width: 100%;
+    padding-top: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    margin-bottom: 0;
+  }
+
+  .notes-sidebar-nav {
+    position: static;
+    max-height: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .sidebar-back { width: 100%; margin-bottom: 0.75rem; }
+  .sidebar-section-title { width: 100%; }
+
+  .sidebar-chapter {
+    border-left: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.7rem;
+    font-size: 0.78rem;
+  }
+
+  .sidebar-chapter.active {
+    border-color: var(--accent-cyan);
+    background: rgba(0, 212, 255, 0.1);
+  }
+
+  .notes-content { padding-top: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .notes-hub {
+    padding: calc(var(--nav-height) + 2.5rem) 1.25rem 4rem;
+  }
+
+  .notes-hub-header h1 { font-size: 1.8rem; }
+
+  .notes-gallery {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .notes-page-inner { padding: 0 1.25rem; }
+
+  .notes-content-header h1 { font-size: 1.6rem; }
+
+  .notes-body h2 { font-size: 1.15rem; }
+
+  .notes-table th,
+  .notes-table td { padding: 0.65rem 0.85rem; }
+}

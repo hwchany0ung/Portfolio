@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="황찬영 | 기술 학습 기록 — Kubernetes, AWS, 네트워킹, CI/CD" />
+  <title>Notes | 황찬영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/notes.css" />
+  <style>
+    /* ── Notes Hub 인라인 보정 ── */
+    .notes-hub {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 110px 2rem 5rem;
+    }
+    .notes-hub-header { margin-bottom: 2.5rem; }
+    .notes-hub-header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .notes-hub-header p { color: #a0a0a0; font-size: 1rem; }
+
+    /* ── 탭 ── */
+    .notes-view-tabs {
+      display: inline-flex;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 2rem;
+    }
+    .view-tab {
+      background: none;
+      border: none;
+      color: #a0a0a0;
+      font-size: 0.875rem;
+      font-family: inherit;
+      font-weight: 500;
+      padding: 0.45rem 1.1rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: #f0f0f0; }
+    .view-tab.active {
+      background: #1e1e1e;
+      color: #f0f0f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    /* ── 갤러리 그리드 ── */
+    .notes-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── 카드 ── */
+    .notes-card {
+      background: #161616 !important;
+      border: 1px solid #2a2a2a !important;
+      border-radius: 12px;
+      padding: 1.6rem;
+      text-decoration: none !important;
+      color: #f0f0f0 !important;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .notes-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .notes-card:hover {
+      border-color: rgba(0,212,255,0.5) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,212,255,0.1);
+      transform: translateY(-3px);
+    }
+    .notes-card:hover::before { opacity: 1; }
+
+    .notes-card-icon { font-size: 2rem; line-height: 1; }
+
+    .notes-card-body { flex: 1; }
+    .notes-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f0f0f0;
+      margin-bottom: 0.3rem;
+    }
+    .notes-card-meta {
+      font-size: 0.8rem;
+      color: #a0a0a0;
+    }
+    .notes-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .notes-card-arrow {
+      font-size: 1rem;
+      color: #606060;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .notes-card:hover .notes-card-arrow {
+      color: #00d4ff;
+      transform: translateX(4px);
+    }
+
+    /* ── 상태 배지 ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.65rem;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .status-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+    .status-badge.done {
+      background: rgba(74,222,128,0.12);
+      color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.25);
+    }
+    .status-badge.done::before { background: #4ade80; }
+    .status-badge.in-progress {
+      background: rgba(0,212,255,0.12);
+      color: #00d4ff;
+      border: 1px solid rgba(0,212,255,0.25);
+    }
+    .status-badge.in-progress::before { background: #00d4ff; }
+    .status-badge.not-started {
+      background: rgba(96,96,96,0.15);
+      color: #a0a0a0;
+      border: 1px solid #2a2a2a;
+    }
+    .status-badge.not-started::before { background: #606060; }
+
+    /* ── 표 보기 ── */
+    .notes-table-wrap {
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .notes-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .notes-table th {
+      background: #111;
+      color: #a0a0a0;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .notes-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #2a2a2a;
+      color: #f0f0f0;
+      vertical-align: middle;
+    }
+    .notes-table tr:last-child td { border-bottom: none; }
+    .notes-table tbody tr { cursor: pointer; transition: background 0.15s; }
+    .notes-table tbody tr:hover { background: #1e1e1e; }
+
+    /* ── 섹션 헤더 ── */
+    .notes-section {
+      margin-top: 2.75rem;
+    }
+    .notes-section:first-of-type { margin-top: 0; }
+    .notes-section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .notes-section-title .sec-icon {
+      font-size: 1.1rem;
+    }
+    .notes-section-title h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f0f0f0;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .notes-section-title .sec-count {
+      font-size: 0.75rem;
+      color: #a0a0a0;
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      margin-left: auto;
+    }
+    .notes-table-section-row td {
+      background: #111 !important;
+      padding: 0.7rem 1.25rem !important;
+      cursor: default !important;
+      color: #a0a0a0 !important;
+      font-size: 0.75rem !important;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+    .notes-table tbody tr.notes-table-section-row:hover td {
+      background: #111 !important;
+    }
+
+    @media (max-width: 600px) {
+      .notes-hub { padding: 90px 1.25rem 4rem; }
+      .notes-gallery { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">&lt;CY /&gt;</a>
+      <ul class="nav-links">
+        <li><a href="index.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="skills.html"><span class="nav-icon">⚡</span> Skills</a></li>
+        <li><a href="projects.html"><span class="nav-icon">🚀</span> Projects</a></li>
+        <li><a href="ai.html"><span class="nav-icon">🤖</span> AI</a></li>
+        <li><a href="roadmap.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="notes.html" class="active"><span class="nav-icon">📚</span> Notes</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="notes-hub">
+    <div class="notes-hub-header">
+      <h1><span>학습 기록</span></h1>
+      <p>노션에서 정리한 기술 학습 자료를 아카이빙합니다. 클릭해서 챕터별로 살펴보세요.</p>
+    </div>
+
+    <!-- 뷰 전환 탭 -->
+    <div class="notes-view-tabs">
+      <button class="view-tab active" data-view="gallery">한눈에 보기</button>
+      <button class="view-tab" data-view="table">표 보기</button>
+    </div>
+
+    <!-- Gallery View -->
+    <div id="view-gallery">
+
+      <section class="notes-section">
+        <div class="notes-section-title">
+          <span class="sec-icon">🧑‍💻</span>
+          <h2>개인 학습</h2>
+          <span class="sec-count">6개</span>
+        </div>
+        <div class="notes-gallery">
+
+          <a href="notes/orchestration.html" class="notes-card">
+            <div class="notes-card-icon">☸️</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">Kubernetes</div>
+              <div class="notes-card-meta">오케스트레이션 · 14개 챕터</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge done">완료</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+          <a href="notes/cloud.html" class="notes-card">
+            <div class="notes-card-icon">☁️</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">AWS 기본</div>
+              <div class="notes-card-meta">클라우드 · IAM · S3 · EC2 · VPC · Lambda · RDS</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge done">완료</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+          <a href="notes/cloud-saa.html" class="notes-card">
+            <div class="notes-card-icon">🎯</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">AWS SAA 시험</div>
+              <div class="notes-card-meta">클라우드 · SAA-C03 5 Domains · 서비스 선택</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge in-progress">진행 중</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+          <a href="notes/networking.html" class="notes-card">
+            <div class="notes-card-icon">🌐</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">네트워킹</div>
+              <div class="notes-card-meta">네트워킹 · 4개 챕터</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge done">완료</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+          <a href="notes/linux.html" class="notes-card">
+            <div class="notes-card-icon">🐧</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">리눅스 시스템 관리</div>
+              <div class="notes-card-meta">리눅스 · 쉘·LVM·RAID·NFS·Samba</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge in-progress">진행 중</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+          <a href="notes/devops.html" class="notes-card">
+            <div class="notes-card-icon">🔧</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">DevOps</div>
+              <div class="notes-card-meta">데브옵스 · CI/CD, 모니터링</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge not-started">시작 전</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <section class="notes-section">
+        <div class="notes-section-title">
+          <span class="sec-icon">🎓</span>
+          <h2>학교 학습 · 3학년 1학기</h2>
+          <span class="sec-count">3개</span>
+        </div>
+        <div class="notes-gallery">
+
+          <a href="notes/network-class.html" class="notes-card">
+            <div class="notes-card-icon">🖥️</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">컴퓨터네트워크</div>
+              <div class="notes-card-meta">수업 노트 · 3학년 1학기</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge in-progress">진행 중</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+          <a href="notes/iot.html" class="notes-card">
+            <div class="notes-card-icon">📡</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">IOT 프로그래밍</div>
+              <div class="notes-card-meta">수업 노트 · 3학년 1학기</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge in-progress">진행 중</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+          <a href="notes/bigdata.html" class="notes-card">
+            <div class="notes-card-icon">📊</div>
+            <div class="notes-card-body">
+              <div class="notes-card-title">빅데이터 프로그래밍</div>
+              <div class="notes-card-meta">수업 노트 · 3학년 1학기</div>
+            </div>
+            <div class="notes-card-footer">
+              <span class="status-badge in-progress">진행 중</span>
+              <span class="notes-card-arrow">→</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Table View -->
+    <div id="view-table" class="notes-table-wrap" style="display:none;">
+      <table class="notes-table">
+        <thead>
+          <tr>
+            <th>주제</th>
+            <th>카테고리</th>
+            <th>진행 상태</th>
+            <th>시작일</th>
+            <th>완료일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="notes-table-section-row"><td colspan="5">🧑‍💻 개인 학습</td></tr>
+          <tr data-href="notes/orchestration.html">
+            <td><strong>Kubernetes</strong></td>
+            <td>오케스트레이션</td>
+            <td><span class="status-badge done">완료</span></td>
+            <td>2025.12.06</td>
+            <td>2025.12.28</td>
+          </tr>
+          <tr data-href="notes/cloud.html">
+            <td><strong>AWS 기본</strong></td>
+            <td>클라우드</td>
+            <td><span class="status-badge done">완료</span></td>
+            <td>2026.02.01</td>
+            <td>2026.02.27</td>
+          </tr>
+          <tr data-href="notes/cloud-saa.html">
+            <td><strong>AWS SAA 시험</strong></td>
+            <td>클라우드</td>
+            <td><span class="status-badge in-progress">진행 중</span></td>
+            <td>2026.03.01</td>
+            <td>—</td>
+          </tr>
+          <tr data-href="notes/networking.html">
+            <td><strong>네트워크 기초 & Cisco</strong></td>
+            <td>네트워킹</td>
+            <td><span class="status-badge done">완료</span></td>
+            <td>2026.03.04</td>
+            <td>2026.03.09</td>
+          </tr>
+          <tr data-href="notes/linux.html">
+            <td><strong>리눅스 시스템 관리</strong></td>
+            <td>리눅스</td>
+            <td><span class="status-badge in-progress">진행 중</span></td>
+            <td>2026.03.10</td>
+            <td>—</td>
+          </tr>
+          <tr data-href="notes/devops.html">
+            <td><strong>CI/CD 파이프라인</strong></td>
+            <td>데브옵스</td>
+            <td><span class="status-badge not-started">시작 전</span></td>
+            <td>2026.03.16</td>
+            <td>2026.03.30</td>
+          </tr>
+          <tr class="notes-table-section-row"><td colspan="5">🎓 학교 학습 · 3학년 1학기</td></tr>
+          <tr data-href="notes/network-class.html">
+            <td><strong>컴퓨터네트워크</strong></td>
+            <td>수업 노트</td>
+            <td><span class="status-badge in-progress">진행 중</span></td>
+            <td>2026.03.02</td>
+            <td>—</td>
+          </tr>
+          <tr data-href="notes/iot.html">
+            <td><strong>IOT 프로그래밍</strong></td>
+            <td>수업 노트</td>
+            <td><span class="status-badge in-progress">진행 중</span></td>
+            <td>2026.03.02</td>
+            <td>—</td>
+          </tr>
+          <tr data-href="notes/bigdata.html">
+            <td><strong>빅데이터 프로그래밍</strong></td>
+            <td>수업 노트</td>
+            <td><span class="status-badge in-progress">진행 중</span></td>
+            <td>2026.03.02</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="js/notes.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

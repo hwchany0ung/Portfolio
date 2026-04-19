@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="리눅스 시스템 관리 — 쉘 · 사용자 · 프로세스 · 디스크 · LVM · RAID · 네트워크 서비스" />
+  <title>리눅스 | Notes | 황찬영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <style>
+    .perm-chip{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85em;font-weight:700;margin-right:.3rem}
+    .perm-r{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid #4ade80}
+    .perm-w{background:rgba(226,183,20,.15);color:#e2b714;border:1px solid #e2b714}
+    .perm-x{background:rgba(255,71,87,.15);color:#ff4757;border:1px solid #ff4757}
+    .sig-chip{display:inline-block;padding:.1rem .45rem;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.82em;font-weight:700;background:rgba(123,47,247,.2);color:#b69cff;border:1px solid #7b2ff7;margin-right:.3rem}
+    .raid-card{background:#161616;border:1px solid #2a2a2a;border-left:4px solid #00d4ff;border-radius:8px;padding:1rem 1.15rem;margin:.8rem 0}
+    .raid-card h4{margin:0 0 .35rem;color:#00d4ff;font-size:1rem}
+    .raid-card .meta{font-size:.82rem;color:#a0a0a0;margin-bottom:.4rem}
+    .tip-card{background:rgba(226,183,20,.08);border-left:3px solid #e2b714;padding:.8rem 1.1rem;margin:.8rem 0;border-radius:4px}
+    .tip-card strong{color:#e2b714}
+    .danger-card{background:rgba(255,71,87,.08);border-left:3px solid #ff4757;padding:.8rem 1.1rem;margin:.8rem 0;border-radius:4px}
+    .danger-card strong{color:#ff4757}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">&lt;CY /&gt;</a>
+      <ul class="nav-links">
+        <li><a href="../index.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="../skills.html"><span class="nav-icon">⚡</span> Skills</a></li>
+        <li><a href="../projects.html"><span class="nav-icon">🚀</span> Projects</a></li>
+        <li><a href="../ai.html"><span class="nav-icon">🤖</span> AI</a></li>
+        <li><a href="../roadmap.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="../notes.html" class="active"><span class="nav-icon">📚</span> Notes</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="notes-page">
+    <div class="notes-page-inner">
+
+      <aside class="notes-sidebar">
+        <nav class="notes-sidebar-nav">
+          <a href="../notes.html" class="sidebar-back">← 목록으로</a>
+          <div class="sidebar-title">목차</div>
+          <a href="#install"   class="sidebar-chapter active">💿 설치 & 부팅</a>
+          <a href="#shell"     class="sidebar-chapter">🐚 쉘 & 환경변수</a>
+          <a href="#ssh"       class="sidebar-chapter">🔐 SSH 키 인증</a>
+          <a href="#runlevel"  class="sidebar-chapter">🎯 Runlevel · systemd</a>
+          <a href="#user"      class="sidebar-chapter">👤 사용자 관리</a>
+          <a href="#perm"      class="sidebar-chapter">🛡️ 퍼미션 · umask · SetUID</a>
+          <a href="#process"   class="sidebar-chapter">⚙️ 프로세스 & 시그널</a>
+          <a href="#daemon"    class="sidebar-chapter">🤖 데몬 · systemctl</a>
+          <a href="#cron"      class="sidebar-chapter">⏰ cron · at</a>
+          <a href="#script"    class="sidebar-chapter">📜 쉘 스크립트</a>
+          <a href="#disk"      class="sidebar-chapter">💾 디스크 · 파일시스템</a>
+          <a href="#lvm"       class="sidebar-chapter">📚 LVM</a>
+          <a href="#raid"      class="sidebar-chapter">🗃️ RAID (mdadm)</a>
+          <a href="#quota"     class="sidebar-chapter">📊 사용자 쿼터</a>
+          <a href="#archive"   class="sidebar-chapter">📦 tar · 압축</a>
+          <a href="#pkg"       class="sidebar-chapter">📥 패키지 관리</a>
+          <a href="#net"       class="sidebar-chapter">🌐 네트워크 & 방화벽</a>
+          <a href="#share"     class="sidebar-chapter">🔗 FTP · NFS · Samba</a>
+          <a href="#web"       class="sidebar-chapter">🕸️ HTTP / 웹서버</a>
+          <a href="#summary"   class="sidebar-chapter">🎯 핵심 정리</a>
+        </nav>
+      </aside>
+
+      <main class="notes-content">
+        <div class="notes-content-header">
+          <h1>🐧 리눅스 시스템 관리</h1>
+          <div class="notes-breadcrumb">
+            <a href="../notes.html">Notes</a>
+            <span>/</span>
+            <span>리눅스</span>
+            <span>/</span>
+            <span>Rocky · Ubuntu · WSL</span>
+            <span style="margin-left:auto;">
+              <span class="status-badge in-progress">진행 중</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="notes-body">
+
+          <section id="install">
+            <h2>💿 설치 & 부팅</h2>
+
+            <h3>설치 방식 3종</h3>
+            <table class="data-table">
+              <thead><tr><th>방식</th><th>장점</th><th>한계</th></tr></thead>
+              <tbody>
+                <tr><td><strong>WSL</strong> (Windows)</td><td>윈도우 통합·가볍다</td><td>커널 공유, 1대만 운용</td></tr>
+                <tr><td><strong>VirtualBox / VMware</strong></td><td>VM 다수 동시 기동·네트워크 토폴로지 실습</td><td>리소스 소비</td></tr>
+                <tr><td><strong>베어메탈</strong></td><td>성능·생산 서버</td><td>초기 구성 비용</td></tr>
+              </tbody>
+            </table>
+
+            <h3>WSL 설치</h3>
+<pre><code class="language-bash"># 관리자 권한 CMD / PowerShell
+wsl --install                     # WSL + 최신 Ubuntu 설치
+wsl --list --online               # 설치 가능 배포판 확인
+wsl --install -d rocky-9          # 다른 배포판 지정 설치
+wsl --set-default-version 2       # WSL2 기본화</code></pre>
+
+            <h3>GRUB 보안 (Rocky)</h3>
+<pre><code class="language-bash">grub2-set-password                # 부트로더 패스워드 → 싱글 유저 모드 악용 차단
+# /boot/grub2/user.cfg 에 해시 저장됨</code></pre>
+          </section>
+
+          <section id="shell">
+            <h2>🐚 쉘 & 환경변수</h2>
+
+            <h3>쉘 설정 파일 — 로그인 vs 인터랙티브</h3>
+            <table class="data-table">
+              <thead><tr><th>범위</th><th>로그인 쉘</th><th>인터랙티브 쉘</th></tr></thead>
+              <tbody>
+                <tr><td>사용자별</td><td><code>~/.bash_profile</code> · <code>~/.profile</code></td><td><code>~/.bashrc</code></td></tr>
+                <tr><td>시스템 전체</td><td><code>/etc/profile</code> · <code>/etc/profile.d/*.sh</code></td><td><code>/etc/bashrc</code></td></tr>
+                <tr><td>주로 담는 것</td><td>PATH·환경변수(한 번만 설정)</td><td>alias·함수(쉘 뜰 때마다)</td></tr>
+              </tbody>
+            </table>
+
+            <h3>변수 명령</h3>
+<pre><code class="language-bash">VAR=hello                # 일반변수 (현재 쉘에서만 유효)
+export VAR               # 환경변수로 승격 → 자식 프로세스에도 전달
+set                      # 모든 변수 + 함수 출력
+env                      # 환경변수만 출력
+echo $PATH               # 실행파일 검색 경로
+
+# PATH 확장 (이번 세션만)
+export PATH=$PATH:/opt/myapp/bin
+
+# 영구 등록
+echo 'export PATH=$PATH:/opt/myapp/bin' &gt;&gt; ~/.bashrc</code></pre>
+
+            <h3>경로 표기법</h3>
+            <ul>
+              <li><strong>절대경로</strong> — <code>/</code>부터 시작 (위치 무관): <code>/etc/systemd/system</code></li>
+              <li><strong>상대경로</strong> — 현재 위치 기준, <code>/</code> 없이: <code>cd lab</code> · <code>./shell.sh</code> · <code>../config</code></li>
+            </ul>
+
+            <div class="tip-card">
+              <strong>현재 디렉토리 실행:</strong> PATH에 <code>.</code>이 없으므로 <code>./shell.sh</code>처럼 상대경로를 명시해야 실행됨 (보안상 의도된 기본값).
+            </div>
+          </section>
+
+          <section id="ssh">
+            <h2>🔐 SSH 키 인증</h2>
+            <p>패스워드보다 안전하고 자동화(CI/CD·앤서블)에 필수. 개인키는 <em>절대</em> 서버에 올리지 않는다.</p>
+
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 760 280" style="max-width:100%;height:auto">
+                <defs>
+                  <marker id="arrSsh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
+                  </marker>
+                  <linearGradient id="gradPriv" x1="0" x2="1">
+                    <stop offset="0" stop-color="#e2b714"/><stop offset="1" stop-color="#ff9900"/>
+                  </linearGradient>
+                  <linearGradient id="gradPub" x1="0" x2="1">
+                    <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#00d4ff"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Client box -->
+                <rect x="30" y="40" width="220" height="200" rx="10" fill="rgba(0,212,255,.05)" stroke="#00d4ff" stroke-width="2"/>
+                <text x="140" y="62" text-anchor="middle" fill="#00d4ff" font-weight="700">🖥️ Client</text>
+                <rect x="55" y="85" width="170" height="40" rx="6" fill="url(#gradPriv)" opacity=".85"/>
+                <text x="140" y="110" text-anchor="middle" fill="#111" font-weight="700" font-family="JetBrains Mono" font-size="12">🔒 id_rsa (Private)</text>
+                <rect x="55" y="140" width="170" height="40" rx="6" fill="url(#gradPub)" opacity=".85"/>
+                <text x="140" y="165" text-anchor="middle" fill="#111" font-weight="700" font-family="JetBrains Mono" font-size="12">🔓 id_rsa.pub</text>
+                <text x="140" y="215" text-anchor="middle" fill="#999" font-size="11">~/.ssh/ (chmod 700)</text>
+
+                <!-- Server box -->
+                <rect x="510" y="40" width="220" height="200" rx="10" fill="rgba(123,47,247,.08)" stroke="#7b2ff7" stroke-width="2"/>
+                <text x="620" y="62" text-anchor="middle" fill="#b69cff" font-weight="700">🖧 Server</text>
+                <rect x="535" y="85" width="170" height="70" rx="6" fill="rgba(74,222,128,.1)" stroke="#4ade80" stroke-dasharray="4 2"/>
+                <text x="620" y="108" text-anchor="middle" fill="#4ade80" font-weight="700" font-family="JetBrains Mono" font-size="11">~/.ssh/authorized_keys</text>
+                <text x="620" y="128" text-anchor="middle" fill="#ccc" font-size="10">(공개키 저장)</text>
+                <text x="620" y="145" text-anchor="middle" fill="#ccc" font-size="10">chmod 644</text>
+                <text x="620" y="200" text-anchor="middle" fill="#999" font-size="11">sshd: 챌린지 생성</text>
+                <text x="620" y="217" text-anchor="middle" fill="#999" font-size="11">→ 공개키로 검증</text>
+
+                <!-- Flow arrows -->
+                <line x1="250" y1="160" x2="508" y2="120" stroke="#4ade80" stroke-width="2" marker-end="url(#arrSsh)"/>
+                <text x="355" y="135" fill="#4ade80" font-size="11" font-weight="700">① ssh-copy-id (공개키 전송)</text>
+
+                <!-- Animated challenge dots -->
+                <circle r="5" fill="#e2b714">
+                  <animateMotion dur="2.4s" repeatCount="indefinite" path="M 250,100 Q 380,30 508,100"/>
+                </circle>
+                <text x="350" y="55" fill="#e2b714" font-size="11" font-weight="700">② 챌린지 ⇄ 서명</text>
+                <circle r="5" fill="#00d4ff">
+                  <animateMotion dur="2.4s" repeatCount="indefinite" begin="1.2s" path="M 508,100 Q 380,30 250,100"/>
+                </circle>
+
+                <text x="380" y="265" text-anchor="middle" fill="#999" font-size="11" font-style="italic">개인키는 절대 전송되지 않는다 — 서명만 전송</text>
+              </svg>
+            </div>
+
+            <h3>키 쌍 생성 & 배포</h3>
+<pre><code class="language-bash"># 1) 클라이언트에서 키쌍 생성 (~/.ssh에 id_rsa, id_rsa.pub)
+ssh-keygen -t rsa -b 4096 -C "chany@local"
+
+# 2) 공개키를 서버의 ~/.ssh/authorized_keys에 등록
+ssh-copy-id -i ~/.ssh/id_rsa.pub admin@192.168.6.10
+
+# 3) 개인키로 접속
+ssh -i ~/.ssh/id_rsa admin@192.168.6.10</code></pre>
+
+            <h3>SSH 파일 퍼미션 규정</h3>
+            <table class="data-table">
+              <thead><tr><th>대상</th><th>퍼미션</th><th>이유</th></tr></thead>
+              <tbody>
+                <tr><td><code>~/.ssh</code></td><td>700</td><td>소유자만 접근</td></tr>
+                <tr><td><code>authorized_keys</code></td><td>644</td><td>소유자 쓰기 + 읽기만</td></tr>
+                <tr><td>개인키 <code>id_rsa</code></td><td>600</td><td>느슨하면 SSH가 거부</td></tr>
+              </tbody>
+            </table>
+
+            <div class="danger-card">
+              <strong>주의:</strong> MobaXterm은 <em>Advanced SSH Setting → Private Key</em>에 개인키 파일을 넣어야 인증. 개인키 유출 시 즉시 <code>authorized_keys</code>에서 해당 공개키 줄 삭제.
+            </div>
+          </section>
+
+          <section id="runlevel">
+            <h2>🎯 Runlevel · systemd target</h2>
+            <p>systemd는 전통 SysV의 <strong>runlevel</strong>을 <strong>target</strong>으로 대체했다.</p>
+
+            <table class="data-table">
+              <thead><tr><th>Runlevel</th><th>systemd target</th><th>용도</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>poweroff.target</td><td>종료</td></tr>
+                <tr><td>1</td><td>rescue.target</td><td>단일 사용자 복구</td></tr>
+                <tr><td>3</td><td>multi-user.target</td><td>CLI 서버</td></tr>
+                <tr><td>5</td><td>graphical.target</td><td>GUI 로그인</td></tr>
+                <tr><td>6</td><td>reboot.target</td><td>재부팅</td></tr>
+              </tbody>
+            </table>
+
+<pre><code class="language-bash">runlevel                                       # 이전·현재 runlevel
+systemctl get-default                          # 부팅 시 사용하는 기본 타깃
+systemctl set-default multi-user.target        # 다음 부팅부터 CLI 모드
+systemctl isolate multi-user.target            # 즉시 전환 (일시적)</code></pre>
+          </section>
+
+          <section id="user">
+            <h2>👤 사용자 관리</h2>
+
+            <h3>계정 관련 핵심 파일</h3>
+            <table class="data-table">
+              <thead><tr><th>파일</th><th>내용</th></tr></thead>
+              <tbody>
+                <tr><td><code>/etc/passwd</code></td><td>계정 기본 정보 (UID, 홈, 쉘)</td></tr>
+                <tr><td><code>/etc/shadow</code></td><td>해시 패스워드 + 에이징(만료·최소/최대일)</td></tr>
+                <tr><td><code>/etc/group</code></td><td>그룹 정보. 마지막 필드는 2차 그룹 멤버 목록</td></tr>
+                <tr><td><code>/etc/gshadow</code></td><td>그룹 패스워드 (그룹 가입 인증용)</td></tr>
+                <tr><td><code>/etc/default/useradd</code></td><td>useradd 기본값 (<code>useradd -D</code>로 조회·수정)</td></tr>
+                <tr><td><code>/etc/login.defs</code></td><td>useradd보다 <strong>우선 적용</strong>. 최소 UID 1000 등</td></tr>
+                <tr><td><code>/etc/skel/</code></td><td>사용자 생성 시 홈디렉토리에 복사되는 템플릿</td></tr>
+              </tbody>
+            </table>
+
+            <h3>자주 쓰는 명령</h3>
+<pre><code class="language-bash">useradd -m -s /bin/bash -G wheel chany          # 홈 생성·쉘 지정·보조그룹 wheel
+passwd chany                                    # 패스워드 설정
+usermod -aG docker chany                        # 보조그룹 추가 (-a 필수, 없으면 덮어씀)
+chage -l chany                                  # 패스워드 에이징 조회
+userdel -r chany                                # 홈까지 삭제
+id chany                                        # UID/GID/그룹 확인
+su - chany                                      # 로그인 쉘로 전환
+sudo -l                                         # 내가 쓸 수 있는 sudo 명령 확인</code></pre>
+          </section>
+
+          <section id="perm">
+            <h2>🛡️ 퍼미션 · 소유권 · umask · SetUID</h2>
+
+            <h3>퍼미션 읽기</h3>
+            <p><code>-rwxr-xr--</code> = 파일타입 | 소유자 <span class="perm-chip perm-r">r</span><span class="perm-chip perm-w">w</span><span class="perm-chip perm-x">x</span> | 그룹 r-x | other r--</p>
+
+<pre><code class="language-bash">chmod 755 script.sh                # rwxr-xr-x
+chmod u+x,g-w file                 # 기호 방식
+chown -R chany:devs /data          # 소유자·그룹 재귀 변경
+chgrp -R devs /data                # 그룹만 변경</code></pre>
+
+            <h3>umask — 생성 시 <em>빼고</em> 부여되는 퍼미션</h3>
+            <ul>
+              <li>파일 기본 666, 디렉토리 기본 777 (디렉토리 진입 시 x 필요)</li>
+              <li><strong>root</strong> umask <code>0022</code> → 파일 644, 디렉토리 755</li>
+              <li><strong>일반 사용자</strong> umask <code>0002</code> → 파일 664, 디렉토리 775</li>
+              <li>umask 값이 클수록 보안 강화 (제거되는 퍼미션 多)</li>
+            </ul>
+
+            <h3>특수 비트 — SetUID · SetGID · Sticky</h3>
+            <table class="data-table">
+              <thead><tr><th>비트</th><th>숫자</th><th>의미</th><th>예시</th></tr></thead>
+              <tbody>
+                <tr><td>SetUID</td><td>4000</td><td>실행 시 <em>파일 소유자 권한</em>으로 동작</td><td><code>/usr/bin/passwd</code></td></tr>
+                <tr><td>SetGID</td><td>2000</td><td>실행 시 그룹 권한 / 디렉토리는 하위 파일의 그룹 상속</td><td>공유 디렉토리</td></tr>
+                <tr><td>Sticky</td><td>1000</td><td>디렉토리 내 파일은 <em>소유자만 삭제</em> 가능</td><td><code>/tmp</code></td></tr>
+              </tbody>
+            </table>
+
+<pre><code class="language-bash">chmod 4755 /usr/local/bin/myapp    # SetUID
+chmod 2775 /shared                 # SetGID 디렉토리
+chmod 1777 /tmp                    # Sticky
+
+find /home -perm -4000             # SetUID 설정된 파일 전수 조사 (감사용)
+find / -perm -2000 -type f
+find /tmp -perm -1000 -type d</code></pre>
+
+            <div class="danger-card">
+              <strong>보안 점검:</strong> 루트 소유 SetUID 실행파일은 권한 상승 벡터. 주기적으로 <code>find / -perm -4000 -not -path "/proc/*"</code>로 목록을 추출해 비인가 파일을 식별.
+            </div>
+          </section>
+
+          <section id="process">
+            <h2>⚙️ 프로세스 & 시그널</h2>
+
+<pre><code class="language-bash">ps -ef                    # 전체 프로세스 (System V 스타일)
+ps aux                    # BSD 스타일 (%CPU, %MEM 포함)
+pstree -p                 # 트리 구조
+top / htop                # 실시간 모니터링
+jobs                      # 현재 쉘의 백그라운드 작업
+&amp; / fg %1 / bg %1 / Ctrl+Z   # 작업 제어</code></pre>
+
+            <h3>주요 시그널</h3>
+            <table class="data-table">
+              <thead><tr><th>번호</th><th>이름</th><th>동작</th><th>트랩 가능</th></tr></thead>
+              <tbody>
+                <tr><td><span class="sig-chip">1</span></td><td>SIGHUP</td><td>재로드 (설정 파일 재읽기)</td><td>✅</td></tr>
+                <tr><td><span class="sig-chip">2</span></td><td>SIGINT</td><td>Ctrl+C 인터럽트</td><td>✅</td></tr>
+                <tr><td><span class="sig-chip">9</span></td><td>SIGKILL</td><td>강제 종료</td><td>❌ 무시 불가</td></tr>
+                <tr><td><span class="sig-chip">15</span></td><td>SIGTERM</td><td>정상 종료 요청 (기본)</td><td>✅</td></tr>
+                <tr><td><span class="sig-chip">19</span></td><td>SIGSTOP</td><td>일시 정지</td><td>❌</td></tr>
+                <tr><td><span class="sig-chip">18</span></td><td>SIGCONT</td><td>재개</td><td>✅</td></tr>
+              </tbody>
+            </table>
+
+<pre><code class="language-bash">kill 1234                  # 기본 SIGTERM
+kill -9 %5                 # 작업번호 5 강제 종료
+kill -1 10000              # SIGHUP → 설정 reload (PID 유지)
+pkill -f "nginx"           # 이름 패턴으로 죽이기
+killall httpd              # 이름 일치 전부</code></pre>
+          </section>
+
+          <section id="daemon">
+            <h2>🤖 데몬 관리 — systemctl</h2>
+            <p>과거 <code>service</code> / <code>chkconfig</code>는 호환용이며 실제는 모두 systemd로 위임된다.</p>
+
+            <table class="data-table">
+              <thead><tr><th>명령</th><th>동작</th></tr></thead>
+              <tbody>
+                <tr><td><code>systemctl start|stop|restart|reload sshd</code></td><td>시작·중지·재시작·reload</td></tr>
+                <tr><td><code>systemctl enable|disable sshd</code></td><td>부팅 시 자동 시작 on/off</td></tr>
+                <tr><td><code>systemctl status sshd</code></td><td>상태·최근 로그</td></tr>
+                <tr><td><code>systemctl list-units --type=service</code></td><td>모든 서비스</td></tr>
+                <tr><td><code>systemctl daemon-reload</code></td><td>unit 파일 변경 반영</td></tr>
+                <tr><td><code>journalctl -u sshd -f</code></td><td>서비스 실시간 로그</td></tr>
+              </tbody>
+            </table>
+
+            <h3>socket vs service</h3>
+            <ul>
+              <li><code>sshd.socket</code> — 요청이 있을 때만 메모리에 올림 (과거 inetd/xinetd 역할)</li>
+              <li><code>sshd.service</code> — 상시 상주 데몬 (기본값, <code>.service</code> 생략 가능)</li>
+            </ul>
+
+            <h3>시간 동기화 — chronyd</h3>
+<pre><code class="language-bash">sudo dnf install chrony
+sudo systemctl enable --now chronyd
+timedatectl                         # 현재 시간·TZ·NTP 상태
+timedatectl set-timezone Asia/Seoul
+chronyc sources                     # 참조 NTP 서버 상태</code></pre>
+          </section>
+
+          <section id="cron">
+            <h2>⏰ cron · at — 예약 작업</h2>
+
+            <h3>cron 포맷</h3>
+<pre><code class="language-bash">#  분   시   일   월   요일  명령
+#  0-59 0-23 1-31 1-12 0-7 (0,7=일)
+ 0  3   *    *    *    /usr/local/bin/backup.sh       # 매일 03:00
+ */5 *   *    *    *    /opt/check.sh                  # 5분마다
+ 0  9   *    *    1-5   /opt/weekday.sh                # 평일 09:00
+
+crontab -e       # 내 사용자 크론 편집
+crontab -l       # 내 크론 조회
+crontab -u bob -e  # (root) 타 사용자 크론 편집</code></pre>
+
+            <h3>at — 1회성 예약</h3>
+<pre><code class="language-bash">at 23:00
+at&gt; /usr/local/bin/once.sh
+at&gt; ^D                           # Ctrl+D 로 종료
+
+atq                              # 예약 큐
+atrm 3                           # 작업 3 취소</code></pre>
+
+            <h3>사용자 제한</h3>
+            <table class="data-table">
+              <thead><tr><th>파일</th><th>의미</th></tr></thead>
+              <tbody>
+                <tr><td><code>/etc/cron.allow</code> · <code>/etc/at.allow</code></td><td>있으면 이 안의 사용자만 허용</td></tr>
+                <tr><td><code>/etc/cron.deny</code> · <code>/etc/at.deny</code></td><td>목록의 사용자는 거부</td></tr>
+              </tbody>
+            </table>
+            <p style="color:#a0a0a0;font-size:.88rem">allow와 deny 둘 다 있으면 <strong>allow가 우선</strong>. 한 줄에 한 사용자씩.</p>
+
+<pre><code class="language-bash"># sudo에서 리다이렉트 오류 회피 — tee 사용
+echo "chany" | sudo tee -a /etc/at.allow</code></pre>
+          </section>
+
+          <section id="script">
+            <h2>📜 쉘 스크립트</h2>
+
+<pre><code class="language-bash">#!/bin/bash
+# backup.sh — 간단 백업 스크립트
+set -euo pipefail                   # 오류·미정의 변수·파이프 실패 시 즉시 중단
+
+SRC="/var/www"
+DST="/backup/$(date +%F).tar.gz"
+
+if [ ! -d "$SRC" ]; then
+  echo "원본 없음: $SRC" &gt;&amp;2
+  exit 1
+fi
+
+tar czf "$DST" "$SRC"
+echo "완료: $DST ($(du -h "$DST" | cut -f1))"</code></pre>
+
+<pre><code class="language-bash">chmod +x backup.sh
+./backup.sh                         # 상대경로
+/opt/scripts/backup.sh              # 절대경로
+sh backup.sh                        # 권한 없어도 쉘 명시로 실행</code></pre>
+
+            <h3>자주 쓰는 문법 요약</h3>
+            <table class="data-table">
+              <thead><tr><th>구문</th><th>예시</th></tr></thead>
+              <tbody>
+                <tr><td>조건문</td><td><code>if [ $? -eq 0 ]; then ... fi</code></td></tr>
+                <tr><td>반복</td><td><code>for f in *.log; do ... done</code></td></tr>
+                <tr><td>명령 치환</td><td><code>NOW=$(date +%s)</code></td></tr>
+                <tr><td>인자</td><td><code>$0</code> 스크립트명 · <code>$1..$9</code> 인자 · <code>$#</code> 개수 · <code>$@</code> 전체</td></tr>
+                <tr><td>종료 코드</td><td><code>exit 0</code> 성공 · <code>$?</code> 직전 명령 종료 코드</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="disk">
+            <h2>💾 디스크 추가 → 사용 가능까지 5단계</h2>
+
+            <ol>
+              <li><strong>파티션 생성</strong> — <code>fdisk /dev/sdb</code> (대용량·GPT는 <code>parted</code> / <code>gdisk</code>)</li>
+              <li><strong>파일시스템 생성</strong> — <code>mkfs -t ext4 /dev/sdb1</code> / <code>mkfs.xfs /dev/sdb2</code></li>
+              <li><strong>마운트 포인트 생성</strong> — <code>mkdir /mnt/data</code></li>
+              <li><strong>마운트</strong> — <code>mount /dev/sdb1 /mnt/data</code> (리부팅 시 해제됨)</li>
+              <li><strong>영구 등록</strong> — <code>/etc/fstab</code>에 기입 후 <code>mount -a</code>로 검증</li>
+            </ol>
+
+            <h3>/etc/fstab 6 필드</h3>
+<pre><code class="language-bash"># 장치명                  마운트포인트  타입   옵션                      덤프  fsck
+UUID=abcd-1234           /            xfs    defaults                   0     0
+/dev/mapper/rl-swap      none         swap   defaults                   0     0
+/dev/sdb1                /mnt/data    ext4   defaults,usrquota,noatime  0     2
+192.168.6.3:/var/nfs     /mnt/nfs     nfs    defaults                   0     0</code></pre>
+
+            <div class="tip-card">
+              <strong>안전 검증 패턴:</strong> fstab 수정 후 반드시 <code>mount -a</code>를 돌려 오타 여부를 점검. 오타가 있으면 <em>재부팅이 실패</em>해 시스템이 올라오지 않는다.
+            </div>
+
+            <h3>swap 추가 — 파일 방식</h3>
+<pre><code class="language-bash">dd if=/dev/zero of=/swapfile bs=1M count=2048
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap defaults 0 0' &gt;&gt; /etc/fstab</code></pre>
+          </section>
+
+          <section id="lvm">
+            <h2>📚 LVM — 논리 볼륨 관리</h2>
+            <p>물리 디스크 경계를 넘어 <em>유연하게 볼륨을 확장·축소</em>할 수 있는 계층. PV → VG → LV 3단 구조.</p>
+
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 760 340" style="max-width:100%;height:auto">
+                <defs>
+                  <marker id="arrLvm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#b69cff"/>
+                  </marker>
+                </defs>
+
+                <!-- PV Layer -->
+                <text x="30" y="40" fill="#4ade80" font-weight="700" font-size="14">PV · Physical Volume</text>
+                <g>
+                  <rect x="30" y="55" width="130" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
+                  <text x="95" y="78" text-anchor="middle" fill="#4ade80" font-family="JetBrains Mono" font-size="12">/dev/sdc1</text>
+                  <text x="95" y="95" text-anchor="middle" fill="#ccc" font-size="10">500GB</text>
+                </g>
+                <g>
+                  <rect x="180" y="55" width="130" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
+                  <text x="245" y="78" text-anchor="middle" fill="#4ade80" font-family="JetBrains Mono" font-size="12">/dev/sdd1</text>
+                  <text x="245" y="95" text-anchor="middle" fill="#ccc" font-size="10">500GB</text>
+                </g>
+                <g>
+                  <rect x="330" y="55" width="130" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
+                  <text x="395" y="78" text-anchor="middle" fill="#4ade80" font-family="JetBrains Mono" font-size="12">/dev/sde1</text>
+                  <text x="395" y="95" text-anchor="middle" fill="#ccc" font-size="10">500GB</text>
+                </g>
+
+                <!-- Flow to VG -->
+                <line x1="95" y1="108" x2="220" y2="145" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
+                <line x1="245" y1="108" x2="260" y2="145" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
+                <line x1="395" y1="108" x2="300" y2="145" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
+                <text x="490" y="85" fill="#999" font-size="11">pvcreate</text>
+
+                <!-- VG Layer -->
+                <text x="30" y="170" fill="#7b2ff7" font-weight="700" font-size="14">VG · Volume Group</text>
+                <rect x="100" y="180" width="360" height="55" rx="8" fill="rgba(123,47,247,.12)" stroke="#7b2ff7" stroke-width="2"/>
+                <text x="280" y="203" text-anchor="middle" fill="#b69cff" font-family="JetBrains Mono" font-size="13" font-weight="700">vg_data (1.5 TB)</text>
+                <text x="280" y="222" text-anchor="middle" fill="#ccc" font-size="11">물리 디스크를 하나의 큰 저장풀로 합침</text>
+                <text x="490" y="215" fill="#999" font-size="11">vgcreate</text>
+
+                <!-- Flow to LV -->
+                <line x1="180" y1="238" x2="120" y2="275" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
+                <line x1="280" y1="238" x2="280" y2="275" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
+                <line x1="380" y1="238" x2="440" y2="275" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
+                <text x="490" y="255" fill="#999" font-size="11">lvcreate</text>
+
+                <!-- LV Layer -->
+                <text x="30" y="298" fill="#00d4ff" font-weight="700" font-size="14">LV · Logical Volume</text>
+                <g>
+                  <rect x="55" y="290" width="130" height="40" rx="6" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
+                  <text x="120" y="308" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11">lv_home</text>
+                  <text x="120" y="322" text-anchor="middle" fill="#ccc" font-size="10">200 GB / xfs</text>
+                </g>
+                <g>
+                  <rect x="210" y="290" width="140" height="40" rx="6" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
+                  <text x="280" y="308" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11">lv_db</text>
+                  <text x="280" y="322" text-anchor="middle" fill="#ccc" font-size="10">800 GB / ext4</text>
+                </g>
+                <g>
+                  <rect x="375" y="290" width="130" height="40" rx="6" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
+                  <text x="440" y="308" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11">lv_logs</text>
+                  <text x="440" y="322" text-anchor="middle" fill="#ccc" font-size="10">500 GB / xfs</text>
+                </g>
+
+                <!-- Data flow particle -->
+                <circle r="4" fill="#e2b714">
+                  <animateMotion dur="3s" repeatCount="indefinite" path="M 95,80 L 260,205 L 280,310"/>
+                </circle>
+                <circle r="4" fill="#4ade80">
+                  <animateMotion dur="3s" repeatCount="indefinite" begin="1s" path="M 395,80 L 260,205 L 120,310"/>
+                </circle>
+
+                <!-- Right side legend -->
+                <g transform="translate(560, 60)">
+                  <rect x="0" y="0" width="180" height="260" rx="8" fill="#0f0f0f" stroke="#2a2a2a"/>
+                  <text x="90" y="22" text-anchor="middle" fill="#f0f0f0" font-weight="700" font-size="13">확장 시나리오</text>
+                  <text x="12" y="48" fill="#4ade80" font-size="11" font-weight="700">① 디스크 추가</text>
+                  <text x="20" y="63" fill="#ccc" font-family="JetBrains Mono" font-size="10">vgextend vg_data /dev/sdf1</text>
+                  <text x="12" y="90" fill="#e2b714" font-size="11" font-weight="700">② LV 확장</text>
+                  <text x="20" y="105" fill="#ccc" font-family="JetBrains Mono" font-size="10">lvextend -L +100G</text>
+                  <text x="20" y="119" fill="#ccc" font-family="JetBrains Mono" font-size="10">   /dev/vg_data/lv_db</text>
+                  <text x="12" y="146" fill="#00d4ff" font-size="11" font-weight="700">③ FS 재조정</text>
+                  <text x="20" y="161" fill="#ccc" font-family="JetBrains Mono" font-size="10">resize2fs (ext4)</text>
+                  <text x="20" y="175" fill="#ccc" font-family="JetBrains Mono" font-size="10">xfs_growfs (xfs)</text>
+                  <text x="12" y="205" fill="#ff4757" font-size="11" font-weight="700">⚠ 주의</text>
+                  <text x="20" y="222" fill="#ccc" font-size="10">xfs는 축소 불가</text>
+                  <text x="20" y="237" fill="#ccc" font-size="10">ext4는 축소 전 umount</text>
+                </g>
+              </svg>
+            </div>
+
+            <h3>생성 파이프라인</h3>
+<pre><code class="language-bash"># 1) 파티션 생성 후 Linux LVM 타입(8e)으로 지정
+fdisk /dev/sdc      # n → t → 8e → w
+
+# 2) Physical Volume
+pvcreate /dev/sdc1 /dev/sdd1 /dev/sde1
+pvs                 # 요약 / pvdisplay 상세
+
+# 3) Volume Group
+vgcreate gdn11 /dev/sdc1 /dev/sdd1 /dev/sde1
+vgs
+
+# 4) Logical Volume
+lvcreate -L 5G -n data gdn11        # /dev/gdn11/data 생성
+lvs
+
+# 5) 파일시스템 & 마운트
+mkfs.ext4 /dev/gdn11/data
+mkdir /home/data
+mount /dev/gdn11/data /home/data
+
+# 6) fstab 등록
+echo '/dev/gdn11/data  /home/data  ext4  defaults,usrquota  0 0' &gt;&gt; /etc/fstab
+mount -a</code></pre>
+
+            <h3>확장 — 서비스 중단 없이</h3>
+<pre><code class="language-bash">vgextend gdn11 /dev/sdf1           # VG에 디스크 추가
+lvextend -L +10G /dev/gdn11/data   # LV 확장
+resize2fs /dev/gdn11/data          # ext4 파일시스템 확장
+xfs_growfs /home/data              # xfs는 xfs_growfs (축소 불가)</code></pre>
+
+            <div class="danger-card">
+              <strong>"excluded by a filter" 오류:</strong> 이전 RAID 서명이 남아있을 때 발생.
+              <code>mdadm --stop /dev/md0</code> → <code>mdadm --zero-superblock /dev/sdX1</code> 후 <code>pvcreate</code> 재시도.
+            </div>
+          </section>
+
+          <section id="raid">
+            <h2>🗃️ RAID — mdadm 소프트웨어 RAID</h2>
+            <p>여러 디스크를 하나의 논리 장치로 묶어 <strong>성능·가용성</strong>을 확보. Linux에서는 <code>mdadm</code>으로 소프트RAID를 구성한다.</p>
+
+            <svg viewBox="0 0 780 540" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="RAID 레벨 블록 배치 다이어그램">
+              <defs>
+                <linearGradient id="raidBlkA" x1="0" x2="1"><stop offset="0" stop-color="#00d4ff"/><stop offset="1" stop-color="#0099cc"/></linearGradient>
+                <linearGradient id="raidBlkB" x1="0" x2="1"><stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#22a055"/></linearGradient>
+                <linearGradient id="raidBlkC" x1="0" x2="1"><stop offset="0" stop-color="#e2b714"/><stop offset="1" stop-color="#b4900f"/></linearGradient>
+                <linearGradient id="raidBlkP" x1="0" x2="1"><stop offset="0" stop-color="#ff4757"/><stop offset="1" stop-color="#c2323f"/></linearGradient>
+                <linearGradient id="raidBlkQ" x1="0" x2="1"><stop offset="0" stop-color="#7b2ff7"/><stop offset="1" stop-color="#5220aa"/></linearGradient>
+                <style>
+                  .dlabel{fill:#a0a0a0;font:11px sans-serif}
+                  .rtitle{fill:#fff;font:bold 13px sans-serif}
+                  .rsub{fill:#a0a0a0;font:10px sans-serif}
+                  .blk{stroke:#0a0a0a;stroke-width:1.5}
+                  .blkt{fill:#fff;font:bold 11px sans-serif;text-anchor:middle;dominant-baseline:central}
+                  .disk{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:4;ry:4}
+                </style>
+              </defs>
+
+              <!-- RAID 0 -->
+              <g transform="translate(20,20)">
+                <text class="rtitle" x="0" y="0">RAID 0 — Stripe</text>
+                <text class="rsub" x="0" y="14">블록을 분할·병렬 기록 · 용량 100% · 장애 시 전멸</text>
+                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
+                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="6" y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A1</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A2</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="6" y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B1</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">B2</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="6" y="82" width="52" height="22" rx="3"/><text class="blkt" x="32" y="93">C1</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="86" y="82" width="52" height="22" rx="3"/><text class="blkt" x="112" y="93">C2</text>
+                <!-- animated block traveling between disks -->
+                <rect class="blk" fill="#00d4ff" width="24" height="10" rx="2" opacity=".9">
+                  <animateMotion dur="2.2s" repeatCount="indefinite" path="M 8,116 L 88,116"/>
+                </rect>
+              </g>
+
+              <!-- RAID 1 -->
+              <g transform="translate(220,20)">
+                <text class="rtitle" x="0" y="0">RAID 1 — Mirror</text>
+                <text class="rsub" x="0" y="14">동일 복제본 기록 · 용량 50% · 읽기 분산 가능</text>
+                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
+                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="6" y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="6" y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">B</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="6" y="82" width="52" height="22" rx="3"/><text class="blkt" x="32" y="93">C</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="86" y="82" width="52" height="22" rx="3"/><text class="blkt" x="112" y="93">C</text>
+                <!-- mirror sync arrow -->
+                <path d="M 62,116 L 82,116" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#arrG)"/>
+                <circle r="4" fill="#4ade80">
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 62,116 L 82,116"/>
+                </circle>
+                <text class="dlabel" x="72" y="132" text-anchor="middle">sync</text>
+              </g>
+
+              <!-- RAID 5 -->
+              <g transform="translate(420,20)">
+                <text class="rtitle" x="0" y="0">RAID 5 — Stripe + 분산 Parity</text>
+                <text class="rsub" x="0" y="14">패리티(P)를 돌아가며 저장 · 1개 장애 복구 가능</text>
+                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
+                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
+                <rect class="disk" x="160" y="24" width="64" height="120"/><text class="dlabel" x="192" y="158" text-anchor="middle">sdd</text>
+                <!-- row A: P on sdd -->
+                <rect class="blk" fill="url(#raidBlkA)" x="6"  y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A1</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A2</text>
+                <rect class="blk" fill="url(#raidBlkP)" x="166" y="30" width="52" height="22" rx="3"/><text class="blkt" x="192" y="41">Ap</text>
+                <!-- row B: P on sdc -->
+                <rect class="blk" fill="url(#raidBlkB)" x="6"  y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B1</text>
+                <rect class="blk" fill="url(#raidBlkP)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">Bp</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="166" y="56" width="52" height="22" rx="3"/><text class="blkt" x="192" y="67">B2</text>
+                <!-- row C: P on sdb -->
+                <rect class="blk" fill="url(#raidBlkP)" x="6"  y="82" width="52" height="22" rx="3"/><text class="blkt" x="32" y="93">Cp</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="86" y="82" width="52" height="22" rx="3"/><text class="blkt" x="112" y="93">C1</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="166" y="82" width="52" height="22" rx="3"/><text class="blkt" x="192" y="93">C2</text>
+                <!-- parity travels diagonally -->
+                <circle r="5" fill="#ff4757" opacity=".9">
+                  <animateMotion dur="3s" repeatCount="indefinite" path="M 192,41 L 112,67 L 32,93"/>
+                </circle>
+              </g>
+
+              <!-- RAID 10 -->
+              <g transform="translate(20,200)">
+                <text class="rtitle" x="0" y="0">RAID 10 — Stripe of Mirrors (1+0)</text>
+                <text class="rsub" x="0" y="14">미러 페어를 스트라이프 · DB 등 랜덤 I/O에 최적</text>
+                <!-- mirror pair 1 -->
+                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
+                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="6"  y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A1</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A1</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="6"  y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B1</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">B1</text>
+                <text class="dlabel" x="72" y="90" text-anchor="middle">Mirror 1</text>
+                <!-- mirror pair 2 -->
+                <rect class="disk" x="180" y="24" width="64" height="120"/><text class="dlabel" x="212" y="158" text-anchor="middle">sdd</text>
+                <rect class="disk" x="260" y="24" width="64" height="120"/><text class="dlabel" x="292" y="158" text-anchor="middle">sde</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="186" y="30" width="52" height="22" rx="3"/><text class="blkt" x="212" y="41">A2</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="266" y="30" width="52" height="22" rx="3"/><text class="blkt" x="292" y="41">A2</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="186" y="56" width="52" height="22" rx="3"/><text class="blkt" x="212" y="67">B2</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="266" y="56" width="52" height="22" rx="3"/><text class="blkt" x="292" y="67">B2</text>
+                <text class="dlabel" x="252" y="90" text-anchor="middle">Mirror 2</text>
+                <!-- stripe arrow across mirrors -->
+                <path d="M 144,116 L 184,116" stroke="#00d4ff" stroke-width="2" fill="none"/>
+                <circle r="4" fill="#00d4ff">
+                  <animateMotion dur="2s" repeatCount="indefinite" path="M 144,116 L 184,116"/>
+                </circle>
+                <text class="dlabel" x="164" y="132" text-anchor="middle">stripe</text>
+              </g>
+
+              <!-- RAID 6 -->
+              <g transform="translate(420,200)">
+                <text class="rtitle" x="0" y="0">RAID 6 — Double Parity (P+Q)</text>
+                <text class="rsub" x="0" y="14">이중 패리티 · 2개 디스크 동시 장애 복구 가능</text>
+                <rect class="disk" x="0" y="24" width="60" height="120"/><text class="dlabel" x="30" y="158" text-anchor="middle">sdb</text>
+                <rect class="disk" x="72" y="24" width="60" height="120"/><text class="dlabel" x="102" y="158" text-anchor="middle">sdc</text>
+                <rect class="disk" x="144" y="24" width="60" height="120"/><text class="dlabel" x="174" y="158" text-anchor="middle">sdd</text>
+                <rect class="disk" x="216" y="24" width="60" height="120"/><text class="dlabel" x="246" y="158" text-anchor="middle">sde</text>
+                <!-- row A -->
+                <rect class="blk" fill="url(#raidBlkA)" x="4"   y="30" width="52" height="22" rx="3"/><text class="blkt" x="30" y="41">A1</text>
+                <rect class="blk" fill="url(#raidBlkA)" x="76"  y="30" width="52" height="22" rx="3"/><text class="blkt" x="102" y="41">A2</text>
+                <rect class="blk" fill="url(#raidBlkP)" x="148" y="30" width="52" height="22" rx="3"/><text class="blkt" x="174" y="41">Ap</text>
+                <rect class="blk" fill="url(#raidBlkQ)" x="220" y="30" width="52" height="22" rx="3"/><text class="blkt" x="246" y="41">Aq</text>
+                <!-- row B -->
+                <rect class="blk" fill="url(#raidBlkB)" x="4"   y="56" width="52" height="22" rx="3"/><text class="blkt" x="30" y="67">B1</text>
+                <rect class="blk" fill="url(#raidBlkP)" x="76"  y="56" width="52" height="22" rx="3"/><text class="blkt" x="102" y="67">Bp</text>
+                <rect class="blk" fill="url(#raidBlkQ)" x="148" y="56" width="52" height="22" rx="3"/><text class="blkt" x="174" y="67">Bq</text>
+                <rect class="blk" fill="url(#raidBlkB)" x="220" y="56" width="52" height="22" rx="3"/><text class="blkt" x="246" y="67">B2</text>
+                <!-- row C -->
+                <rect class="blk" fill="url(#raidBlkP)" x="4"   y="82" width="52" height="22" rx="3"/><text class="blkt" x="30" y="93">Cp</text>
+                <rect class="blk" fill="url(#raidBlkQ)" x="76"  y="82" width="52" height="22" rx="3"/><text class="blkt" x="102" y="93">Cq</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="148" y="82" width="52" height="22" rx="3"/><text class="blkt" x="174" y="93">C1</text>
+                <rect class="blk" fill="url(#raidBlkC)" x="220" y="82" width="52" height="22" rx="3"/><text class="blkt" x="246" y="93">C2</text>
+                <circle r="5" fill="#7b2ff7">
+                  <animateMotion dur="2.6s" repeatCount="indefinite" path="M 246,41 L 174,67 L 102,93"/>
+                </circle>
+              </g>
+
+              <!-- Legend -->
+              <g transform="translate(20,400)">
+                <rect x="0" y="0" width="740" height="120" fill="#111" stroke="#2a2a2a" rx="6"/>
+                <text class="rtitle" x="14" y="22">선택 가이드</text>
+                <g transform="translate(14,36)" font-size="11" fill="#d0d0d0">
+                  <text y="14"><tspan fill="#00d4ff" font-weight="bold">RAID 0</tspan> — 최대 성능·가용성 포기 (임시 캐시, 재생성 가능한 데이터)</text>
+                  <text y="32"><tspan fill="#4ade80" font-weight="bold">RAID 1</tspan> — OS 디스크·중요 로그 (소규모 미러)</text>
+                  <text y="50"><tspan fill="#e2b714" font-weight="bold">RAID 5</tspan> — 용량 효율 + 1중 보호 (일반 파일 서버) · 요즘은 대용량에서 비권장</text>
+                  <text y="68"><tspan fill="#ff4757" font-weight="bold">RAID 6</tspan> — 대용량 NAS·재구축 시간 긴 HDD 어레이</text>
+                  <text y="86"><tspan fill="#7b2ff7" font-weight="bold">RAID 10</tspan> — DB·VM 스토리지 등 랜덤 쓰기 집중 워크로드</text>
+                </g>
+              </g>
+
+              <defs>
+                <marker id="arrG" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6 z" fill="#4ade80"/>
+                </marker>
+              </defs>
+            </svg>
+
+            <div class="raid-card">
+              <h4>RAID 0 (Stripe)</h4>
+              <div class="meta">최소 2개 · 용량 100% · 내결함성 ❌ · 성능 ▲▲</div>
+              <p>데이터를 블록 단위로 분할 병렬 기록. 디스크 1개라도 죽으면 전체 데이터 소실.</p>
+            </div>
+            <div class="raid-card">
+              <h4>RAID 1 (Mirror)</h4>
+              <div class="meta">최소 2개 · 용량 50% · 내결함성 ▲ (n-1) · 성능 ▲(읽기)</div>
+              <p>동일 데이터를 2개 이상 디스크에 동시에 기록. 읽기 병렬로 성능 ↑.</p>
+            </div>
+            <div class="raid-card">
+              <h4>RAID 5 (Stripe + Parity)</h4>
+              <div class="meta">최소 3개 · 용량 (n-1)/n · 내결함성 디스크 1개 · 성능 ▲</div>
+              <p>패리티를 분산 저장. 디스크 1개 장애 시 복구 가능. 쓰기 시 패리티 계산 오버헤드.</p>
+            </div>
+            <div class="raid-card">
+              <h4>RAID 6 (Double Parity)</h4>
+              <div class="meta">최소 4개 · 용량 (n-2)/n · 내결함성 디스크 2개 · 성능 ▲</div>
+              <p>패리티를 이중으로 보관. 대용량 어레이에서 재구축 중 2차 장애 대비.</p>
+            </div>
+            <div class="raid-card">
+              <h4>RAID 10 (1+0, Stripe of Mirrors)</h4>
+              <div class="meta">최소 4개(짝수) · 용량 50% · 내결함성 각 미러당 1개 · 성능 ▲▲</div>
+              <p>미러 페어를 스트라이프. DB처럼 랜덤 쓰기가 많은 워크로드에 최적.</p>
+            </div>
+
+            <h3>mdadm 운용</h3>
+<pre><code class="language-bash"># RAID 5 생성 — 3개 디스크
+mdadm --create /dev/md0 --level=5 --raid-devices=3 \
+      /dev/sdc1 /dev/sdd1 /dev/sde1
+
+cat /proc/mdstat                   # 재구축 진행률
+mdadm --detail /dev/md0            # 상세 상태
+
+# 파일시스템 & 마운트
+mkfs.xfs /dev/md0
+mkdir /srv/raid
+mount /dev/md0 /srv/raid
+
+# 구성 영구 저장 — 부팅 시 자동 조립
+mdadm --detail --scan &gt;&gt; /etc/mdadm.conf
+
+# 장애 시뮬레이션·교체
+mdadm /dev/md0 --fail /dev/sdd1
+mdadm /dev/md0 --remove /dev/sdd1
+mdadm /dev/md0 --add /dev/sdf1     # 핫스페어 투입 → 자동 재구축
+
+# 어레이 해체 (LVM 전환 전 필수)
+mdadm --stop /dev/md0
+mdadm --zero-superblock /dev/sdc1 /dev/sdd1 /dev/sde1</code></pre>
+
+            <div class="tip-card">
+              <strong>RAID ≠ 백업:</strong> RAID는 하드웨어 장애 가용성을 올릴 뿐, 실수로 <code>rm</code> 한 파일이나 랜섬웨어는 모든 디스크에 그대로 반영된다. 별도 백업 전략이 필수.
+            </div>
+          </section>
+
+          <section id="quota">
+            <h2>📊 사용자 쿼터</h2>
+            <p>특정 파티션에서 사용자·그룹별 <strong>저장 용량</strong>과 <strong>파일 개수</strong>를 제한. 호스팅·다중 사용자 서버에서 필수.</p>
+
+            <h3>활성화 단계</h3>
+<pre><code class="language-bash"># 1) fstab에 usrquota / grpquota 옵션 추가
+# /dev/sdh1  /mnt/mp1  ext4  defaults,usrquota,grpquota  0 0
+systemctl daemon-reload
+mount -o remount /mnt/mp1
+
+# 2) 쿼터 DB 생성
+quotacheck -aumg       # a:전체 u:사용자 m:강제 g:그룹
+
+# 3) 쿼터 ON
+quotaon -auv
+
+# 4) 사용자별 제한 설정
+edquota -u chany
+#   파일시스템     blocks   soft   hard    inodes  soft  hard
+#   /dev/sdh1         0    50000  60000      0     500   600
+
+# Grace Period 확인·수정
+edquota -t
+
+# 현재 상태 조회
+repquota -a
+quota -u chany
+
+# 복제 — 한 사용자 설정을 다른 사용자에 동일하게
+edquota -p chany bob alice</code></pre>
+
+            <ul>
+              <li><strong>soft limit</strong> — 초과 가능하지만 grace period 후 자동 감축</li>
+              <li><strong>hard limit</strong> — 초과 불가, 즉시 쓰기 거부</li>
+              <li><strong>XFS</strong>는 <code>quotacheck</code> 불필요 — <code>xfs_quota</code> 전용 툴 사용</li>
+            </ul>
+          </section>
+
+          <section id="archive">
+            <h2>📦 tar · 압축</h2>
+
+            <h3>tar 옵션 조합</h3>
+            <table class="data-table">
+              <thead><tr><th>옵션</th><th>의미</th></tr></thead>
+              <tbody>
+                <tr><td><code>c</code></td><td>create (묶기)</td></tr>
+                <tr><td><code>x</code></td><td>extract (풀기)</td></tr>
+                <tr><td><code>t</code></td><td>list (내용만 조회)</td></tr>
+                <tr><td><code>v</code></td><td>verbose</td></tr>
+                <tr><td><code>f</code></td><td>파일명 지정 (<em>항상 마지막</em>)</td></tr>
+                <tr><td><code>z</code> / <code>j</code> / <code>J</code></td><td>gzip / bzip2 / xz 동시 압축</td></tr>
+              </tbody>
+            </table>
+
+<pre><code class="language-bash">tar cvf archive.tar /etc              # 묶기만
+tar czf archive.tar.gz /etc           # gzip 압축
+tar cjf archive.tar.bz2 /etc          # bzip2
+tar cJf archive.tar.xz /etc           # xz (최강 압축률)
+
+tar xzf archive.tar.gz -C /tmp        # /tmp로 풀기
+tar tzf archive.tar.gz                # 내용 조회</code></pre>
+
+            <h3>압축 명령 비교</h3>
+            <table class="data-table">
+              <thead><tr><th>압축</th><th>해제</th><th>확장자</th><th>특징</th></tr></thead>
+              <tbody>
+                <tr><td>gzip</td><td>gunzip</td><td>.gz</td><td>빠름·범용</td></tr>
+                <tr><td>bzip2</td><td>bunzip2</td><td>.bz2</td><td>중간 속도·높은 압축률</td></tr>
+                <tr><td>xz</td><td>unxz</td><td>.xz</td><td>최고 압축률·느림</td></tr>
+                <tr><td>zip</td><td>unzip</td><td>.zip</td><td>Windows 호환·파일명 필수</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="pkg">
+            <h2>📥 패키지 관리</h2>
+
+            <h3>고수준 — dnf / apt</h3>
+<pre><code class="language-bash"># Rocky / RHEL / Fedora
+dnf search nginx
+dnf install -y nginx
+dnf update
+dnf remove nginx
+dnf list installed
+dnf history                   # 설치/삭제 이력
+dnf repolist
+
+# Ubuntu / Debian
+apt-get update
+apt-get install -y nginx
+apt-get upgrade
+apt-get remove nginx
+dpkg -l                       # 설치된 패키지 목록</code></pre>
+
+            <h3>저수준 — rpm</h3>
+            <table class="data-table">
+              <thead><tr><th>옵션</th><th>의미</th></tr></thead>
+              <tbody>
+                <tr><td><code>-i</code></td><td>설치</td></tr>
+                <tr><td><code>-U</code></td><td>업그레이드(없으면 설치)</td></tr>
+                <tr><td><code>-e</code></td><td>삭제</td></tr>
+                <tr><td><code>-qa</code></td><td>모든 설치 패키지</td></tr>
+                <tr><td><code>-qc &lt;pkg&gt;</code></td><td>설정 파일 목록</td></tr>
+                <tr><td><code>-qf &lt;path&gt;</code></td><td>파일 소유 패키지</td></tr>
+                <tr><td><code>-ql &lt;pkg&gt;</code></td><td>설치된 파일 목록</td></tr>
+                <tr><td><code>--nodeps</code></td><td>의존성 무시(위험)</td></tr>
+              </tbody>
+            </table>
+
+            <h3>소스 컴파일 3단계</h3>
+<pre><code class="language-bash">./configure --prefix=/usr/local      # 의존성 점검·Makefile 생성
+make                                 # 컴파일
+sudo make install                    # /usr/local/...에 복사
+
+# 제거 (권장)
+sudo make uninstall                  # 없는 프로젝트 많음 → checkinstall로 .rpm/.deb 포장 추천</code></pre>
+          </section>
+
+          <section id="net">
+            <h2>🌐 네트워크 & 방화벽</h2>
+
+            <h3>IP·라우팅 진단</h3>
+<pre><code class="language-bash">ip addr                # NIC·IP 전수 조회 (신규 표준)
+ip route               # 라우팅 테이블
+ip -s link             # NIC 통계
+ss -tnlp               # 리스닝 TCP + 프로세스 (netstat 대체)
+ss -tnp                # ESTABLISHED 연결
+ping -c 4 8.8.8.8
+traceroute google.com
+dig naver.com          # DNS 질의
+curl -I https://example.com
+nmcli connection       # NetworkManager</code></pre>
+
+            <h3>firewalld (Rocky) · ufw (Ubuntu)</h3>
+
+            <svg viewBox="0 0 780 340" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="방화벽 패킷 흐름 (netfilter 체인)">
+              <defs>
+                <marker id="fwArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/>
+                </marker>
+                <marker id="fwArrR" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <path d="M0,0 L9,3 L0,6 z" fill="#ff4757"/>
+                </marker>
+                <style>
+                  .fwbox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
+                  .fwin{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:6;ry:6}
+                  .fwout{fill:#2a1a1a;stroke:#ff4757;stroke-width:1.5;rx:6;ry:6}
+                  .fwt{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
+                  .fws{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
+                  .fwh{fill:#00d4ff;font:bold 11px sans-serif}
+                </style>
+              </defs>
+
+              <!-- External network -->
+              <rect class="fwbox" x="10" y="20" width="120" height="60"/>
+              <text class="fwt" x="70" y="44">🌐 외부</text>
+              <text class="fws" x="70" y="62">Internet</text>
+
+              <!-- PREROUTING -->
+              <rect class="fwbox" x="160" y="20" width="110" height="60"/>
+              <text class="fwt" x="215" y="40">PREROUTING</text>
+              <text class="fws" x="215" y="56">nat</text>
+              <text class="fws" x="215" y="70">DNAT·포트포워드</text>
+
+              <!-- Routing decision -->
+              <polygon points="300,50 350,20 400,50 350,80" fill="#2a1f10" stroke="#e2b714" stroke-width="1.5"/>
+              <text class="fwt" x="350" y="46" font-size="11">Routing</text>
+              <text class="fws" x="350" y="60">local? forward?</text>
+
+              <!-- INPUT -->
+              <rect class="fwin" x="430" y="20" width="120" height="60"/>
+              <text class="fwt" x="490" y="44">INPUT ✔</text>
+              <text class="fws" x="490" y="60">로컬 프로세스 향</text>
+
+              <!-- local process -->
+              <rect class="fwbox" x="580" y="20" width="180" height="60"/>
+              <text class="fwt" x="670" y="44">💻 로컬 서비스</text>
+              <text class="fws" x="670" y="60">sshd · httpd · nfsd</text>
+
+              <!-- FORWARD -->
+              <rect class="fwbox" x="300" y="130" width="200" height="50"/>
+              <text class="fwt" x="400" y="150">FORWARD</text>
+              <text class="fws" x="400" y="166">라우터·NAT 게이트웨이 전용</text>
+
+              <!-- OUTPUT -->
+              <rect class="fwout" x="430" y="210" width="120" height="60"/>
+              <text class="fwt" x="490" y="234">OUTPUT</text>
+              <text class="fws" x="490" y="250">로컬 → 외부</text>
+
+              <!-- POSTROUTING -->
+              <rect class="fwbox" x="160" y="210" width="110" height="60"/>
+              <text class="fwt" x="215" y="234">POSTROUTING</text>
+              <text class="fws" x="215" y="250">SNAT·Masquerade</text>
+
+              <!-- external out -->
+              <rect class="fwbox" x="10" y="210" width="120" height="60"/>
+              <text class="fwt" x="70" y="234">🌐 외부</text>
+              <text class="fws" x="70" y="250">Internet</text>
+
+              <!-- Arrows: incoming flow -->
+              <path d="M 130,50 L 158,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
+              <path d="M 270,50 L 298,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
+              <path d="M 400,50 L 428,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
+              <path d="M 550,50 L 578,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
+              <!-- routing→forward (diverted) -->
+              <path d="M 350,80 L 350,130" stroke="#e2b714" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
+              <path d="M 500,155 Q 550,155 550,200 L 490,240 Q 430,240 330,240 L 270,240" stroke="#e2b714" stroke-width="2" fill="none" opacity=".6"/>
+
+              <!-- outgoing: local → OUTPUT → POSTROUTING → net -->
+              <path d="M 670,80 L 670,180 L 550,240" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#fwArrR)"/>
+              <path d="M 430,240 L 270,240" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#fwArrR)"/>
+              <path d="M 160,240 L 130,240" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#fwArrR)"/>
+
+              <!-- animated packets -->
+              <circle r="5" fill="#00d4ff">
+                <animateMotion dur="4s" repeatCount="indefinite" path="M 130,50 L 430,50 L 580,50"/>
+              </circle>
+              <circle r="5" fill="#ff4757">
+                <animateMotion dur="4s" repeatCount="indefinite" begin="2s" path="M 670,80 L 670,180 L 550,240 L 270,240 L 130,240"/>
+              </circle>
+              <circle r="4" fill="#e2b714" opacity=".8">
+                <animateMotion dur="3.6s" repeatCount="indefinite" begin="1s" path="M 350,80 L 350,130 L 500,155"/>
+              </circle>
+
+              <!-- Legend -->
+              <g transform="translate(20,295)">
+                <text class="fwh" x="0" y="0">Zones (firewalld)</text>
+                <text class="fws" text-anchor="start" x="0" y="18">public(기본) · trusted · internal · dmz · drop · block — 인터페이스·원천IP에 존 바인딩</text>
+              </g>
+            </svg>
+
+<pre><code class="language-bash"># firewalld
+firewall-cmd --state
+firewall-cmd --list-all
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-port=8080/tcp
+firewall-cmd --permanent --add-service=nfs
+firewall-cmd --reload
+
+# ufw
+ufw enable
+ufw allow 22/tcp
+ufw allow from 192.168.0.0/24 to any port 3306
+ufw status verbose</code></pre>
+          </section>
+
+          <section id="share">
+            <h2>🔗 파일 공유 서비스</h2>
+
+            <h3>4종 비교</h3>
+            <table class="data-table">
+              <thead><tr><th>서비스</th><th>프로토콜/포트</th><th>사용처</th></tr></thead>
+              <tbody>
+                <tr><td><strong>FTP</strong> (vsftpd)</td><td>TCP 21 / 20</td><td>레거시 업/다운로드</td></tr>
+                <tr><td><strong>NFS</strong></td><td>TCP 2049</td><td>Unix/Linux 간 디렉토리 공유</td></tr>
+                <tr><td><strong>Samba</strong> (SMB/CIFS)</td><td>TCP 445 · 139 · UDP 137/138</td><td>Windows ↔ Linux 공유</td></tr>
+                <tr><td><strong>SCP / SFTP</strong></td><td>TCP 22 (SSH)</td><td>보안·자동화·개별 전송</td></tr>
+              </tbody>
+            </table>
+
+            <h3>FTP — Active vs Passive</h3>
+            <ul>
+              <li><strong>Active</strong>: 데이터 세션을 <em>서버가 클라이언트로</em> 역접속 → 클라이언트 방화벽/NAT에 자주 차단됨</li>
+              <li><strong>Passive</strong>: 클라이언트가 데이터 세션도 서버로 접속 → 현대 기본값</li>
+            </ul>
+
+            <div class="tip-card">
+              <strong>chroot jail:</strong> FTP/SFTP 사용자가 자기 홈 밖으로 벗어나지 못하게 루트를 가상 고정하는 보안 기법. vsftpd의 <code>chroot_local_user=YES</code>.
+            </div>
+
+            <svg viewBox="0 0 780 320" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="NFS · Samba 클라이언트-서버 토폴로지">
+              <defs>
+                <marker id="shArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/>
+                </marker>
+                <style>
+                  .shbox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:8;ry:8}
+                  .shcli{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:8;ry:8}
+                  .shsrv{fill:#1a2030;stroke:#00d4ff;stroke-width:1.5;rx:8;ry:8}
+                  .sht{fill:#fff;font:bold 13px sans-serif;text-anchor:middle}
+                  .shs{fill:#a0a0a0;font:10.5px sans-serif;text-anchor:middle}
+                  .port{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
+                </style>
+              </defs>
+
+              <!-- Server -->
+              <rect class="shsrv" x="300" y="20" width="200" height="90"/>
+              <text class="sht" x="400" y="42">🖥️ Linux 서버</text>
+              <text class="shs" x="400" y="58">/var/nfs · /srv/samba/share</text>
+              <text class="shs" x="400" y="74">nfs-server · smbd/nmbd</text>
+              <text class="shs" x="400" y="90">firewalld: --add-service=nfs,samba</text>
+
+              <!-- NFS client -->
+              <rect class="shcli" x="20" y="200" width="180" height="90"/>
+              <text class="sht" x="110" y="222">🐧 NFS 클라이언트</text>
+              <text class="shs" x="110" y="240">mount -t nfs</text>
+              <text class="shs" x="110" y="256">SRV:/var/nfs → /mnt/nfs</text>
+              <text class="shs" x="110" y="272">fstab: _netdev, hard, bg</text>
+
+              <!-- Samba client (Windows) -->
+              <rect class="shcli" x="580" y="200" width="180" height="90"/>
+              <text class="sht" x="670" y="222">🪟 Windows 클라이언트</text>
+              <text class="shs" x="670" y="240">\\192.168.6.3\share</text>
+              <text class="shs" x="670" y="256">net use Z: ...</text>
+              <text class="shs" x="670" y="272">SMB 3.x 암호화</text>
+
+              <!-- mac/linux samba -->
+              <rect class="shcli" x="300" y="230" width="200" height="60"/>
+              <text class="sht" x="400" y="254">🐧 Linux/Mac (cifs-utils)</text>
+              <text class="shs" x="400" y="272">mount -t cifs -o username=user</text>
+
+              <!-- Lines -->
+              <path d="M 200,230 Q 260,200 320,115" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#shArr)"/>
+              <text class="port" x="240" y="170">TCP 2049 (NFS)</text>
+
+              <path d="M 580,230 Q 540,200 480,115" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#shArr)"/>
+              <text class="port" x="560" y="170">TCP 445 (SMB)</text>
+
+              <path d="M 400,230 L 400,115" stroke="#e2b714" stroke-width="2" fill="none" marker-end="url(#shArr)"/>
+              <text class="port" x="440" y="175">TCP 445 / 139</text>
+
+              <!-- Animated packets -->
+              <circle r="5" fill="#4ade80">
+                <animateMotion dur="2.4s" repeatCount="indefinite" path="M 200,230 Q 260,200 320,115"/>
+              </circle>
+              <circle r="5" fill="#00d4ff">
+                <animateMotion dur="2.4s" repeatCount="indefinite" begin="0.6s" path="M 580,230 Q 540,200 480,115"/>
+              </circle>
+              <circle r="5" fill="#e2b714">
+                <animateMotion dur="2s" repeatCount="indefinite" begin="1.2s" path="M 400,230 L 400,115"/>
+              </circle>
+
+              <!-- Legend -->
+              <g transform="translate(20,140)">
+                <text fill="#00d4ff" font-size="11" font-weight="bold" x="0" y="0">공유 프로토콜 요약</text>
+                <text fill="#d0d0d0" font-size="10.5" x="0" y="18">NFS: Unix 권한 모델·네이티브 속도 · no_root_squash 주의</text>
+                <text fill="#d0d0d0" font-size="10.5" x="0" y="34">Samba: SMB/CIFS · Windows AD 연동 · smbpasswd -a 필수</text>
+              </g>
+            </svg>
+
+            <h3>NFS — 서버 설정 예</h3>
+<pre><code class="language-bash">sudo dnf install nfs-utils
+mkdir /var/nfs &amp;&amp; chmod 777 /var/nfs
+
+# /etc/exports
+/var/nfs   192.168.6.0/24(rw,sync,no_root_squash)
+
+systemctl enable --now nfs-server
+exportfs -rav                              # 재로드·조회
+firewall-cmd --permanent --add-service=nfs
+firewall-cmd --reload
+
+# 클라이언트
+sudo dnf install nfs-utils
+sudo mount -t nfs 192.168.6.3:/var/nfs /mnt/nfs
+# fstab: 192.168.6.3:/var/nfs  /mnt/nfs  nfs  defaults,_netdev  0  0</code></pre>
+
+            <h3>NFS 마운트 옵션</h3>
+            <table class="data-table">
+              <thead><tr><th>옵션</th><th>동작</th></tr></thead>
+              <tbody>
+                <tr><td><code>fg</code> (기본)</td><td>첫 마운트 실패 시 즉시 중단</td></tr>
+                <tr><td><code>bg</code></td><td>백그라운드에서 재시도</td></tr>
+                <tr><td><code>hard</code></td><td>타임아웃에도 무한 재시도 (데이터 일관성 최우선)</td></tr>
+                <tr><td><code>soft</code></td><td>타임아웃 시 오류 반환 (부팅 진행 보장)</td></tr>
+                <tr><td><code>_netdev</code></td><td>네트워크가 올라온 후 마운트 (부팅 멈춤 예방)</td></tr>
+              </tbody>
+            </table>
+
+            <h3>Samba — Windows 공유</h3>
+<pre><code class="language-bash">sudo dnf install samba samba-client cifs-utils
+
+# /etc/samba/smb.conf
+# [global]
+#   workgroup = WORKGROUP
+#   hosts allow = 192.168.6.
+# [share]
+#   path = /var/samba
+#   public = yes
+#   writable = yes
+
+mkdir /var/samba &amp;&amp; chmod 777 /var/samba
+smbpasswd -a chany                        # 삼바 사용자 등록
+systemctl enable --now smb nmb
+firewall-cmd --permanent --add-service=samba
+firewall-cmd --reload
+
+# 리눅스에서 윈도우 공유 마운트
+smbclient -L //192.168.3.101 -U chany     # 공유 목록
+mount -t cifs //192.168.3.101/share /mnt/smb \
+      -o username=chany,password=...,uid=1000,gid=1000</code></pre>
+          </section>
+
+          <section id="web">
+            <h2>🕸️ HTTP / 웹서버</h2>
+            <p>웹서버는 클라이언트 요청에 HTML·이미지 등 리소스를 <strong>HTTP</strong> 프로토콜로 응답한다. 기본 포트 TCP 80, HTTPS는 TCP 443.</p>
+
+            <h3>대표 웹서버</h3>
+            <table class="data-table">
+              <thead><tr><th>프로그램</th><th>특징</th></tr></thead>
+              <tbody>
+                <tr><td>Apache (httpd)</td><td>모듈 풍부·.htaccess·프로세스/스레드 모델</td></tr>
+                <tr><td>Nginx</td><td>이벤트 기반·고동시성 리버스 프록시 기본</td></tr>
+                <tr><td>IIS</td><td>Windows 전용·ASP.NET 통합</td></tr>
+              </tbody>
+            </table>
+
+            <h3>URI · URL · URN</h3>
+            <ul>
+              <li><strong>URI</strong>: 리소스를 식별하는 문자열의 상위 개념 (URL + URN)</li>
+              <li><strong>URL</strong>: 프로토콜+위치를 포함한 접근 주소 — <code>https://host/path</code></li>
+              <li><strong>URN</strong>: 위치 무관 이름 — <code>urn:isbn:0-395-36341-1</code></li>
+            </ul>
+
+            <h3>Apache 빠른 기동 (Rocky)</h3>
+<pre><code class="language-bash">sudo dnf install httpd
+sudo systemctl enable --now httpd
+firewall-cmd --permanent --add-service=http --add-service=https
+firewall-cmd --reload
+echo "&lt;h1&gt;Hello&lt;/h1&gt;" | sudo tee /var/www/html/index.html
+curl http://localhost/</code></pre>
+          </section>
+
+          <section id="summary">
+            <h2>🎯 핵심 정리 — 시험/면접 포인트</h2>
+            <ol>
+              <li><strong>쉘 설정 파일</strong>: 로그인(<code>.bash_profile</code>·PATH) vs 인터랙티브(<code>.bashrc</code>·alias). 시스템 전역은 <code>/etc/profile</code>·<code>/etc/bashrc</code>.</li>
+              <li><strong>export</strong>하지 않은 변수는 자식 프로세스에 전달되지 않는다.</li>
+              <li><strong>SSH 키 퍼미션</strong>: <code>~/.ssh</code>=700, <code>authorized_keys</code>=644, <code>id_rsa</code>=600. 너무 열면 sshd가 거부.</li>
+              <li><strong>systemd 기본 target</strong>: CLI 서버는 <code>multi-user.target</code> (=runlevel 3), GUI는 <code>graphical.target</code> (=5).</li>
+              <li><strong>useradd 우선순위</strong>: <code>/etc/login.defs</code> &gt; <code>/etc/default/useradd</code>. 최소 UID 1000.</li>
+              <li><strong>umask</strong>: root 0022 → 파일 644·디렉토리 755. 값이 클수록 보안 ↑.</li>
+              <li><strong>특수비트</strong>: SUID 4000(passwd) · SGID 2000(공유디렉토리 그룹상속) · Sticky 1000(/tmp).</li>
+              <li><strong>SIGHUP(1)</strong>은 <em>설정 재로드</em>, <strong>SIGKILL(9)</strong>은 <em>무시 불가 강제종료</em>, <strong>SIGTERM(15)</strong>은 <em>정상종료 요청(기본)</em>.</li>
+              <li><strong>systemctl reload</strong>는 PID 유지하며 설정만 재적용. restart는 PID가 바뀐다.</li>
+              <li><strong>at/cron 제어</strong>: allow와 deny 동시 존재 시 <em>allow가 우선</em>.</li>
+              <li><strong>fstab</strong> 편집 후 <code>mount -a</code>로 반드시 검증 — 오타 시 재부팅 실패.</li>
+              <li><strong>LVM 3계층</strong>: PV(디스크) → VG(풀) → LV(볼륨). <code>lvextend + resize2fs/xfs_growfs</code>로 무중단 확장.</li>
+              <li><strong>RAID 레벨</strong>: 0=속도 · 1=미러 · 5=1개 장애 허용 · 6=2개 허용 · 10=고성능 HA. <em>RAID는 백업이 아니다.</em></li>
+              <li><strong>쿼터 Soft vs Hard</strong>: Soft는 grace 기간 동안 초과 허용, Hard는 즉시 차단.</li>
+              <li><strong>tar 옵션</strong>: <code>c</code>묶기·<code>x</code>풀기·<code>z</code>gzip·<code>j</code>bzip2·<code>J</code>xz. <code>f</code>는 항상 마지막.</li>
+              <li><strong>NFS vs Samba</strong>: Linux↔Linux는 NFS(2049) · Windows 끼면 Samba(445).</li>
+              <li><strong>FTP Passive</strong>가 기본 — 방화벽·NAT 환경에서 Active는 데이터 세션이 막힌다.</li>
+              <li><strong>tee로 sudo 리다이렉트</strong>: <code>echo ... | sudo tee -a /etc/...</code> (쉘이 먼저 리다이렉트를 평가해 sudo 효과가 무력화되는 문제 회피).</li>
+              <li><strong>firewalld --permanent</strong>로 저장 후 <code>--reload</code>, 아니면 재부팅 시 설정 소실.</li>
+              <li><strong>URI ⊃ URL + URN</strong> — URL은 위치 기반, URN은 이름 기반 식별자.</li>
+            </ol>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/notes.js"></script>
+</body>
+</html>

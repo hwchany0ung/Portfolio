@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AWS 클라우드 기초 — IAM · S3 · EC2 · VPC · Lambda · RDS 학습 정리" />
+  <title>클라우드 | Notes | 황찬영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <style>
+    .svc-chip{display:inline-block;padding:.2rem .55rem;border-radius:12px;font-size:.8em;font-weight:700;margin-right:.3rem}
+    .svc-compute{background:rgba(255,153,0,.15);color:#ff9900;border:1px solid #ff9900}
+    .svc-storage{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid #4ade80}
+    .svc-network{background:rgba(0,212,255,.15);color:#00d4ff;border:1px solid #00d4ff}
+    .svc-security{background:rgba(255,71,87,.15);color:#ff4757;border:1px solid #ff4757}
+    .svc-db{background:rgba(123,47,247,.2);color:#b69cff;border:1px solid #7b2ff7}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">&lt;CY /&gt;</a>
+      <ul class="nav-links">
+        <li><a href="../index.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="../skills.html"><span class="nav-icon">⚡</span> Skills</a></li>
+        <li><a href="../projects.html"><span class="nav-icon">🚀</span> Projects</a></li>
+        <li><a href="../ai.html"><span class="nav-icon">🤖</span> AI</a></li>
+        <li><a href="../roadmap.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="../notes.html" class="active"><span class="nav-icon">📚</span> Notes</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="notes-page">
+    <div class="notes-page-inner">
+
+      <aside class="notes-sidebar">
+        <nav class="notes-sidebar-nav">
+          <a href="../notes.html" class="sidebar-back">← 목록으로</a>
+          <div class="sidebar-title">목차</div>
+          <a href="#overview" class="sidebar-chapter active">☁️ AWS 개요</a>
+          <a href="#iam"      class="sidebar-chapter">🔐 IAM 계정 관리</a>
+          <a href="#s3"       class="sidebar-chapter">📦 S3 스토리지</a>
+          <a href="#ec2"      class="sidebar-chapter">🖥️ EC2 컴퓨팅</a>
+          <a href="#vpc"      class="sidebar-chapter">🌐 VPC 네트워킹</a>
+          <a href="#sg-nacl"  class="sidebar-chapter">🛡️ 보안 그룹 vs NACL</a>
+          <a href="#lambda"   class="sidebar-chapter">⚡ Lambda Serverless</a>
+          <a href="#rds"      class="sidebar-chapter">🗄️ RDS 관리형 DB</a>
+          <a href="#elb"      class="sidebar-chapter">⚖️ ELB (ALB/NLB/GWLB)</a>
+          <a href="#asg"      class="sidebar-chapter">📈 Auto Scaling</a>
+          <a href="#endpoint" class="sidebar-chapter">🔌 VPC Endpoint</a>
+          <a href="#summary"  class="sidebar-chapter">🎯 핵심 정리</a>
+        </nav>
+      </aside>
+
+      <main class="notes-content">
+        <div class="notes-content-header">
+          <h1>☁️ AWS 클라우드</h1>
+          <div class="notes-breadcrumb">
+            <a href="../notes.html">Notes</a>
+            <span>/</span>
+            <span>클라우드</span>
+            <span>/</span>
+            <span>AWS 기초 ~ 응용</span>
+            <span style="margin-left:auto;">
+              <span class="status-badge done">완료</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="notes-body">
+
+          <section id="overview">
+            <h2>☁️ AWS 개요</h2>
+            <div class="callout">
+              <strong>출처:</strong> 형님IT AWS 클라우드 책 (김정우 강사) — 1~22장
+              · <strong>학습 목표:</strong> IAM·S3·EC2·VPC·Lambda·RDS 핵심 서비스를 이해하고 실습까지 완료한다.
+            </div>
+
+            <h3>AWS 서비스 카테고리</h3>
+            <table class="data-table">
+              <thead>
+                <tr><th>카테고리</th><th>대표 서비스</th><th>용도</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="svc-chip svc-compute">Compute</span></td><td>EC2, Lambda, ECS, EKS</td><td>애플리케이션 실행</td></tr>
+                <tr><td><span class="svc-chip svc-storage">Storage</span></td><td>S3, EBS, EFS, Glacier</td><td>데이터 저장</td></tr>
+                <tr><td><span class="svc-chip svc-network">Network</span></td><td>VPC, Route 53, CloudFront, ELB</td><td>네트워크·CDN·DNS</td></tr>
+                <tr><td><span class="svc-chip svc-db">Database</span></td><td>RDS, DynamoDB, ElastiCache</td><td>관계형/NoSQL/캐시 DB</td></tr>
+                <tr><td><span class="svc-chip svc-security">Security</span></td><td>IAM, KMS, WAF, Shield</td><td>인증·암호화·공격 방어</td></tr>
+              </tbody>
+            </table>
+
+            <h3>리전(Region) · AZ · Edge</h3>
+            <ul>
+              <li><strong>Region</strong> — 지리적 영역 (예: 서울 <code>ap-northeast-2</code>)</li>
+              <li><strong>Availability Zone (AZ)</strong> — 리전 안의 독립된 데이터센터. 장애 격리용 (리전당 2~6개)</li>
+              <li><strong>Edge Location</strong> — CloudFront CDN 캐시 거점 (전 세계 400+개)</li>
+            </ul>
+          </section>
+
+          <section id="iam">
+            <h2>🔐 IAM — 계정 & 접근 관리</h2>
+            <p><strong>IAM (Identity and Access Management)</strong> = AWS 리소스에 대한 접근 제어 서비스.</p>
+
+            <h3>4대 구성 요소</h3>
+            <table class="data-table">
+              <thead>
+                <tr><th>요소</th><th>설명</th><th>비유</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>User</strong></td><td>개별 사람/앱에 부여하는 자격증명</td><td>직원 사원증</td></tr>
+                <tr><td><strong>Group</strong></td><td>여러 사용자에게 동일 권한 일괄 적용</td><td>부서</td></tr>
+                <tr><td><strong>Role</strong></td><td>EC2·Lambda 등 AWS 서비스에 부여하는 권한</td><td>역할 배지 (교대로 착용)</td></tr>
+                <tr><td><strong>Policy</strong></td><td>JSON 권한 문서 (Allow/Deny)</td><td>출입 규정</td></tr>
+              </tbody>
+            </table>
+
+            <h3>IAM 계정 생성 절차</h3>
+            <ol>
+              <li>AWS 콘솔 → IAM 서비스</li>
+              <li>사용자 그룹 생성 → <code>AdministratorAccess</code> 정책 연결</li>
+              <li>사용자 <code>myuser</code> 생성 → 그룹에 추가</li>
+              <li>액세스 키 생성 → CSV 파일 저장 (<code>myaccesskey.csv</code>)</li>
+              <li>IAM 계정으로 재로그인</li>
+            </ol>
+
+            <h3>Policy 예시 — S3 읽기 허용</h3>
+<pre><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": ["s3:GetObject", "s3:ListBucket"],
+    "Resource": ["arn:aws:s3:::mybucket/*"]
+  }]
+}</code></pre>
+
+            <div class="callout">
+              <strong>IAM 보안 모범 사례:</strong>
+              ① 루트 계정 MFA 활성화 ·
+              ② <strong>최소 권한 원칙</strong>(Principle of Least Privilege) 적용 ·
+              ③ 액세스 키 정기 교체 ·
+              ④ 루트 계정 일상 사용 금지
+            </div>
+          </section>
+
+          <section id="s3">
+            <h2>📦 S3 — Simple Storage Service</h2>
+            <ul>
+              <li>객체 스토리지 (파일 단위 저장) · <strong>11 9s (99.999999999%)</strong> 내구성</li>
+              <li><strong>Bucket</strong> — 최상위 컨테이너 (이름은 전 세계 유일)</li>
+              <li><strong>Object</strong> — 버킷에 저장되는 파일 (최대 5TB)</li>
+            </ul>
+
+            <h3>버킷 정책 — 정적 웹 호스팅 공개 읽기</h3>
+<pre><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::버킷이름/*"
+  }]
+}</code></pre>
+
+            <h3>S3 스토리지 클래스</h3>
+            <table class="data-table">
+              <thead>
+                <tr><th>클래스</th><th>용도</th><th>특징</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>S3 Standard</td><td>자주 접근하는 데이터</td><td>기본값, 고가용성</td></tr>
+                <tr><td>S3 Standard-IA</td><td>가끔 접근 (Infrequent Access)</td><td>저장 저렴, 읽기 과금</td></tr>
+                <tr><td>S3 Intelligent-Tiering</td><td>접근 패턴 불규칙</td><td>자동 계층 이동</td></tr>
+                <tr><td>S3 Glacier</td><td>아카이브·장기 보관</td><td>분~시간 단위 복원</td></tr>
+                <tr><td>S3 Glacier Deep Archive</td><td>7~10년 보관</td><td>최저 비용·12시간 복원</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="ec2">
+            <h2>🖥️ EC2 — Elastic Compute Cloud</h2>
+            <p>AWS의 가상 서버 서비스. 인스턴스 유형 선택 → AMI → 스토리지 → 보안 그룹 → 키페어 순으로 구성한다.</p>
+
+            <h3>인스턴스 유형 (Family)</h3>
+            <table class="data-table">
+              <thead>
+                <tr><th>패밀리</th><th>용도</th><th>예시</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>T (범용 버스트)</td><td>저부하 웹/개발</td><td>t3.micro, t4g.small</td></tr>
+                <tr><td>M (범용)</td><td>일반 애플리케이션</td><td>m5.large, m6i.xlarge</td></tr>
+                <tr><td>C (Compute)</td><td>CPU 집약 작업</td><td>c5.xlarge, c6g.2xlarge</td></tr>
+                <tr><td>R (Memory)</td><td>메모리 집약·캐시·DB</td><td>r5.large, r6i.4xlarge</td></tr>
+                <tr><td>G / P (GPU)</td><td>머신러닝·그래픽</td><td>g4dn.xlarge, p3.2xlarge</td></tr>
+              </tbody>
+            </table>
+
+            <h3>구매 옵션 4종</h3>
+            <ul>
+              <li><strong>On-Demand</strong> — 사용한 만큼 과금 (기본값, 탄력적)</li>
+              <li><strong>Reserved (RI)</strong> — 1~3년 약정, 최대 72% 할인</li>
+              <li><strong>Savings Plans</strong> — 월 사용량 약정, 유연한 할인</li>
+              <li><strong>Spot</strong> — 여유 용량 경매, 최대 90% 할인 (중단 가능)</li>
+            </ul>
+          </section>
+
+          <section id="vpc">
+            <h2>🌐 VPC — Virtual Private Cloud</h2>
+            <p>AWS 클라우드 내에서 논리적으로 격리된 가상 네트워크. <code>10.0.0.0/16</code> 같은 CIDR 블록으로 IP 주소 범위를 정의한다.</p>
+
+            <h3>실습 아키텍처</h3>
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 760 360" style="max-width:100%;height:auto">
+                <defs>
+                  <marker id="arrVpc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
+                  </marker>
+                </defs>
+                <!-- 인터넷 -->
+                <rect x="320" y="10" width="120" height="40" rx="20" fill="rgba(255,71,87,.2)" stroke="#ff4757" stroke-width="2"/>
+                <text x="380" y="35" text-anchor="middle" fill="#ff4757" font-weight="700">🌐 Internet</text>
+
+                <!-- IGW -->
+                <rect x="320" y="75" width="120" height="38" rx="8" fill="rgba(226,183,20,.2)" stroke="#e2b714" stroke-width="2"/>
+                <text x="380" y="99" text-anchor="middle" fill="#e2b714" font-weight="700">MyIGW</text>
+
+                <!-- VPC outer -->
+                <rect x="40" y="130" width="680" height="220" rx="12" fill="none" stroke="#7b2ff7" stroke-width="2" stroke-dasharray="6 4"/>
+                <text x="60" y="150" fill="#b69cff" font-weight="700" font-size="14">VPC (MyVPC01: 10.0.0.0/16)</text>
+
+                <!-- Public subnet -->
+                <rect x="70" y="165" width="300" height="170" rx="8" fill="rgba(74,222,128,.08)" stroke="#4ade80" stroke-width="2"/>
+                <text x="220" y="185" text-anchor="middle" fill="#4ade80" font-weight="700">Public Subnet 10.0.1.0/24</text>
+
+                <rect x="95" y="200" width="110" height="50" rx="6" fill="rgba(255,153,0,.15)" stroke="#ff9900"/>
+                <text x="150" y="222" text-anchor="middle" fill="#ff9900" font-weight="700" font-size="12">MyWeb1 EC2</text>
+                <text x="150" y="238" text-anchor="middle" fill="#ccc" font-size="10">10.0.1.101</text>
+
+                <rect x="230" y="200" width="120" height="50" rx="6" fill="rgba(0,212,255,.15)" stroke="#00d4ff"/>
+                <text x="290" y="222" text-anchor="middle" fill="#00d4ff" font-weight="700" font-size="12">NAT Gateway</text>
+                <text x="290" y="238" text-anchor="middle" fill="#ccc" font-size="10">탄력적 IP</text>
+
+                <text x="100" y="290" fill="#999" font-size="11">Route: 0.0.0.0/0 → IGW</text>
+
+                <!-- Private subnet -->
+                <rect x="390" y="165" width="310" height="170" rx="8" fill="rgba(123,47,247,.08)" stroke="#7b2ff7" stroke-width="2"/>
+                <text x="545" y="185" text-anchor="middle" fill="#b69cff" font-weight="700">Private Subnet 10.0.2.0/24</text>
+
+                <rect x="470" y="215" width="150" height="50" rx="6" fill="rgba(123,47,247,.25)" stroke="#7b2ff7"/>
+                <text x="545" y="237" text-anchor="middle" fill="#b69cff" font-weight="700" font-size="12">MyDB1 EC2</text>
+                <text x="545" y="253" text-anchor="middle" fill="#ccc" font-size="10">10.0.2.101</text>
+
+                <text x="420" y="305" fill="#999" font-size="11">Route: 0.0.0.0/0 → NAT GW</text>
+
+                <!-- Arrows -->
+                <line x1="380" y1="50" x2="380" y2="72" stroke="#ff4757" stroke-width="2" marker-end="url(#arrVpc)"/>
+                <line x1="380" y1="113" x2="290" y2="200" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrVpc)"/>
+                <line x1="350" y1="225" x2="470" y2="240" stroke="#00d4ff" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrVpc)"/>
+                <text x="405" y="215" fill="#4ade80" font-size="11" font-weight="700">NAT 경유 아웃바운드</text>
+              </svg>
+            </div>
+
+            <h3>VPC 구성 요소</h3>
+            <ul>
+              <li><strong>IGW (Internet Gateway)</strong> — VPC↔인터넷 양방향 통신 · 퍼블릭 서브넷 라우팅 테이블에 <code>0.0.0.0/0 → IGW</code></li>
+              <li><strong>NAT Gateway</strong> — 프라이빗 EC2의 <em>아웃바운드</em>만 허용 (인바운드 차단) · 퍼블릭 서브넷 배치 · 탄력적 IP 필요</li>
+              <li><strong>Public Subnet</strong> — 인터넷 직접 접근 가능</li>
+              <li><strong>Private Subnet</strong> — 인터넷 직접 접근 불가 · NAT 통해서만 아웃바운드</li>
+              <li><strong>라우팅 테이블</strong> — 서브넷 트래픽 경로 정의</li>
+            </ul>
+
+            <h3>통신 테스트</h3>
+<pre><code class="language-bash"># 퍼블릭 EC2 → 프라이빗 EC2 SSH 접속
+[root@MyWeb1 ~]# ssh root@10.0.2.101
+
+# 프라이빗 EC2에서 NAT GW 경유 인터넷 통신
+[root@MyDB1 ~]# ping -c 3 8.8.8.8
+[root@MyDB1 ~]# curl -I http://www.google.com</code></pre>
+          </section>
+
+          <section id="sg-nacl">
+            <h2>🛡️ 보안 그룹 vs NACL</h2>
+            <table class="data-table">
+              <thead>
+                <tr><th>항목</th><th>보안 그룹 (Security Group)</th><th>NACL (Network ACL)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>적용 대상</td><td>EC2 인스턴스(ENI)</td><td>서브넷 전체</td></tr>
+                <tr><td>상태 추적</td><td><strong>Stateful</strong> — 응답 자동 허용</td><td><strong>Stateless</strong> — 인/아웃 각각 설정</td></tr>
+                <tr><td>규칙 처리</td><td>모든 규칙 평가 (OR)</td><td>번호 순서대로 처음 매칭 적용</td></tr>
+                <tr><td>기본 동작</td><td>인바운드 <strong>전체 차단</strong></td><td>인/아웃 <strong>전체 허용</strong> (default)</td></tr>
+                <tr><td>Allow/Deny</td><td>Allow만 가능</td><td>Allow + <strong>Deny 가능</strong></td></tr>
+              </tbody>
+            </table>
+
+            <div class="callout">
+              <strong>흔한 출제:</strong> "보안 그룹은 Stateful, NACL은 Stateless" — 인바운드 요청을 허용하면 SG는 응답까지 자동 허용하지만, NACL은 아웃바운드 규칙에도 별도로 허용을 적어줘야 한다.
+            </div>
+          </section>
+
+          <section id="lambda">
+            <h2>⚡ Lambda — Serverless</h2>
+            <p>서버 관리 없이 코드만 작성해 실행. <strong>이벤트 트리거</strong> 기반 · <strong>유휴 비용 0원</strong> · 실행 시간 최대 <strong>15분</strong>.</p>
+
+            <h3>Lambda vs EC2</h3>
+            <table class="data-table">
+              <thead>
+                <tr><th>항목</th><th>Lambda</th><th>EC2</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>서버 관리</td><td>불필요 (서버리스)</td><td>직접 관리</td></tr>
+                <tr><td>실행 방식</td><td>이벤트 트리거</td><td>지속 실행</td></tr>
+                <tr><td>비용</td><td>실행 시간 + 요청 수</td><td>가동 시간 (유휴도 과금)</td></tr>
+                <tr><td>실행 시간 제한</td><td>최대 15분</td><td>제한 없음</td></tr>
+                <tr><td>확장성</td><td>자동 수평 확장</td><td>Auto Scaling 필요</td></tr>
+              </tbody>
+            </table>
+
+            <h3>기본 Python Lambda</h3>
+<pre><code class="language-python">import json
+
+def lambda_handler(event, context):
+    print("Lambda 함수 실행!")
+    print(f"이벤트: {event}")
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }</code></pre>
+
+            <h3>S3 트리거 — 업로드 자동 처리</h3>
+<pre><code class="language-python">import json
+import boto3
+
+def lambda_handler(event, context):
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key    = event['Records'][0]['s3']['object']['key']
+
+    s3 = boto3.client('s3')
+    response = s3.get_object(Bucket=bucket, Key=key)
+    content = response['Body'].read().decode('utf-8')
+    print(f"파일 내용: {content}")
+
+    return {'statusCode': 200, 'body': json.dumps(f'{key} 처리 완료')}</code></pre>
+
+            <h3>Serverless 활용 패턴</h3>
+            <table class="data-table">
+              <thead>
+                <tr><th>사례</th><th>구성</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>이미지 썸네일 생성</td><td>S3 업로드 → Lambda → 썸네일 저장</td></tr>
+                <tr><td>실시간 데이터 처리</td><td>Kinesis → Lambda → DynamoDB</td></tr>
+                <tr><td>REST API 백엔드</td><td>API Gateway → Lambda → RDS/DynamoDB</td></tr>
+                <tr><td>예약 작업 (Cron)</td><td>CloudWatch Events → Lambda</td></tr>
+                <tr><td>알림 발송</td><td>SNS/SQS → Lambda → 이메일/SMS</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="rds">
+            <h2>🗄️ RDS — 관리형 관계형 DB</h2>
+            <p>MySQL · PostgreSQL · MariaDB · Oracle · SQL Server · Aurora를 AWS가 백업·패치·복제·장애조치까지 대신 관리.</p>
+
+            <h3>주요 기능</h3>
+            <ul>
+              <li><strong>Multi-AZ 배포</strong> — 다른 AZ에 동기 Standby 복제본, 장애 시 자동 Failover</li>
+              <li><strong>Read Replica</strong> — 비동기 읽기 전용 복제본, 읽기 부하 분산 (최대 5개)</li>
+              <li><strong>자동 백업</strong> — 매일 스냅샷 + 5분 단위 트랜잭션 로그 (최대 35일 보관)</li>
+              <li><strong>DB Parameter Group</strong> — DB 엔진 설정 일괄 관리</li>
+            </ul>
+
+            <h3>Multi-AZ vs Read Replica</h3>
+            <table class="data-table">
+              <thead>
+                <tr><th>항목</th><th>Multi-AZ</th><th>Read Replica</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>목적</td><td>고가용성 (HA)</td><td>읽기 성능 확장</td></tr>
+                <tr><td>복제 방식</td><td>동기 복제</td><td>비동기 복제</td></tr>
+                <tr><td>접근 가능</td><td>Standby 접근 불가</td><td>읽기 가능</td></tr>
+                <tr><td>장애 처리</td><td>자동 Failover</td><td>수동 승격 필요</td></tr>
+              </tbody>
+            </table>
+
+            <div class="callout">
+              <strong>Aurora:</strong> MySQL/PostgreSQL 호환, 스토리지 자동 확장(최대 128TB), 최대 15개 Read Replica, 3개 AZ에 6카피 복제.
+            </div>
+          </section>
+
+          <section id="elb">
+            <h2>⚖️ ELB — 3종 로드밸런서</h2>
+            <p>Elastic Load Balancing은 트래픽을 여러 타깃(EC2/컨테이너/IP/Lambda)에 분산한다. 계층과 용도로 3종을 구분한다.</p>
+
+            <svg viewBox="0 0 780 360" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="ELB 3종 라우팅 비교">
+              <defs>
+                <marker id="elbArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
+                <marker id="elbArrG" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#4ade80"/></marker>
+                <marker id="elbArrP" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#7b2ff7"/></marker>
+                <style>
+                  .elbbox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
+                  .elbL{fill:#1a2030;stroke:#00d4ff;stroke-width:1.5;rx:6;ry:6}
+                  .elbN{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:6;ry:6}
+                  .elbG{fill:#201a2e;stroke:#7b2ff7;stroke-width:1.5;rx:6;ry:6}
+                  .elt{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
+                  .els{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
+                  .lab{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
+                </style>
+              </defs>
+
+              <!-- ALB row -->
+              <g transform="translate(0,10)">
+                <rect class="elbbox" x="10" y="10" width="80" height="56"/>
+                <text class="elt" x="50" y="32">👥 Client</text>
+                <text class="els" x="50" y="50">HTTPS</text>
+
+                <rect class="elbL" x="130" y="0" width="160" height="76"/>
+                <text class="elt" x="210" y="22">ALB · L7</text>
+                <text class="els" x="210" y="38">Host/Path 라우팅</text>
+                <text class="els" x="210" y="52">/api/* → api-tg</text>
+                <text class="els" x="210" y="66">/img/* → img-tg</text>
+
+                <rect class="elbbox" x="340" y="0" width="110" height="34"/>
+                <text class="elt" x="395" y="22">api-tg (EC2)</text>
+                <rect class="elbbox" x="340" y="44" width="110" height="32"/>
+                <text class="elt" x="395" y="64">img-tg (Lambda)</text>
+
+                <path d="M 90,38 L 128,38" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#elbArr)"/>
+                <path d="M 290,30 L 338,17" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#elbArr)"/>
+                <path d="M 290,50 L 338,60" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#elbArr)"/>
+
+                <text class="lab" x="580" y="40">WAF · SSL 오프로드 · WebSocket</text>
+
+                <circle r="4" fill="#00d4ff"><animateMotion dur="2.2s" repeatCount="indefinite" path="M 90,38 L 128,38 L 290,30 L 338,17"/></circle>
+              </g>
+
+              <!-- NLB row -->
+              <g transform="translate(0,120)">
+                <rect class="elbbox" x="10" y="10" width="80" height="56"/>
+                <text class="elt" x="50" y="32">🎮 Game</text>
+                <text class="els" x="50" y="50">TCP/UDP</text>
+
+                <rect class="elbN" x="130" y="0" width="160" height="76"/>
+                <text class="elt" x="210" y="22">NLB · L4</text>
+                <text class="els" x="210" y="38">정적 IP · 초당 수백만</text>
+                <text class="els" x="210" y="52">소스 IP 보존</text>
+                <text class="els" x="210" y="66">TLS passthrough</text>
+
+                <rect class="elbbox" x="340" y="0" width="110" height="34"/>
+                <text class="elt" x="395" y="22">Game EC2-1</text>
+                <rect class="elbbox" x="340" y="44" width="110" height="32"/>
+                <text class="elt" x="395" y="64">Game EC2-2</text>
+
+                <path d="M 90,38 L 128,38" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#elbArrG)"/>
+                <path d="M 290,30 L 338,17" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#elbArrG)"/>
+                <path d="M 290,50 L 338,60" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#elbArrG)"/>
+
+                <text class="lab" x="580" y="40">극저지연 · Elastic IP 고정 · IoT/MQTT</text>
+                <circle r="4" fill="#4ade80"><animateMotion dur="1.6s" repeatCount="indefinite" path="M 90,38 L 128,38 L 290,50 L 338,60"/></circle>
+              </g>
+
+              <!-- GWLB row -->
+              <g transform="translate(0,230)">
+                <rect class="elbbox" x="10" y="10" width="80" height="56"/>
+                <text class="elt" x="50" y="32">🌐 VPC</text>
+                <text class="els" x="50" y="50">Inbound</text>
+
+                <rect class="elbG" x="130" y="0" width="160" height="76"/>
+                <text class="elt" x="210" y="22">GWLB · L3</text>
+                <text class="els" x="210" y="38">GENEVE 터널</text>
+                <text class="els" x="210" y="52">투명 삽입 (bump-in-wire)</text>
+                <text class="els" x="210" y="66">Palo Alto / Checkpoint</text>
+
+                <rect class="elbbox" x="340" y="0" width="110" height="34"/>
+                <text class="elt" x="395" y="22">Firewall #1</text>
+                <rect class="elbbox" x="340" y="44" width="110" height="32"/>
+                <text class="elt" x="395" y="64">IDS/IPS</text>
+
+                <rect class="elbbox" x="500" y="10" width="80" height="56"/>
+                <text class="elt" x="540" y="32">🎯 App</text>
+                <text class="els" x="540" y="50">타깃 서브넷</text>
+
+                <path d="M 90,38 L 128,38" stroke="#7b2ff7" stroke-width="2" fill="none" marker-end="url(#elbArrP)"/>
+                <path d="M 290,30 L 338,17" stroke="#7b2ff7" stroke-width="2" fill="none" marker-end="url(#elbArrP)"/>
+                <path d="M 450,17 L 498,38" stroke="#7b2ff7" stroke-width="2" fill="none" marker-end="url(#elbArrP)"/>
+
+                <text class="lab" x="680" y="40">3rd-party 보안장비 체이닝</text>
+                <circle r="4" fill="#7b2ff7"><animateMotion dur="2.6s" repeatCount="indefinite" path="M 90,38 L 128,38 L 290,30 L 338,17 L 450,17 L 498,38"/></circle>
+              </g>
+            </svg>
+
+            <table class="data-table">
+              <thead>
+                <tr><th>종류</th><th>계층</th><th>프로토콜</th><th>주요 용도</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>ALB</strong> (Application)</td><td>L7</td><td>HTTP / HTTPS / gRPC / WebSocket</td><td>Host/Path 기반 라우팅, WAF 연동, 컨테이너/Lambda 타깃</td></tr>
+                <tr><td><strong>NLB</strong> (Network)</td><td>L4</td><td>TCP / UDP / TLS</td><td>고정 IP·극저지연·초당 수백만 요청, 게임/IoT 서버</td></tr>
+                <tr><td><strong>GWLB</strong> (Gateway)</td><td>L3</td><td>IP (GENEVE 터널)</td><td>3rd-party 방화벽/IDS 체인 통과</td></tr>
+              </tbody>
+            </table>
+
+            <div class="callout">
+              <strong>헬스 체크:</strong> ALB/NLB 모두 Target Group 단위로 주기적 헬스 체크(HTTP 200, TCP 핸드셰이크). 실패한 타깃은 자동으로 라우팅 제외 → Auto Scaling과 결합해 <em>자가 치유</em> 구성.
+            </div>
+          </section>
+
+          <section id="asg">
+            <h2>📈 Auto Scaling Group (ASG)</h2>
+            <p>수요에 따라 EC2 인스턴스 수를 자동으로 늘리고 줄이는 수평 확장 서비스. 4개 축으로 구성한다.</p>
+
+            <svg viewBox="0 0 780 360" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="Auto Scaling Group 동작 흐름">
+              <defs>
+                <marker id="asgArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
+                <linearGradient id="cpuGrad" x1="0" x2="1"><stop offset="0" stop-color="#4ade80"/><stop offset=".5" stop-color="#e2b714"/><stop offset="1" stop-color="#ff4757"/></linearGradient>
+                <style>
+                  .asgBox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
+                  .asgG{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:6;ry:6}
+                  .asgO{fill:#2a2010;stroke:#e2b714;stroke-width:1.5;rx:6;ry:6}
+                  .asgT{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
+                  .asgS{fill:#a0a0a0;font:10.5px sans-serif;text-anchor:middle}
+                  .axis{stroke:#444;stroke-width:1}
+                  .alab{fill:#a0a0a0;font:10px sans-serif}
+                </style>
+              </defs>
+
+              <!-- CloudWatch -->
+              <rect class="asgBox" x="20" y="20" width="160" height="80"/>
+              <text class="asgT" x="100" y="42">📊 CloudWatch</text>
+              <text class="asgS" x="100" y="60">CPUUtilization</text>
+              <!-- mini chart -->
+              <line class="axis" x1="34" y1="90" x2="166" y2="90"/>
+              <polyline points="34,84 58,80 78,76 98,68 118,60 138,70 158,78" fill="none" stroke="url(#cpuGrad)" stroke-width="2">
+                <animate attributeName="points" dur="4s" repeatCount="indefinite"
+                  values="34,84 58,80 78,76 98,68 118,60 138,70 158,78;
+                          34,86 58,78 78,66 98,54 118,48 138,56 158,70;
+                          34,84 58,80 78,76 98,68 118,60 138,70 158,78"/>
+              </polyline>
+
+              <!-- Scaling Policy -->
+              <rect class="asgO" x="230" y="20" width="160" height="80"/>
+              <text class="asgT" x="310" y="42">⚙️ Scaling Policy</text>
+              <text class="asgS" x="310" y="60">Target Tracking</text>
+              <text class="asgS" x="310" y="76">CPU 50%</text>
+
+              <!-- Launch Template -->
+              <rect class="asgBox" x="440" y="20" width="160" height="80"/>
+              <text class="asgT" x="520" y="42">📦 Launch Template</text>
+              <text class="asgS" x="520" y="60">AMI · type · SG · Role</text>
+              <text class="asgS" x="520" y="76">UserData 부트스트랩</text>
+
+              <!-- ELB -->
+              <rect class="asgBox" x="640" y="20" width="120" height="80"/>
+              <text class="asgT" x="700" y="42">⚖️ ALB</text>
+              <text class="asgS" x="700" y="60">Health Check</text>
+              <text class="asgS" x="700" y="76">Target Group</text>
+
+              <!-- arrows top -->
+              <path d="M 180,60 L 228,60" stroke="#00d4ff" stroke-width="2" marker-end="url(#asgArr)"/>
+              <path d="M 390,60 L 438,60" stroke="#00d4ff" stroke-width="2" marker-end="url(#asgArr)"/>
+
+              <!-- ASG box encompassing instances -->
+              <rect x="30" y="140" width="720" height="180" fill="#0e1420" stroke="#00d4ff" stroke-width="1.5" rx="8" stroke-dasharray="6 4"/>
+              <text x="50" y="160" fill="#00d4ff" font-size="12" font-weight="bold">Auto Scaling Group — Min 2 · Desired 4 · Max 8</text>
+
+              <!-- AZ labels -->
+              <text x="180" y="180" fill="#a0a0a0" font-size="11" text-anchor="middle">AZ-a</text>
+              <text x="440" y="180" fill="#a0a0a0" font-size="11" text-anchor="middle">AZ-b</text>
+              <text x="660" y="180" fill="#a0a0a0" font-size="11" text-anchor="middle">AZ-c (scale-out)</text>
+
+              <!-- instances AZ-a -->
+              <rect class="asgG" x="110" y="200" width="64" height="60"/><text class="asgT" x="142" y="226">EC2</text><text class="asgS" x="142" y="244">healthy</text>
+              <rect class="asgG" x="184" y="200" width="64" height="60"/><text class="asgT" x="216" y="226">EC2</text><text class="asgS" x="216" y="244">healthy</text>
+              <!-- instances AZ-b -->
+              <rect class="asgG" x="370" y="200" width="64" height="60"/><text class="asgT" x="402" y="226">EC2</text><text class="asgS" x="402" y="244">healthy</text>
+              <rect class="asgG" x="444" y="200" width="64" height="60"/><text class="asgT" x="476" y="226">EC2</text><text class="asgS" x="476" y="244">healthy</text>
+              <!-- new instance AZ-c -->
+              <rect class="asgO" x="628" y="200" width="64" height="60" opacity="0">
+                <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;0;1;1;0"/>
+              </rect>
+              <text class="asgT" x="660" y="226" opacity="0">
+                <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;0;1;1;0"/>
+                NEW
+              </text>
+              <text class="asgS" x="660" y="244" opacity="0">
+                <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;0;1;1;0"/>
+                warming
+              </text>
+
+              <!-- scale signal arrow -->
+              <path d="M 310,100 Q 310,170 660,198" stroke="#e2b714" stroke-width="2" fill="none" stroke-dasharray="5 3" marker-end="url(#asgArr)"/>
+              <text x="500" y="160" fill="#e2b714" font-size="10" font-weight="bold">scale-out</text>
+
+              <!-- traffic particles from ALB to instances -->
+              <circle r="4" fill="#00d4ff"><animateMotion dur="2s" repeatCount="indefinite" path="M 700,100 L 216,200"/></circle>
+              <circle r="4" fill="#00d4ff"><animateMotion dur="2s" repeatCount="indefinite" begin=".7s" path="M 700,100 L 402,200"/></circle>
+              <circle r="4" fill="#00d4ff"><animateMotion dur="2s" repeatCount="indefinite" begin="1.4s" path="M 700,100 L 660,200"/></circle>
+
+              <!-- health check cross on failed (cycle) -->
+              <g transform="translate(142,230)">
+                <circle r="22" fill="none" stroke="#ff4757" stroke-width="2" opacity="0">
+                  <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;0;1;0;0"/>
+                </circle>
+                <text fill="#ff4757" font-size="18" text-anchor="middle" y="6" opacity="0">
+                  <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;0;1;0;0"/>
+                  ✕
+                </text>
+              </g>
+              <text x="142" y="286" fill="#ff4757" font-size="10" text-anchor="middle" opacity="0">
+                <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;0;1;1;0"/>
+                unhealthy → replace
+              </text>
+
+              <!-- legend -->
+              <text class="alab" x="40" y="340">녹색 = healthy · 황색 = 신규 warming · 빨강 X = 헬스 실패 → ASG가 자동 교체 (self-healing)</text>
+            </svg>
+
+            <ol>
+              <li><strong>Launch Template</strong> — AMI, 인스턴스 타입, 키페어, SG, IAM Role, UserData 정의</li>
+              <li><strong>Min / Desired / Max</strong> — 유지해야 할 인스턴스 개수 범위</li>
+              <li><strong>Scaling Policy</strong> — Target Tracking(가장 단순) / Step / Scheduled</li>
+              <li><strong>Health Check</strong> — EC2 상태 + ELB 헬스 체크 통합, 비정상 인스턴스 자동 교체</li>
+            </ol>
+
+            <h3>Target Tracking 예시 — CPU 50% 유지</h3>
+<pre><code class="language-bash">aws autoscaling put-scaling-policy \
+  --auto-scaling-group-name web-asg \
+  --policy-name cpu-50 \
+  --policy-type TargetTrackingScaling \
+  --target-tracking-configuration '{
+    "PredefinedMetricSpecification": {"PredefinedMetricType":"ASGAverageCPUUtilization"},
+    "TargetValue": 50.0
+  }'</code></pre>
+
+            <div class="callout">
+              <strong>Cooldown:</strong> 스케일 액션 직후 다음 액션을 미루는 대기 시간(기본 300초). 짧은 스파이크에 과반응하지 않도록 해준다.
+            </div>
+          </section>
+
+          <section id="endpoint">
+            <h2>🔌 VPC Endpoint — NAT 없이 AWS 서비스 호출</h2>
+            <p>프라이빗 서브넷에서 AWS API를 호출할 때 인터넷 경유(NAT GW 비용)를 없애는 기능. 2가지 타입이 있다.</p>
+
+            <svg viewBox="0 0 780 380" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="VPC Endpoint 2종 비교 (Gateway vs Interface)">
+              <defs>
+                <marker id="epArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
+                <marker id="epArrR" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#ff4757"/></marker>
+                <marker id="epArrG" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#4ade80"/></marker>
+                <style>
+                  .epVpc{fill:#0e1420;stroke:#00d4ff;stroke-width:1.5;rx:8;ry:8;stroke-dasharray:6 4}
+                  .epSub{fill:#131a14;stroke:#4ade80;stroke-width:1.2;rx:6;ry:6}
+                  .epBox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
+                  .epG{fill:#201a2e;stroke:#7b2ff7;stroke-width:1.5;rx:6;ry:6}
+                  .epI{fill:#112a2a;stroke:#00d4ff;stroke-width:1.5;rx:6;ry:6}
+                  .ept{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
+                  .eps{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
+                  .eplab{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
+                </style>
+              </defs>
+
+              <!-- LEFT: Without endpoint (expensive NAT path) -->
+              <text fill="#ff4757" font-size="12" font-weight="bold" x="20" y="18">❌ 이전: NAT Gateway 경유 (비용↑)</text>
+              <rect class="epVpc" x="20" y="26" width="360" height="160"/>
+              <rect class="epSub" x="40" y="60" width="110" height="50"/>
+              <text class="ept" x="95" y="82">Private Subnet</text>
+              <text class="eps" x="95" y="98">Lambda / EC2</text>
+              <rect class="epBox" x="180" y="60" width="90" height="50"/>
+              <text class="ept" x="225" y="82">NAT GW</text>
+              <text class="eps" x="225" y="98">$$$/GB</text>
+              <rect class="epBox" x="290" y="60" width="80" height="50"/>
+              <text class="ept" x="330" y="82">IGW</text>
+              <text class="eps" x="330" y="98">Public</text>
+              <rect class="epBox" x="140" y="135" width="120" height="38"/>
+              <text class="ept" x="200" y="158">☁️ S3 · API</text>
+              <path d="M 150,85 L 178,85" stroke="#ff4757" stroke-width="2" marker-end="url(#epArrR)"/>
+              <path d="M 270,85 L 288,85" stroke="#ff4757" stroke-width="2" marker-end="url(#epArrR)"/>
+              <path d="M 330,110 Q 330,140 260,154" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#epArrR)"/>
+              <circle r="4" fill="#ff4757"><animateMotion dur="2.4s" repeatCount="indefinite" path="M 150,85 L 178,85 L 270,85 L 288,85 L 330,110 Q 330,140 260,154"/></circle>
+
+              <!-- RIGHT: With endpoint -->
+              <text fill="#4ade80" font-size="12" font-weight="bold" x="400" y="18">✅ 개선: VPC Endpoint (프라이빗 직결)</text>
+              <rect class="epVpc" x="400" y="26" width="360" height="160"/>
+              <rect class="epSub" x="420" y="50" width="110" height="50"/>
+              <text class="ept" x="475" y="72">Private Subnet</text>
+              <text class="eps" x="475" y="88">Lambda / EC2</text>
+
+              <!-- Gateway EP (for S3/DDB) -->
+              <rect class="epG" x="560" y="40" width="180" height="30"/>
+              <text class="ept" x="650" y="60">Gateway Endpoint (무료)</text>
+              <!-- Interface EP -->
+              <rect class="epI" x="560" y="80" width="180" height="30"/>
+              <text class="ept" x="650" y="100">Interface Endpoint · ENI</text>
+
+              <rect class="epBox" x="580" y="130" width="80" height="40"/>
+              <text class="ept" x="620" y="150">☁️ S3</text>
+              <text class="eps" x="620" y="164">DynamoDB</text>
+              <rect class="epBox" x="670" y="130" width="80" height="40"/>
+              <text class="ept" x="710" y="150">ECR/KMS</text>
+              <text class="eps" x="710" y="164">SQS/SNS…</text>
+
+              <path d="M 530,65 L 558,55" stroke="#7b2ff7" stroke-width="2" marker-end="url(#epArr)"/>
+              <path d="M 530,85 L 558,95" stroke="#00d4ff" stroke-width="2" marker-end="url(#epArr)"/>
+              <path d="M 650,70 L 620,130" stroke="#7b2ff7" stroke-width="2" fill="none" marker-end="url(#epArr)"/>
+              <path d="M 650,110 L 710,130" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#epArr)"/>
+
+              <circle r="4" fill="#7b2ff7"><animateMotion dur="2s" repeatCount="indefinite" path="M 530,65 L 558,55 L 650,70 L 620,130"/></circle>
+              <circle r="4" fill="#00d4ff"><animateMotion dur="2s" repeatCount="indefinite" begin=".8s" path="M 530,85 L 558,95 L 650,110 L 710,130"/></circle>
+
+              <text class="eplab" x="475" y="115">route table prefix</text>
+              <text class="eplab" x="475" y="128">privatelink ENI</text>
+
+              <!-- Comparison table -->
+              <g transform="translate(20,210)">
+                <rect x="0" y="0" width="740" height="150" fill="#111" stroke="#2a2a2a" rx="6"/>
+                <text class="ept" x="370" y="22" fill="#00d4ff">📋 Gateway vs Interface 요약</text>
+                <g font-size="11" fill="#d0d0d0">
+                  <text x="20" y="52" fill="#7b2ff7" font-weight="bold">Gateway Endpoint</text>
+                  <text x="20" y="70">· 지원: S3, DynamoDB <tspan fill="#4ade80">(딱 2종)</tspan></text>
+                  <text x="20" y="86">· 과금: <tspan fill="#4ade80" font-weight="bold">무료</tspan></text>
+                  <text x="20" y="102">· 구성: Route Table에 prefix list 추가</text>
+                  <text x="20" y="118">· 제약: 같은 리전 내 서비스만, 크로스-리전 불가</text>
+                  <text x="20" y="134">· 사용: S3 버킷 접근, DDB 테이블 호출</text>
+
+                  <text x="390" y="52" fill="#00d4ff" font-weight="bold">Interface Endpoint (PrivateLink)</text>
+                  <text x="390" y="70">· 지원: 대부분 AWS 서비스 + 3rd-party SaaS</text>
+                  <text x="390" y="86">· 과금: <tspan fill="#e2b714">시간당 + 데이터 처리 GB</tspan></text>
+                  <text x="390" y="102">· 구성: 서브넷에 ENI(프라이빗 IP) 생성</text>
+                  <text x="390" y="118">· 장점: 온프렘에서 DX/VPN으로도 접근 가능</text>
+                  <text x="390" y="134">· 사용: ECR pull, SQS/SNS/KMS/CloudWatch</text>
+                </g>
+              </g>
+            </svg>
+
+            <table class="data-table">
+              <thead>
+                <tr><th>타입</th><th>지원 서비스</th><th>과금</th><th>연결 방식</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>Gateway Endpoint</strong></td><td>S3 · DynamoDB <em>(2종)</em></td><td>무료</td><td>라우트 테이블에 prefix list 추가</td></tr>
+                <tr><td><strong>Interface Endpoint</strong></td><td>그 외 대부분 (ECR, SQS, SNS, KMS, CloudWatch …)</td><td>시간당 + GB</td><td>ENI(프라이빗 IP) 생성, PrivateLink 기반</td></tr>
+              </tbody>
+            </table>
+
+            <div class="callout">
+              <strong>활용 패턴:</strong> 프라이빗 Lambda가 S3에 쓰기 → Gateway Endpoint로 NAT 비용 제거 · ECS Task가 ECR에서 이미지 pull → Interface Endpoint로 폐쇄망 배포 가능.
+            </div>
+          </section>
+
+          <section id="summary">
+            <h2>🎯 핵심 정리 — 출제/면접 포인트</h2>
+            <ol>
+              <li><strong>IAM 4요소</strong>: User / Group / Role / Policy — Role은 <em>AWS 서비스</em>에 부여</li>
+              <li><strong>S3 내구성</strong>: 11 9s (99.999999999%) — 스토리지 클래스별 비용/복원 시간 트레이드오프</li>
+              <li><strong>VPC 라우팅</strong>: Public = <code>0.0.0.0/0 → IGW</code>, Private = <code>0.0.0.0/0 → NAT GW</code></li>
+              <li><strong>SG vs NACL</strong>: SG = Stateful + Allow only + 인스턴스 · NACL = Stateless + Allow/Deny + 서브넷</li>
+              <li><strong>NAT Gateway</strong>: 프라이빗의 아웃바운드만 허용, 반드시 <em>퍼블릭 서브넷</em>에 배치</li>
+              <li><strong>Lambda 한계</strong>: 실행 시간 최대 15분 · 이벤트 기반 · 동시성 자동 확장</li>
+              <li><strong>Multi-AZ ≠ Read Replica</strong>: HA 목적 vs 읽기 확장 목적</li>
+              <li><strong>비용 최적화</strong>: EC2는 RI/Savings Plans/Spot 조합 · S3는 Intelligent-Tiering · Lambda는 유휴 0원</li>
+            </ol>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/notes.js"></script>
+</body>
+</html>

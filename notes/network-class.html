@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="컴퓨터 네트워크 1~8주차 — OSI·서브네팅·DNS·ARP·소켓" />
+  <title>컴퓨터 네트워크 | Notes | 황찬영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <style>
+    .layer-row{display:flex;align-items:center;margin:.2rem 0}
+    .layer-n{width:52px;font-weight:700;color:#e2b714;font-family:'JetBrains Mono',monospace}
+    .layer-box{flex:1;padding:.5rem .8rem;border-radius:4px;border-left:3px solid #00d4ff;background:rgba(0,212,255,.07)}
+    .week-section{padding:1.2rem 1.4rem;margin:2rem 0;border-left:4px solid #7b2ff7;background:linear-gradient(90deg,rgba(123,47,247,.08),transparent);border-radius:6px}
+    .week-section > h2{color:#b69cff;margin-top:.2rem;border-bottom:1px solid rgba(123,47,247,.3);padding-bottom:.5rem}
+    .week-section.w8{border-left-color:#e2b714;background:linear-gradient(90deg,rgba(226,183,20,.08),transparent)}
+    .week-section.w8 > h2{color:#e2b714;border-bottom-color:rgba(226,183,20,.3)}
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">&lt;CY /&gt;</a>
+      <ul class="nav-links">
+        <li><a href="../index.html"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="../skills.html"><span class="nav-icon">⚡</span> Skills</a></li>
+        <li><a href="../projects.html"><span class="nav-icon">🚀</span> Projects</a></li>
+        <li><a href="../ai.html"><span class="nav-icon">🤖</span> AI</a></li>
+        <li><a href="../roadmap.html"><span class="nav-icon">🗺️</span> Roadmap</a></li>
+        <li><a href="../notes.html" class="active"><span class="nav-icon">📚</span> Notes</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="notes-page">
+    <div class="notes-page-inner">
+
+      <aside class="notes-sidebar">
+        <nav class="notes-sidebar-nav">
+          <a href="../notes.html" class="sidebar-back">← 목록으로</a>
+          <div class="sidebar-title">목차</div>
+          <a href="#overview" class="sidebar-chapter active">📝 개요</a>
+          <a href="#w1" class="sidebar-chapter">📅 1~3주차 · 네트워크 기초</a>
+          <a href="#w4" class="sidebar-chapter">📅 4주차 · 서브네팅 LAB</a>
+          <a href="#w5" class="sidebar-chapter">📅 5~7주차 · 소켓 프로그래밍</a>
+          <a href="#w8" class="sidebar-chapter">📝 8주차 · 중간고사 정리</a>
+        </nav>
+      </aside>
+
+      <main class="notes-content">
+        <div class="notes-content-header">
+          <h1>📝 컴퓨터 네트워크 — 1~8주차 정리</h1>
+          <div class="notes-breadcrumb">
+            <a href="../notes.html">Notes</a>
+            <span>/</span>
+            <span>3학년1학기</span>
+            <span>/</span>
+            <span>컴퓨터 네트워크</span>
+            <span style="margin-left:auto;">
+              <span class="status-badge done">중간고사 대비</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="notes-body">
+
+          <section id="overview">
+            <h2>📝 개요</h2>
+            <div class="callout">
+              <strong>컴퓨터 네트워크 3학년 1학기 — 1~8주차 전체 정리</strong><br>
+              OSI 7계층 · 교환방식 · IPv4 서브네팅 · DNS · ARP · 소켓(C) 프로그래밍 전반
+            </div>
+          </section>
+
+          <!-- ==================== 1~3주차 ==================== -->
+          <section id="w1" class="week-section">
+            <h2>📅 1~3주차 — 네트워크 기초 이론</h2>
+            <p style="color:#aaa">OSI 7계층, 교환방식, MAC 접근제어, IPv4 주소체계, DNS, ARP, 토폴로지 등 개념 정립 주차</p>
+
+            <h3>🏛️ OSI 7계층 vs TCP/IP ⭐</h3>
+            <table>
+              <thead>
+                <tr><th>OSI 계층</th><th>TCP/IP 계층</th><th>PDU</th><th>주소</th><th>대표 장비/프로토콜</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>7. 응용</td><td>응용</td><td>—</td><td>—</td><td>HTTP, FTP, DNS</td></tr>
+                <tr><td>6. 표현</td><td>(응용 포함)</td><td>—</td><td>—</td><td>TLS/SSL</td></tr>
+                <tr><td>5. 세션</td><td>(응용 포함)</td><td>—</td><td>—</td><td>세션 관리</td></tr>
+                <tr><td>4. 전송</td><td>전송</td><td>Segment(TCP) / Datagram(UDP)</td><td>Port</td><td>TCP, UDP</td></tr>
+                <tr><td>3. 네트워크</td><td>인터넷</td><td>Packet</td><td>IP 주소</td><td>IP, ICMP, <strong>라우터</strong></td></tr>
+                <tr><td>2. 데이터링크</td><td>네트워크 접근</td><td>Frame</td><td>MAC 주소</td><td><strong>스위치(L2)</strong>, ARP</td></tr>
+                <tr><td>1. 물리</td><td>물리</td><td>bit</td><td>—</td><td>허브, 케이블</td></tr>
+              </tbody>
+            </table>
+            <ul><li>OSI는 <strong>참조 모델(Reference Model)</strong>이지 프로토콜이 아님. 실제 인터넷은 TCP/IP 중심.</li></ul>
+
+            <div style="margin:1rem 0">
+              <div class="layer-row"><div class="layer-n">L7</div><div class="layer-box">응용 · HTTP, FTP, DNS</div></div>
+              <div class="layer-row"><div class="layer-n">L4</div><div class="layer-box">전송 · TCP/UDP · Segment · Port</div></div>
+              <div class="layer-row"><div class="layer-n">L3</div><div class="layer-box">네트워크 · IP · Packet · 라우터</div></div>
+              <div class="layer-row"><div class="layer-n">L2</div><div class="layer-box">데이터링크 · Frame · MAC · 스위치</div></div>
+              <div class="layer-row"><div class="layer-n">L1</div><div class="layer-box">물리 · bit · 허브/케이블</div></div>
+            </div>
+
+            <h3>🔀 교환 방식 3가지 ⭐</h3>
+            <ul>
+              <li><strong>회선 교환(Circuit Switching)</strong>: 전용 통로를 먼저 설정. 통신이 없어도 회선 점유 → 비효율. 예: 전통 전화망</li>
+              <li><strong>메시지 교환(Message Switching)</strong>: 메시지 전체를 저장(Store) → 전달(Forward). 대용량 시 지연 큼</li>
+              <li><strong>패킷 교환(Packet Switching)</strong>: 데이터를 패킷 단위로 분할 전송. 현대 인터넷의 근간
+                <ul>
+                  <li><strong>데이터그램</strong>: 각 패킷이 독립적으로 라우팅 (IP)</li>
+                  <li><strong>가상회선</strong>: 논리적 경로 설정 후 전송 (X.25, ATM)</li>
+                </ul>
+              </li>
+            </ul>
+
+            <h3>📡 MAC 접근 제어 방식 ⭐</h3>
+            <ul>
+              <li><strong>ALOHA</strong>: 전송하고 싶을 때 바로 전송 → 충돌 빈번</li>
+              <li><strong>CSMA</strong>: 전송 전에 채널 사용 여부 감지(Carrier Sense)만 함</li>
+              <li><strong>CSMA/CD</strong>: 전송 <strong>도중에도</strong> 채널 감시 → 충돌 감지 시 전송 중단 후 랜덤 대기 재전송. <strong>이더넷의 기본 개념</strong></li>
+            </ul>
+
+            <h3>📤 전송 유형</h3>
+            <ul>
+              <li><strong>유니캐스트</strong>: 1:1 (특정 수신자 1명)</li>
+              <li><strong>멀티캐스트</strong>: 1:N (가입 그룹에만)</li>
+              <li><strong>브로드캐스트</strong>: 1:ALL (같은 L2 도메인 전체)</li>
+              <li><strong>애니캐스트</strong>: 1:1 (동일 주소 중 가장 가까운 노드 1곳)</li>
+            </ul>
+
+            <h3>🕸️ 토폴로지 ⭐</h3>
+            <table>
+              <thead><tr><th>형태</th><th>특징</th><th>장점</th><th>단점</th></tr></thead>
+              <tbody>
+                <tr><td>버스(Bus)</td><td>공통 케이블에 모두 연결</td><td>설치 단순, 케이블 절약</td><td>케이블 장애 시 전체 영향</td></tr>
+                <tr><td>스타(Star)</td><td>중앙 장비에 1:1 연결</td><td>관리/확장 쉬움</td><td>중앙 장비 고장 시 전체 마비</td></tr>
+                <tr><td>메시(Mesh)</td><td>여러 경로로 촘촘히 연결</td><td>장애에 강함, 신뢰성 높음</td><td>비용/구성 복잡</td></tr>
+                <tr><td>링(Ring)</td><td>원형 연결, 순차 전달</td><td>충돌 적음</td><td>한 구간 장애 시 전체 영향</td></tr>
+              </tbody>
+            </table>
+
+            <h3>🔢 IPv4 주소 클래스 ⭐</h3>
+            <table>
+              <thead><tr><th>클래스</th><th>첫 옥텟 범위</th><th>구조</th><th>기본 서브넷 마스크</th></tr></thead>
+              <tbody>
+                <tr><td>A</td><td>1~126</td><td>N.H.H.H</td><td>255.0.0.0</td></tr>
+                <tr><td>B</td><td>128~191</td><td>N.N.H.H</td><td>255.255.0.0</td></tr>
+                <tr><td>C</td><td>192~223</td><td>N.N.N.H</td><td>255.255.255.0</td></tr>
+                <tr><td>D</td><td>224~239</td><td>—</td><td>멀티캐스트용</td></tr>
+                <tr><td>E</td><td>240~254</td><td>—</td><td>실험용</td></tr>
+              </tbody>
+            </table>
+            <blockquote>127.x.x.x = 루프백/진단용 예약</blockquote>
+
+            <h3>🌐 DNS & 도메인 ⭐</h3>
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 720 260" style="max-width:100%;height:auto">
+                <defs>
+                  <marker id="arrD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
+                  </marker>
+                </defs>
+                <rect x="20" y="100" width="100" height="60" rx="8" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
+                <text x="45" y="135" fill="#4ade80" font-size="14" font-weight="700">PC (Stub)</text>
+                <rect x="180" y="100" width="140" height="60" rx="8" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
+                <text x="200" y="130" fill="#00d4ff" font-size="13" font-weight="700">재귀 리졸버</text>
+                <text x="200" y="148" fill="#aaa" font-size="11">(Recursive)</text>
+                <rect x="400" y="30" width="120" height="45" rx="6" fill="rgba(226,183,20,.15)" stroke="#e2b714" stroke-width="2"/>
+                <text x="435" y="58" fill="#e2b714" font-size="13" font-weight="700">Root DNS</text>
+                <rect x="400" y="118" width="120" height="45" rx="6" fill="rgba(226,183,20,.15)" stroke="#e2b714" stroke-width="2"/>
+                <text x="445" y="146" fill="#e2b714" font-size="13" font-weight="700">TLD</text>
+                <rect x="400" y="205" width="120" height="45" rx="6" fill="rgba(226,183,20,.15)" stroke="#e2b714" stroke-width="2"/>
+                <text x="415" y="233" fill="#e2b714" font-size="13" font-weight="700">권한 DNS</text>
+                <line x1="120" y1="130" x2="178" y2="130" stroke="#4ade80" stroke-width="2" marker-end="url(#arrD)"/>
+                <text x="120" y="120" fill="#4ade80" font-size="11" font-weight="700">①재귀 질의</text>
+                <line x1="320" y1="120" x2="398" y2="55" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrD)"/>
+                <line x1="320" y1="130" x2="398" y2="140" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrD)"/>
+                <line x1="320" y1="145" x2="398" y2="225" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrD)"/>
+                <text x="335" y="85" fill="#00d4ff" font-size="11" font-weight="700">②반복 질의</text>
+                <circle r="6" fill="#ff9900">
+                  <animateMotion dur="4s" repeatCount="indefinite"
+                    path="M 120 130 L 178 130 L 320 130 L 398 55 L 320 130 L 398 140 L 320 130 L 398 225 L 320 130 L 120 130"/>
+                </circle>
+              </svg>
+            </div>
+            <ol>
+              <li>PC(Stub resolver) → 재귀 리졸버: 요청 (<strong>재귀 질의</strong>)</li>
+              <li>재귀 리졸버 → Root → TLD → 권한 DNS: 순차 질의 (<strong>반복 질의</strong>)</li>
+              <li>결과를 PC에 전달 + TTL만큼 캐시</li>
+            </ol>
+            <table>
+              <thead><tr><th>레코드</th><th>역할</th></tr></thead>
+              <tbody>
+                <tr><td>A</td><td>도메인 → IPv4</td></tr>
+                <tr><td>AAAA</td><td>도메인 → IPv6</td></tr>
+                <tr><td>CNAME</td><td>도메인 → 다른 도메인(별칭)</td></tr>
+                <tr><td>NS</td><td>권한 네임서버 정보</td></tr>
+                <tr><td>MX</td><td>메일 서버 정보</td></tr>
+                <tr><td>TXT</td><td>텍스트 정보 (SPF 등)</td></tr>
+              </tbody>
+            </table>
+
+            <h3>🔍 ARP ⭐</h3>
+            <ul>
+              <li>IP → MAC 변환 프로토콜 (L2 전송을 위해 필수)</li>
+              <li><strong>ARP Request = 브로드캐스트</strong> (&ldquo;이 IP의 MAC이 뭐야?&rdquo;)</li>
+              <li><strong>ARP Reply = 유니캐스트</strong> (해당 장치가 MAC을 알려줌)</li>
+              <li>같은 서브넷: 목적지 IP의 MAC을 ARP로 찾아 직접 전달</li>
+              <li>다른 서브넷: <strong>게이트웨이(라우터) IP의 MAC</strong>을 ARP로 찾아 라우터에 먼저 전달</li>
+            </ul>
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 700 200" style="max-width:100%;height:auto">
+                <defs>
+                  <marker id="arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#ff9900"/>
+                  </marker>
+                </defs>
+                <rect x="30" y="70" width="120" height="60" rx="8" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
+                <text x="55" y="105" fill="#4ade80" font-size="13" font-weight="700">Host A</text>
+                <rect x="280" y="20" width="140" height="50" rx="8" fill="rgba(226,183,20,.15)" stroke="#e2b714" stroke-width="2"/>
+                <text x="305" y="50" fill="#e2b714" font-size="12" font-weight="700">브로드캐스트</text>
+                <rect x="280" y="130" width="140" height="50" rx="8" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
+                <text x="320" y="160" fill="#00d4ff" font-size="12" font-weight="700">Host B</text>
+                <line x1="150" y1="90" x2="278" y2="45" stroke="#ff9900" stroke-width="2" marker-end="url(#arrA)"/>
+                <text x="160" y="65" fill="#ff9900" font-size="11" font-weight="700">Request (누가 10.0.0.5?)</text>
+                <line x1="420" y1="155" x2="152" y2="115" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrA)"/>
+                <text x="200" y="145" fill="#00d4ff" font-size="11" font-weight="700">Reply (MAC=aa:bb:cc)</text>
+                <circle r="5" fill="#ff9900">
+                  <animateMotion dur="3s" repeatCount="indefinite"
+                    path="M 150 90 L 280 45 M 420 155 L 150 115"/>
+                </circle>
+              </svg>
+            </div>
+          </section>
+
+          <!-- ==================== 4주차 ==================== -->
+          <section id="w4" class="week-section">
+            <h2>📅 4주차 — LAB 10.7.5 Class B 서브네팅</h2>
+            <p style="color:#aaa">네트워크 ID <code>150.193.0.0</code> (Class B) 서브네팅 실습 — ANDing 연산으로 같은/다른 서브넷 판별</p>
+
+            <h3>🧮 ANDing 연산 ⭐</h3>
+            <ul>
+              <li>호스트 IP와 서브넷 마스크를 비트 AND 연산 → 서브넷(네트워크) 주소 도출</li>
+              <li>1 AND 1 = 1 / 1 AND 0 = 0 / 0 AND 0 = 0</li>
+              <li>같은 서브넷 = ANDing 결과 동일 / 다른 서브넷 = ANDing 결과 다름</li>
+              <li>다른 서브넷으로 패킷 전송 시 → <strong>기본 게이트웨이(라우터)</strong>로 먼저 전달</li>
+            </ul>
+
+            <h3>📐 서브네팅 계산법</h3>
+            <ul>
+              <li>빌린 비트 수 n개 → 서브넷 수: 2ⁿ, 호스트 수: 2^(나머지 비트) − 2</li>
+              <li>첫 번째(네트워크)·마지막(브로드캐스트) 서브넷 사용 불가</li>
+              <li>Class B 기본 마스크 <code>255.255.0.0</code>에서 3번째 옥텟을 빌려 서브넷 분할</li>
+            </ul>
+
+            <h3>🔍 실습 예제 — Host X vs Host Z</h3>
+            <table>
+              <thead><tr><th>항목</th><th>값</th><th>2진수 (3·4옥텟)</th></tr></thead>
+              <tbody>
+                <tr><td>Host X IP</td><td>150.193.4.10</td><td>00000100 . 00001010</td></tr>
+                <tr><td>Host Z IP</td><td>150.193.12.10</td><td>00001100 . 00001010</td></tr>
+                <tr><td>마스크</td><td>255.255.240.0</td><td>11110000 . 00000000</td></tr>
+                <tr><td>X ANDing</td><td>150.193.0.0</td><td>00000000 . 00000000</td></tr>
+                <tr><td>Z ANDing</td><td>150.193.0.0</td><td>00000000 . 00000000</td></tr>
+              </tbody>
+            </table>
+            <blockquote>
+              마스크 <code>255.255.240.0</code> 기준: X와 Z의 ANDing 결과가 동일 → <strong>같은 서브넷</strong> (라우터 거치지 않고 직접 통신 가능)<br>
+              만약 마스크가 <code>255.255.248.0</code>라면 X=150.193.0.0 / Z=150.193.8.0 → 다른 서브넷이 됨
+            </blockquote>
+          </section>
+
+          <!-- ==================== 5~7주차 ==================== -->
+          <section id="w5" class="week-section">
+            <h2>📅 5~7주차 — Ch.2 소켓 프로그래밍 (C)</h2>
+            <p style="color:#aaa">Linux BSD Socket API, 주소구조체, 바이트오더, 에코 서버/클라이언트 구현</p>
+
+            <h3>🔌 소켓 기본 개념</h3>
+            <ul>
+              <li>소켓 = 네트워크 통신 엔드포인트</li>
+              <li>리눅스에서 소켓은 <strong>파일처럼 취급</strong> → <code>socket()</code> 반환값이 <strong>정수형 FD(파일 디스크립터)</strong></li>
+              <li><code>close(fd)</code>로 해제 (파일과 동일)</li>
+            </ul>
+
+            <h3>📞 서버 vs 클라이언트 흐름 ⭐</h3>
+<pre><code class="language-text">서버: socket() → bind() → listen() → accept() → read/write → close()
+클라이언트: socket() → connect() → write/read → close()</code></pre>
+            <div style="margin:1.5rem 0;text-align:center">
+              <svg viewBox="0 0 720 260" style="max-width:100%;height:auto">
+                <defs>
+                  <marker id="arrS" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
+                  </marker>
+                </defs>
+                <text x="60" y="28" fill="#4ade80" font-size="15" font-weight="700">서버</text>
+                <text x="540" y="28" fill="#e2b714" font-size="15" font-weight="700">클라이언트</text>
+                <g font-size="12" font-weight="700" fill="#fff">
+                  <rect x="20" y="45" width="130" height="34" rx="4" fill="rgba(74,222,128,.15)" stroke="#4ade80"/><text x="55" y="67">socket()</text>
+                  <rect x="20" y="85" width="130" height="34" rx="4" fill="rgba(74,222,128,.15)" stroke="#4ade80"/><text x="60" y="107">bind()</text>
+                  <rect x="20" y="125" width="130" height="34" rx="4" fill="rgba(74,222,128,.15)" stroke="#4ade80"/><text x="55" y="147">listen()</text>
+                  <rect x="20" y="165" width="130" height="34" rx="4" fill="rgba(74,222,128,.15)" stroke="#4ade80"/><text x="50" y="187">accept()</text>
+                  <rect x="20" y="205" width="130" height="34" rx="4" fill="rgba(74,222,128,.15)" stroke="#4ade80"/><text x="40" y="227">read/write</text>
+                  <rect x="520" y="85" width="130" height="34" rx="4" fill="rgba(226,183,20,.15)" stroke="#e2b714"/><text x="555" y="107">socket()</text>
+                  <rect x="520" y="145" width="130" height="34" rx="4" fill="rgba(226,183,20,.15)" stroke="#e2b714"/><text x="550" y="167">connect()</text>
+                  <rect x="520" y="205" width="130" height="34" rx="4" fill="rgba(226,183,20,.15)" stroke="#e2b714"/><text x="540" y="227">write/read</text>
+                </g>
+                <line x1="585" y1="165" x2="155" y2="182" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrS)"/>
+                <text x="260" y="170" fill="#00d4ff" font-size="11">TCP 3-way handshake</text>
+                <line x1="150" y1="225" x2="519" y2="225" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrS)"/>
+                <line x1="519" y1="220" x2="150" y2="220" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrS)"/>
+              </svg>
+            </div>
+
+            <h3>🔁 바이트 오더 변환 함수 ⭐</h3>
+            <table>
+              <thead><tr><th>함수</th><th>용도</th><th>비트</th></tr></thead>
+              <tbody>
+                <tr><td><code>htons()</code></td><td>Host→Network 포트 변환</td><td>16비트 (Short)</td></tr>
+                <tr><td><code>htonl()</code></td><td>Host→Network IP 변환</td><td>32비트 (Long)</td></tr>
+                <tr><td><code>inet_addr()</code></td><td>문자열 IP → 이진수 변환</td><td>—</td></tr>
+                <tr><td><code>inet_ntoa()</code></td><td>이진수 → 문자열 IP 변환</td><td>—</td></tr>
+              </tbody>
+            </table>
+            <ul>
+              <li><strong>포트(16비트)</strong> → <code>htons()</code> / <strong>IP/주소(32비트)</strong> → <code>htonl()</code></li>
+              <li><code>INADDR_ANY</code> + <code>htonl()</code>: 특정 IP가 아닌 <strong>모든 인터페이스</strong>에서 연결 수락</li>
+            </ul>
+
+            <h3>📦 주소 구조체</h3>
+<pre><code class="language-c">struct sockaddr_in {
+    short sin_family;         // 주소 체계 (AF_INET)
+    unsigned short sin_port;  // 16비트 포트 번호
+    struct in_addr sin_addr;  // 32비트 IP 주소
+    char sin_zero[8];         // 패딩
+};
+
+struct in_addr { unsigned long s_addr; };
+struct servent { char *s_name; int s_port; ... };   // /etc/services
+struct hostent { char *h_name; char **h_addr_list; ... }; // /etc/hosts</code></pre>
+
+            <h3>📄 open_socket.c — 기본 소켓 생성</h3>
+<pre><code class="language-c">#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+int main() {
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);  // TCP
+    if (sockfd &lt; 0) { perror("socket"); return 1; }
+    close(sockfd);
+    return 0;
+}</code></pre>
+
+            <h3>📄 mvecho.c — 에코 클라이언트</h3>
+<pre><code class="language-c">int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+struct sockaddr_in serv;
+serv.sin_family = AF_INET;
+serv.sin_port   = htons(7);                  // echo 포트
+serv.sin_addr.s_addr = inet_addr("127.0.0.1");
+connect(sockfd, (struct sockaddr*)&amp;serv, sizeof(serv));
+write(sockfd, buf, strlen(buf));
+read(sockfd, recv, sizeof(recv));</code></pre>
+
+            <h3>📄 mvecho_server.c — 에코 서버</h3>
+<pre><code class="language-c">int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+struct sockaddr_in addr = { AF_INET, htons(PORT), { htonl(INADDR_ANY) } };
+bind(server_fd, (struct sockaddr*)&amp;addr, sizeof(addr));
+listen(server_fd, 5);
+while (1) {
+    int client_fd = accept(server_fd, NULL, NULL);
+    int n = read(client_fd, buf, sizeof(buf));
+    write(client_fd, buf, n);   // echo
+    close(client_fd);
+}</code></pre>
+
+            <h3>🗣️ Talk 프로그램 — fork() 사용 이유 (6주차) ⭐</h3>
+            <ul>
+              <li><code>read()</code>/<code>write()</code>는 <strong>Blocking</strong> → 한 프로세스로 송수신 동시 처리 불가</li>
+              <li><code>fork()</code>로 프로세스 복제 → <strong>부모: 송신(write)</strong> / <strong>자식: 수신(read)+출력</strong></li>
+              <li>종료 문자열: <code>exit\n</code></li>
+            </ul>
+          </section>
+
+          <!-- ==================== 8주차 중간 ==================== -->
+          <section id="w8" class="week-section w8">
+            <h2>📝 8주차 — 중간고사 정리 & 예상 출제</h2>
+            <p style="color:#aaa">1~7주차 전체 내용 요약 + 시험 핵심 포인트</p>
+
+            <h3>🎯 핵심 암기 키워드</h3>
+            <ul>
+              <li><strong>OSI 계층별 PDU</strong>: bit → Frame → Packet → Segment</li>
+              <li><strong>CSMA/CD</strong>: 이더넷의 기본, 충돌 감지 후 랜덤 대기 재전송</li>
+              <li><strong>ANDing</strong>: IP &amp; Mask = 서브넷 주소 → 같으면 같은 서브넷</li>
+              <li><strong>DNS</strong>: 클라이언트는 재귀 질의, 리졸버는 반복 질의</li>
+              <li><strong>ARP Request</strong> = 브로드캐스트 / <strong>Reply</strong> = 유니캐스트</li>
+              <li><strong>소켓 호출 순서</strong>: 서버 6단계, 클라이언트 4단계</li>
+              <li><strong>htons vs htonl</strong>: 포트=16비트=htons, 주소=32비트=htonl</li>
+            </ul>
+
+            <h3>📋 예상 출제 유형</h3>
+            <ul>
+              <li>OSI 7계층 각 계층의 역할·PDU·대표 프로토콜 서술</li>
+              <li>회선 교환 vs 패킷 교환 차이 (&ldquo;자원 점유 방식&rdquo; 관점으로)</li>
+              <li>CSMA vs CSMA/CD 차이 (&ldquo;충돌 처리&rdquo; 관점으로)</li>
+              <li>ANDing 연산으로 서브넷 주소 도출 (이진수 계산 포함)</li>
+              <li>서브넷 빌린 비트 수 계산 (서브넷 수·호스트 수 도출)</li>
+              <li>DNS 재귀 질의 vs 반복 질의 설명</li>
+              <li>ARP 동작 흐름 (같은 서브넷 vs 다른 서브넷)</li>
+              <li>소켓 서버/클라이언트 호출 순서 직접 작성</li>
+              <li><code>htons()</code> vs <code>htonl()</code> 언제 쓰는지</li>
+              <li><code>fork()</code> 기반 Talk 프로그램에서 부모/자식 역할</li>
+            </ul>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/notes-sidebar.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+</body>
+</html>
