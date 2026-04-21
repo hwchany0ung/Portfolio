@@ -1,0 +1,7 @@
+[
+  "sequenceDiagram\n  actor U as 사용자 PC\n  participant LR as Local Resolver<br/>(ISP DNS)\n  participant ROOT as Root (.)\n  participant TLD as TLD (.com)\n  participant AUTH as Authoritative<br/>example.com\n  U->>LR: www.example.com?\n  LR->>ROOT: .com 서버는?\n  ROOT-->>LR: .com TLD 서버 주소\n  LR->>TLD: example.com 서버는?\n  TLD-->>LR: Authoritative 주소\n  LR->>AUTH: www.example.com A?\n  AUTH-->>LR: 93.184.216.34\n  LR-->>U: 93.184.216.34 (TTL 캐시)",
+
+  "sequenceDiagram\n  participant A as Host A<br/>10.0.0.2\n  participant BR as Broadcast<br/>FF:FF:FF:FF:FF:FF\n  participant B as Host B<br/>10.0.0.3\n  A->>BR: ARP Request<br/>\"10.0.0.3 의 MAC?\"\n  BR->>B: 브로드캐스트 수신\n  B-->>A: ARP Reply (유니캐스트)<br/>\"10.0.0.3 = AA:BB:CC:DD:EE:FF\"\n  Note over A: ARP 테이블 캐시<br/>(기본 TTL ~20분)",
+
+  "sequenceDiagram\n  participant S as Server\n  participant C as Client\n  S->>S: socket()\n  S->>S: bind(port)\n  S->>S: listen()\n  C->>C: socket()\n  C->>S: connect()\n  S->>S: accept() → new fd\n  C->>S: write() / send()\n  S->>C: read() / recv()\n  S->>C: write() 응답\n  C->>S: close()\n  S->>S: close(client_fd)"
+]

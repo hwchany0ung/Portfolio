@@ -1,0 +1,3 @@
+[
+  "flowchart LR\n  DEV([개발자]) -->|git push| REPO[(Git Repository)]\n  REPO -->|webhook 트리거| CI[CI Server<br/>GitHub Actions · Jenkins]\n  CI --> BLD[Build<br/>컴파일·번들]\n  BLD --> TST[Test<br/>unit · lint]\n  TST --> PKG[Package<br/>Docker image · artifact]\n  PKG -->|성공| OK([✅ 통합 완료])\n  TST -.실패.-> NOTIFY[❌ 개발자 알림]"
+]

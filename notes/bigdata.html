@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/animations.css" />
   <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="../css/mermaid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
   <style>
     .hot-box{background:rgba(255,71,87,.08);border:1px solid #ff4757;border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
@@ -228,29 +229,32 @@ print(s.min())     # 82</code></pre>
 
             <h3>🔄 git reset 3 모드 ⭐</h3>
             <div style="margin:1.5rem 0;text-align:center">
-              <svg viewBox="0 0 720 240" style="max-width:100%;height:auto">
-                <text x="280" y="28" fill="#fff" font-size="15" font-weight="700">git reset — 3 모드 비교</text>
-                <g font-size="12" font-weight="700">
-                  <rect x="40" y="55" width="180" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80"/>
-                  <text x="55" y="78" fill="#4ade80">--soft</text>
-                  <text x="55" y="95" fill="#aaa" font-size="11">커밋만 취소 · staged 유지</text>
-                  <rect x="260" y="55" width="180" height="50" rx="6" fill="rgba(226,183,20,.15)" stroke="#e2b714"/>
-                  <text x="275" y="78" fill="#e2b714">--mixed (기본)</text>
-                  <text x="275" y="95" fill="#aaa" font-size="11">커밋+스테이징 취소</text>
-                  <rect x="480" y="55" width="180" height="50" rx="6" fill="rgba(255,71,87,.15)" stroke="#ff4757"/>
-                  <text x="495" y="78" fill="#ff4757">--hard</text>
-                  <text x="495" y="95" fill="#aaa" font-size="11">커밋+파일 모두 삭제 (위험)</text>
-                  <rect x="40" y="140" width="180" height="16" fill="#4ade80" opacity=".4"/>
-                  <text x="50" y="175" fill="#4ade80" font-size="11">HEAD만 이동</text>
-                  <rect x="260" y="140" width="180" height="16" fill="#e2b714" opacity=".4"/>
-                  <rect x="260" y="160" width="180" height="16" fill="#e2b714" opacity=".4"/>
-                  <text x="270" y="195" fill="#e2b714" font-size="11">HEAD + Index</text>
-                  <rect x="480" y="140" width="180" height="16" fill="#ff4757" opacity=".4"/>
-                  <rect x="480" y="160" width="180" height="16" fill="#ff4757" opacity=".4"/>
-                  <rect x="480" y="180" width="180" height="16" fill="#ff4757" opacity=".4"/>
-                  <text x="490" y="215" fill="#ff4757" font-size="11">HEAD + Index + Working Dir</text>
-                </g>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  subgraph BEF["git reset 전 상태"]
+    WD1[Working Dir<br/>수정 중]
+    IDX1[Staging<br/>git add]
+    HEAD1[HEAD<br/>C3 커밋]
+  end
+  subgraph SOFT["--soft (HEAD만 이동)"]
+    WD2[Working Dir ✅ 유지]
+    IDX2[Staging ✅ 유지]
+    HEAD2[HEAD → C1]
+  end
+  subgraph MIX["--mixed (default)"]
+    WD3[Working Dir ✅ 유지]
+    IDX3[Staging ❌ 초기화]
+    HEAD3[HEAD → C1]
+  end
+  subgraph HARD["--hard (모두 삭제)"]
+    WD4[Working Dir ❌ 삭제]
+    IDX4[Staging ❌ 삭제]
+    HEAD4[HEAD → C1]
+  end
+  BEF --> SOFT
+  BEF --> MIX
+  BEF --> HARD
+            </div>
             </div>
 
             <h3>📝 week04.py min() 예제</h3>
@@ -406,26 +410,21 @@ print(array04 > 0.5)       # 조건 비교 → True/False Boolean 배열 반환
 array05 = array04.copy()</code></pre>
 
             <div style="margin:1.5rem 0;text-align:center">
-              <svg viewBox="0 0 720 220" style="max-width:100%;height:auto">
-                <text x="40" y="30" fill="#ff4757" font-size="14" font-weight="700">for 루프 (느림)</text>
-                <text x="420" y="30" fill="#4ade80" font-size="14" font-weight="700">NumPy 벡터화 (빠름)</text>
-                <g font-family="JetBrains Mono,monospace" font-size="13" font-weight="700">
-                  <rect x="40" y="50" width="40" height="40" fill="rgba(255,71,87,.2)" stroke="#ff4757"/><text x="52" y="76" fill="#ff4757">1</text>
-                  <rect x="40" y="95" width="40" height="40" fill="rgba(255,71,87,.2)" stroke="#ff4757"/><text x="52" y="121" fill="#ff4757">2</text>
-                  <rect x="40" y="140" width="40" height="40" fill="rgba(255,71,87,.2)" stroke="#ff4757"/><text x="52" y="166" fill="#ff4757">3</text>
-                  <text x="100" y="76" fill="#aaa">× 10 → 10</text>
-                  <text x="100" y="121" fill="#aaa">× 10 → 20</text>
-                  <text x="100" y="166" fill="#aaa">× 10 → 30</text>
-                  <rect x="420" y="95" width="150" height="40" fill="rgba(74,222,128,.2)" stroke="#4ade80"/>
-                  <text x="435" y="121" fill="#4ade80">[1, 2, 3]</text>
-                  <text x="580" y="121" fill="#aaa">× 10</text>
-                  <rect x="420" y="160" width="150" height="40" fill="rgba(74,222,128,.2)" stroke="#4ade80"/>
-                  <text x="425" y="186" fill="#4ade80">[10, 20, 30]</text>
-                </g>
-                <circle r="6" fill="#00d4ff">
-                  <animateMotion dur="2s" repeatCount="indefinite" path="M 495 135 L 495 160"/>
-                </circle>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  subgraph LOOP["❌ Python for-loop"]
+    L1["for i in range(N):<br/>total += a[i]"]
+    L2[인터프리터 오버헤드<br/>~100배 느림]
+    L1 --> L2
+  end
+  subgraph VEC["✅ NumPy 벡터화"]
+    V1["np.sum(a)"]
+    V2[C 레벨 SIMD 실행<br/>연속 메모리 접근]
+    V3[성능 ×100]
+    V1 --> V2 --> V3
+  end
+  LOOP -.같은 결과.-> VEC
+            </div>
             </div>
 
             <h3>🔧 NumPy dtype</h3>
@@ -498,5 +497,7 @@ git branch -d [이름]          # 병합된 브랜치 삭제</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script type="module" src="../js/mermaid-init.js"></script>
+
 </body>
 </html>

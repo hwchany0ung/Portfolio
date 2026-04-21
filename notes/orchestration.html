@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/animations.css" />
   <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="../css/mermaid.css" />
   <!-- Prism.js — 코드 syntax highlighting -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
 </head>
@@ -123,66 +124,17 @@
             <h3>2) 왜 필요한가?</h3>
 
             <figure class="diagram">
-              <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Self-healing 동작 흐름">
-                <!-- Step labels -->
-                <text x="95" y="30" text-anchor="middle" fill="#888" font-size="11" font-family="JetBrains Mono">① 정상 상태</text>
-                <text x="285" y="30" text-anchor="middle" fill="#888" font-size="11" font-family="JetBrains Mono">② Pod 장애</text>
-                <text x="475" y="30" text-anchor="middle" fill="#888" font-size="11" font-family="JetBrains Mono">③ 감지</text>
-                <text x="665" y="30" text-anchor="middle" fill="#888" font-size="11" font-family="JetBrains Mono">④ 자동 복구</text>
-
-                <!-- Step 1 -->
-                <g>
-                  <rect x="30" y="50" width="130" height="130" rx="8" fill="none" stroke="#2a2a2a" stroke-dasharray="4 3"/>
-                  <rect x="50" y="70" width="40" height="40" rx="4" fill="#161616" stroke="#4ade80"/>
-                  <text x="70" y="95" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono">✓</text>
-                  <rect x="100" y="70" width="40" height="40" rx="4" fill="#161616" stroke="#4ade80"/>
-                  <text x="120" y="95" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono">✓</text>
-                  <rect x="75" y="125" width="40" height="40" rx="4" fill="#161616" stroke="#4ade80"/>
-                  <text x="95" y="150" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono">✓</text>
-                </g>
-                <line x1="165" y1="115" x2="210" y2="115" stroke="#888" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
-
-                <!-- Step 2 -->
-                <g>
-                  <rect x="220" y="50" width="130" height="130" rx="8" fill="none" stroke="#2a2a2a" stroke-dasharray="4 3"/>
-                  <rect x="240" y="70" width="40" height="40" rx="4" fill="#161616" stroke="#4ade80"/>
-                  <text x="260" y="95" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono">✓</text>
-                  <rect x="290" y="70" width="40" height="40" rx="4" fill="#161616" stroke="#ff4757">
-                    <animate attributeName="stroke" values="#ff4757;#ff8888;#ff4757" dur="1s" repeatCount="indefinite"/>
-                  </rect>
-                  <text x="310" y="95" text-anchor="middle" fill="#ff4757" font-size="13" font-family="JetBrains Mono">✗</text>
-                  <rect x="265" y="125" width="40" height="40" rx="4" fill="#161616" stroke="#4ade80"/>
-                  <text x="285" y="150" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono">✓</text>
-                </g>
-                <line x1="355" y1="115" x2="400" y2="115" stroke="#888" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
-
-                <!-- Step 3 - Controller detects -->
-                <g>
-                  <rect x="410" y="50" width="130" height="130" rx="8" fill="none" stroke="#2a2a2a" stroke-dasharray="4 3"/>
-                  <circle cx="475" cy="95" r="20" fill="#161616" stroke="#7b2ff7" stroke-width="2">
-                    <animate attributeName="r" values="20;24;20" dur="1.2s" repeatCount="indefinite"/>
-                  </circle>
-                  <text x="475" y="100" text-anchor="middle" fill="#c79bff" font-size="11" font-family="JetBrains Mono">ctrl</text>
-                  <text x="475" y="140" text-anchor="middle" fill="#888" font-size="10" font-family="JetBrains Mono">desired: 3</text>
-                  <text x="475" y="158" text-anchor="middle" fill="#ff4757" font-size="10" font-family="JetBrains Mono">actual: 2</text>
-                </g>
-                <line x1="545" y1="115" x2="590" y2="115" stroke="#888" stroke-width="1.5" marker-end="url(#flow-arrow)"/>
-
-                <!-- Step 4 - Recovered -->
-                <g>
-                  <rect x="600" y="50" width="130" height="130" rx="8" fill="none" stroke="#4ade80" stroke-dasharray="4 3"/>
-                  <rect x="620" y="70" width="40" height="40" rx="4" fill="#161616" stroke="#4ade80"/>
-                  <text x="640" y="95" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono">✓</text>
-                  <rect x="670" y="70" width="40" height="40" rx="4" fill="#161616" stroke="#00d4ff">
-                    <animate attributeName="stroke" values="#00d4ff;#7fe5ff;#00d4ff" dur="1.2s" repeatCount="indefinite"/>
-                  </rect>
-                  <text x="690" y="95" text-anchor="middle" fill="#00d4ff" font-size="11" font-family="JetBrains Mono">★</text>
-                  <rect x="645" y="125" width="40" height="40" rx="4" fill="#161616" stroke="#4ade80"/>
-                  <text x="665" y="150" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono">✓</text>
-                </g>
-
-                <text x="380" y="205" text-anchor="middle" fill="#888" font-size="11" font-family="JetBrains Mono">Controller가 desired state(replicas=3)를 항상 맞춰준다</text>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  D[Deployment<br/>replicas: 3] --> RS[ReplicaSet]
+  RS --> P1[Pod-1 🟢]
+  RS --> P2[Pod-2 🟢]
+  RS --> P3[Pod-3 🔴 crash]
+  CTL{{Controller Loop<br/>desired=3 current=2}}
+  P3 -.감지.-> CTL
+  CTL -.재생성.-> RS
+  RS --> P4[Pod-4 🟢 new]
+            </div>
               <figcaption>Self-healing: Pod가 죽어도 Controller가 자동으로 원하는 상태를 복구</figcaption>
             </figure>
 
@@ -198,79 +150,38 @@
             <h3>3) 클러스터 기본 구조</h3>
 
             <figure class="diagram">
-              <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kubernetes 클러스터 구조">
-                <defs>
-                  <linearGradient id="cpGrad" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0" stop-color="#7b2ff7" stop-opacity="0.25"/>
-                    <stop offset="1" stop-color="#7b2ff7" stop-opacity="0.05"/>
-                  </linearGradient>
-                  <linearGradient id="wkGrad" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0" stop-color="#00d4ff" stop-opacity="0.18"/>
-                    <stop offset="1" stop-color="#00d4ff" stop-opacity="0.03"/>
-                  </linearGradient>
-                </defs>
-                <!-- Cluster border -->
-                <rect x="10" y="10" width="700" height="340" rx="12" fill="none" stroke="#2a2a2a" stroke-dasharray="6 4"/>
-                <text x="24" y="32" fill="#888" font-size="13" font-family="JetBrains Mono">Cluster</text>
-
-                <!-- Control Plane -->
-                <rect x="40" y="60" width="260" height="260" rx="10" fill="url(#cpGrad)" stroke="#7b2ff7"/>
-                <text x="170" y="85" text-anchor="middle" fill="#c79bff" font-size="15" font-weight="700">Control Plane</text>
-                <g font-family="JetBrains Mono" font-size="12" fill="#e0e0e0">
-                  <rect x="60" y="105" width="220" height="38" rx="6" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="170" y="129" text-anchor="middle">kube-apiserver</text>
-                  <rect x="60" y="153" width="220" height="38" rx="6" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="170" y="177" text-anchor="middle">etcd (상태 저장)</text>
-                  <rect x="60" y="201" width="220" height="38" rx="6" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="170" y="225" text-anchor="middle">scheduler</text>
-                  <rect x="60" y="249" width="220" height="38" rx="6" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="170" y="273" text-anchor="middle">controller-manager</text>
-                </g>
-
-                <!-- Arrow -->
-                <g stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#arrow)">
-                  <line x1="310" y1="190" x2="380" y2="190"/>
-                </g>
-                <defs>
-                  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
-                  </marker>
-                </defs>
-
-                <!-- Worker Nodes -->
-                <g font-family="JetBrains Mono" font-size="11" fill="#e0e0e0">
-                  <rect x="400" y="60" width="290" height="85" rx="10" fill="url(#wkGrad)" stroke="#00d4ff"/>
-                  <text x="545" y="82" text-anchor="middle" fill="#7fe5ff" font-size="13" font-weight="700">Worker Node 1</text>
-                  <rect x="416" y="95" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="446" y="117" text-anchor="middle">Pod</text>
-                  <rect x="484" y="95" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="514" y="117" text-anchor="middle">Pod</text>
-                  <rect x="552" y="95" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="582" y="117" text-anchor="middle">kubelet</text>
-                  <rect x="620" y="95" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="650" y="117" text-anchor="middle">proxy</text>
-
-                  <rect x="400" y="155" width="290" height="85" rx="10" fill="url(#wkGrad)" stroke="#00d4ff"/>
-                  <text x="545" y="177" text-anchor="middle" fill="#7fe5ff" font-size="13" font-weight="700">Worker Node 2</text>
-                  <rect x="416" y="190" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="446" y="212" text-anchor="middle">Pod</text>
-                  <rect x="484" y="190" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="514" y="212" text-anchor="middle">Pod</text>
-                  <rect x="552" y="190" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="582" y="212" text-anchor="middle">kubelet</text>
-                  <rect x="620" y="190" width="60" height="36" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="650" y="212" text-anchor="middle">proxy</text>
-
-                  <rect x="400" y="250" width="290" height="70" rx="10" fill="url(#wkGrad)" stroke="#00d4ff"/>
-                  <text x="545" y="272" text-anchor="middle" fill="#7fe5ff" font-size="13" font-weight="700">Worker Node 3</text>
-                  <rect x="440" y="285" width="60" height="28" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="470" y="303" text-anchor="middle">Pod</text>
-                  <rect x="510" y="285" width="80" height="28" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="550" y="303" text-anchor="middle">kubelet</text>
-                  <rect x="600" y="285" width="70" height="28" rx="4" fill="#161616" stroke="#2a2a2a"/>
-                  <text x="635" y="303" text-anchor="middle">proxy</text>
-                </g>
-              </svg>
+              <div class="mermaid">
+flowchart TB
+  subgraph CP["Control Plane (Master)"]
+    API[kube-apiserver]
+    ETCD[(etcd)]
+    SCH[kube-scheduler]
+    CM[controller-manager]
+    CCM[cloud-controller-manager]
+    API <--> ETCD
+    API <--> SCH
+    API <--> CM
+    API <--> CCM
+  end
+  subgraph N1[Worker Node 1]
+    KL1[kubelet]
+    KP1[kube-proxy]
+    CR1[container runtime<br/>containerd]
+    POD1[Pod · Pod]
+    KL1 --> CR1 --> POD1
+    KP1 -.iptables/IPVS.-> POD1
+  end
+  subgraph N2[Worker Node 2]
+    KL2[kubelet]
+    KP2[kube-proxy]
+    CR2[container runtime]
+    POD2[Pod · Pod]
+    KL2 --> CR2 --> POD2
+  end
+  API <--> KL1
+  API <--> KL2
+  USER([kubectl / API Client]) --> API
+            </div>
               <figcaption>Control Plane이 명령하고 Worker Node가 Pod를 실행한다</figcaption>
             </figure>
 
@@ -287,72 +198,19 @@
             <h3>4) 핵심 오브젝트 (암기 포인트)</h3>
 
             <figure class="diagram">
-              <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="트래픽 흐름: User → Ingress → Service → Pod">
-                <defs>
-                  <marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
-                  </marker>
-                </defs>
-
-                <!-- User -->
-                <g>
-                  <circle cx="60" cy="160" r="30" fill="#161616" stroke="#e2b714" stroke-width="2"/>
-                  <text x="60" y="165" text-anchor="middle" fill="#e2b714" font-size="20">👤</text>
-                  <text x="60" y="215" text-anchor="middle" fill="#888" font-size="12" font-family="JetBrains Mono">User</text>
-                </g>
-
-                <!-- Ingress -->
-                <g>
-                  <rect x="150" y="130" width="110" height="60" rx="8" fill="#161616" stroke="#7b2ff7" stroke-width="2"/>
-                  <text x="205" y="158" text-anchor="middle" fill="#c79bff" font-size="13" font-weight="700">Ingress</text>
-                  <text x="205" y="178" text-anchor="middle" fill="#888" font-size="10" font-family="JetBrains Mono">HTTP/HTTPS 라우팅</text>
-                </g>
-
-                <!-- Service -->
-                <g>
-                  <rect x="310" y="130" width="110" height="60" rx="8" fill="#161616" stroke="#00d4ff" stroke-width="2"/>
-                  <text x="365" y="158" text-anchor="middle" fill="#7fe5ff" font-size="13" font-weight="700">Service</text>
-                  <text x="365" y="178" text-anchor="middle" fill="#888" font-size="10" font-family="JetBrains Mono">고정 IP + LB</text>
-                </g>
-
-                <!-- Deployment box wrapping Pods -->
-                <rect x="470" y="60" width="270" height="200" rx="10" fill="none" stroke="#4ade80" stroke-dasharray="5 3"/>
-                <text x="485" y="80" fill="#4ade80" font-size="12" font-family="JetBrains Mono">Deployment (replicas: 3)</text>
-
-                <!-- Pods -->
-                <g font-family="JetBrains Mono" font-size="11" fill="#e0e0e0">
-                  <rect x="500" y="95" width="100" height="50" rx="6" fill="#161616" stroke="#00d4ff"/>
-                  <text x="550" y="115" text-anchor="middle" fill="#7fe5ff" font-weight="700">Pod 1</text>
-                  <text x="550" y="132" text-anchor="middle" fill="#888" font-size="9">app:v1</text>
-
-                  <rect x="610" y="95" width="100" height="50" rx="6" fill="#161616" stroke="#00d4ff"/>
-                  <text x="660" y="115" text-anchor="middle" fill="#7fe5ff" font-weight="700">Pod 2</text>
-                  <text x="660" y="132" text-anchor="middle" fill="#888" font-size="9">app:v1</text>
-
-                  <rect x="555" y="175" width="100" height="50" rx="6" fill="#161616" stroke="#00d4ff"/>
-                  <text x="605" y="195" text-anchor="middle" fill="#7fe5ff" font-weight="700">Pod 3</text>
-                  <text x="605" y="212" text-anchor="middle" fill="#888" font-size="9">app:v1</text>
-                </g>
-
-                <!-- Animated traffic flow -->
-                <g stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#flow-arrow)">
-                  <line x1="95" y1="160" x2="145" y2="160"/>
-                  <line x1="260" y1="160" x2="305" y2="160"/>
-                  <line x1="420" y1="160" x2="465" y2="130"/>
-                  <line x1="420" y1="160" x2="465" y2="160"/>
-                  <line x1="420" y1="160" x2="465" y2="195"/>
-                </g>
-                <!-- Flowing dots -->
-                <circle r="4" fill="#00d4ff">
-                  <animateMotion dur="3s" repeatCount="indefinite" path="M95,160 L145,160 L260,160 L305,160 L420,160 L520,120"/>
-                </circle>
-                <circle r="4" fill="#7b2ff7">
-                  <animateMotion dur="3s" begin="1s" repeatCount="indefinite" path="M95,160 L145,160 L260,160 L305,160 L420,160 L605,160"/>
-                </circle>
-                <circle r="4" fill="#4ade80">
-                  <animateMotion dur="3s" begin="2s" repeatCount="indefinite" path="M95,160 L145,160 L260,160 L305,160 L420,160 L605,200"/>
-                </circle>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  USER([사용자]) -->|HTTPS| LB[External LoadBalancer]
+  LB --> ING["Ingress Controller<br/>(nginx · traefik)"]
+  ING -->|host/path 규칙| SVC1[Service: web<br/>ClusterIP :80]
+  ING -->|path /api| SVC2[Service: api<br/>ClusterIP :3000]
+  SVC1 --> P1[Pod web-1]
+  SVC1 --> P2[Pod web-2]
+  SVC2 --> P3[Pod api-1]
+  SVC2 --> P4[Pod api-2]
+  P3 -->|Service: db| SVC3[Service: db]
+  SVC3 --> P5[(Pod postgres)]
+            </div>
               <figcaption>외부 요청 → Ingress → Service(로드밸런싱) → Pod 분산 (실시간 흐름)</figcaption>
             </figure>
 
@@ -900,6 +758,9 @@ kubectl get secret db-secret -o yaml</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
   <script src="../js/notes.js"></script>
   <script src="../js/main.js"></script>
+
+  <script type="module" src="../js/mermaid-init.js"></script>
+
 
 </body>
 </html>

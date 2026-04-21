@@ -1,0 +1,61 @@
+/* Mermaid 다이어그램 공용 스타일 */
+.mermaid {
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 1rem .6rem;
+  margin: 1rem 0;
+  text-align: center;
+  overflow-x: auto;
+  min-height: 60px;
+  max-width: 100%;
+}
+.mermaid svg {
+  max-width: 100%;
+  height: auto !important;
+  margin: 0 auto;
+  display: block;
+}
+.mermaid .node rect,
+.mermaid .node polygon,
+.mermaid .node circle,
+.mermaid .node ellipse {
+  stroke-width: 1.5px !important;
+}
+.mermaid .edgeLabel {
+  background: #161616 !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+  color: #00d4ff !important;
+  font-weight: 500 !important;
+}
+.mermaid .cluster rect {
+  fill: #11141a !important;
+  stroke: #e2b714 !important;
+  stroke-dasharray: 4 2 !important;
+}
+.mermaid .cluster .cluster-label {
+  color: #e2b714 !important;
+}
+/* Sequence diagram */
+.mermaid .actor {
+  stroke: #00d4ff !important;
+  fill: #161616 !important;
+}
+.mermaid text.actor {
+  fill: #e0e0e0 !important;
+  stroke: none !important;
+}
+.mermaid .messageText,
+.mermaid .labelText {
+  fill: #e0e0e0 !important;
+  stroke: none !important;
+}
+.mermaid .note {
+  fill: #1f1a0a !important;
+  stroke: #e2b714 !important;
+}
+.mermaid .noteText {
+  fill: #e0e0e0 !important;
+  stroke: none !important;
+}

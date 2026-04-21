@@ -1,0 +1,7 @@
+[
+  "flowchart LR\n  D[Deployment<br/>replicas: 3] --> RS[ReplicaSet]\n  RS --> P1[Pod-1 🟢]\n  RS --> P2[Pod-2 🟢]\n  RS --> P3[Pod-3 🔴 crash]\n  CTL{{Controller Loop<br/>desired=3 current=2}}\n  P3 -.감지.-> CTL\n  CTL -.재생성.-> RS\n  RS --> P4[Pod-4 🟢 new]",
+
+  "flowchart TB\n  subgraph CP[\"Control Plane (Master)\"]\n    API[kube-apiserver]\n    ETCD[(etcd)]\n    SCH[kube-scheduler]\n    CM[controller-manager]\n    CCM[cloud-controller-manager]\n    API <--> ETCD\n    API <--> SCH\n    API <--> CM\n    API <--> CCM\n  end\n  subgraph N1[Worker Node 1]\n    KL1[kubelet]\n    KP1[kube-proxy]\n    CR1[container runtime<br/>containerd]\n    POD1[Pod · Pod]\n    KL1 --> CR1 --> POD1\n    KP1 -.iptables/IPVS.-> POD1\n  end\n  subgraph N2[Worker Node 2]\n    KL2[kubelet]\n    KP2[kube-proxy]\n    CR2[container runtime]\n    POD2[Pod · Pod]\n    KL2 --> CR2 --> POD2\n  end\n  API <--> KL1\n  API <--> KL2\n  USER([kubectl / API Client]) --> API",
+
+  "flowchart LR\n  USER([사용자]) -->|HTTPS| LB[External LoadBalancer]\n  LB --> ING[\"Ingress Controller<br/>(nginx · traefik)\"]\n  ING -->|host/path 규칙| SVC1[Service: web<br/>ClusterIP :80]\n  ING -->|path /api| SVC2[Service: api<br/>ClusterIP :3000]\n  SVC1 --> P1[Pod web-1]\n  SVC1 --> P2[Pod web-2]\n  SVC2 --> P3[Pod api-1]\n  SVC2 --> P4[Pod api-2]\n  P3 -->|Service: db| SVC3[Service: db]\n  SVC3 --> P5[(Pod postgres)]"
+]

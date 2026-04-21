@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/animations.css" />
   <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="../css/mermaid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
   <style>
     details.qa{background:rgba(0,212,255,.05);border-left:3px solid #00d4ff;padding:.8rem 1rem;margin:.6rem 0;border-radius:4px}
@@ -304,18 +305,22 @@ tar -xzvf archive.tar.gz       # 해제</code></pre>
               <li><strong>KVL</strong>: 폐회로에서 전압강하의 합 = 전원전압 → Σ전압강하 = 전원전압</li>
             </ul>
             <div style="margin:1.5rem 0;text-align:center">
-              <svg viewBox="0 0 700 280" style="max-width:100%;height:auto">
-                <defs><marker id="arrK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4ade80"/></marker></defs>
-                <circle cx="350" cy="140" r="10" fill="#e2b714" stroke="#fff" stroke-width="2"/>
-                <text x="340" y="100" fill="#e2b714" font-size="14" font-weight="700">노드 N</text>
-                <line x1="80" y1="60" x2="340" y2="130" stroke="#4ade80" stroke-width="2" marker-end="url(#arrK)"/>
-                <text x="100" y="50" fill="#4ade80" font-size="13" font-weight="700">I₁ = 2A (in)</text>
-                <line x1="80" y1="220" x2="340" y2="150" stroke="#4ade80" stroke-width="2" marker-end="url(#arrK)"/>
-                <text x="100" y="240" fill="#4ade80" font-size="13" font-weight="700">I₂ = 3A (in)</text>
-                <line x1="360" y1="140" x2="620" y2="140" stroke="#ff4757" stroke-width="2" marker-end="url(#arrK)"/>
-                <text x="500" y="130" fill="#ff4757" font-size="13" font-weight="700">I₃ = 5A (out)</text>
-                <text x="180" y="275" fill="#00d4ff" font-size="15" font-weight="700">KCL: ΣI_in (2+3) = ΣI_out (5) ✓</text>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  subgraph KCL["KCL · 전류 보존"]
+    N([접점 N])
+    I1[I1 = 2A] -->|들어옴| N
+    I2[I2 = 3A] -->|들어옴| N
+    N -->|나감| I3[I3 = 5A]
+    NOTE1["ΣI_in = ΣI_out<br/>2 + 3 = 5"]
+  end
+  subgraph KVL["KVL · 전압 보존"]
+    V1[V1 = 12V<br/>전원] --> R1[R1 = 4Ω]
+    R1 --> R2[R2 = 8Ω]
+    R2 --> V1
+    NOTE2["ΣV_rise = ΣV_drop<br/>12 = 4I + 8I → I=1A"]
+  end
+            </div>
             </div>
 
             <h3>🔌 브레드보드 & 저항 컬러코드</h3>
@@ -327,26 +332,14 @@ tar -xzvf archive.tar.gz       # 해제</code></pre>
 
             <h3>💡 LED + 저항 회로 — 예제 계산</h3>
             <div style="margin:1.5rem 0;text-align:center">
-              <svg viewBox="0 0 700 220" style="max-width:100%;height:auto">
-                <defs><marker id="arrI" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e2b714"/></marker></defs>
-                <line x1="80" y1="60" x2="80" y2="100" stroke="#e2b714" stroke-width="4"/>
-                <line x1="70" y1="70" x2="90" y2="70" stroke="#e2b714" stroke-width="6"/>
-                <line x1="60" y1="85" x2="100" y2="85" stroke="#e2b714" stroke-width="3"/>
-                <text x="45" y="135" fill="#e2b714" font-size="14" font-weight="700">5V</text>
-                <line x1="80" y1="60" x2="620" y2="60" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrI)"/>
-                <rect x="260" y="48" width="100" height="24" fill="rgba(123,47,247,.2)" stroke="#7b2ff7" stroke-width="2"/>
-                <text x="285" y="65" fill="#b69cff" font-size="12" font-weight="700">R=150Ω</text>
-                <polygon points="500,48 500,72 525,60" fill="#ff4757" stroke="#ff4757"/>
-                <line x1="525" y1="48" x2="525" y2="72" stroke="#ff4757" stroke-width="3"/>
-                <text x="480" y="90" fill="#ff4757" font-size="12" font-weight="700">LED (VF=2V)</text>
-                <line x1="620" y1="60" x2="620" y2="180" stroke="#00d4ff" stroke-width="2"/>
-                <line x1="620" y1="180" x2="80" y2="180" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrI)"/>
-                <line x1="80" y1="180" x2="80" y2="100" stroke="#00d4ff" stroke-width="2"/>
-                <circle r="5" fill="#4ade80">
-                  <animateMotion dur="3s" repeatCount="indefinite" path="M 80 60 L 620 60 L 620 180 L 80 180 L 80 60"/>
-                </circle>
-                <text x="260" y="210" fill="#4ade80" font-size="13" font-weight="700">IF = 20mA → R = (5V−2V)/0.02A = 150Ω</text>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  BAT(["전원 Vs = 5V"]) --> R["저항 R<br/>(Vs - Vf) / If"]
+  R --> LED["LED<br/>Vf ≈ 2V · If = 20mA"]
+  LED --> GND([GND])
+  NOTE["예: R = (5 - 2) / 0.02 = 150Ω<br/>시판 표준 저항 220Ω 사용 (안전여유)"]
+  LED -.-> NOTE
+            </div>
             </div>
 
             <h3>🔧 전자 부품</h3>
@@ -450,5 +443,7 @@ tar -xzvf archive.tar.gz       # 해제</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script type="module" src="../js/mermaid-init.js"></script>
+
 </body>
 </html>

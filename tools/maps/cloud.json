@@ -1,0 +1,9 @@
+[
+  "flowchart TB\n  USER([Internet 사용자]) --> IGW[Internet Gateway]\n  subgraph VPC[\"VPC 10.0.0.0/16\"]\n    subgraph PUB[\"Public Subnet 10.0.1.0/24\"]\n      BAS[Bastion / Web<br/>Public IP]\n      NAT[NAT Gateway]\n    end\n    subgraph PRI[\"Private Subnet 10.0.2.0/24\"]\n      APP[App Server<br/>Private IP]\n      DB[(RDS)]\n    end\n    IGW --> BAS\n    IGW --> NAT\n    NAT -->|Outbound Only| APP\n    BAS -->|SSH 22| APP\n    APP -->|3306| DB\n  end",
+
+  "flowchart TB\n  USER([Client]) --> ALB[\"ALB (L7)<br/>HTTP · HTTPS · gRPC\"]\n  USER --> NLB[\"NLB (L4)<br/>TCP · UDP · TLS\"]\n  USER --> CLB[\"CLB (L4/L7 Legacy)\"]\n  ALB -->|path /api/*| TG1[Target Group A]\n  ALB -->|path /img/*| TG2[Target Group B]\n  NLB -->|초저지연·정적IP| TG3[Target Group C]\n  CLB -->|단순 라운드로빈| TG4[EC2 Pool]\n  TG1 --> EC1[EC2 · Fargate · IP]\n  TG2 --> EC2[EC2 · Fargate · IP]\n  TG3 --> EC3[EC2 · 고정 IP 필요 시]\n  TG4 --> EC4[EC2 Classic]",
+
+  "flowchart LR\n  CW[CloudWatch<br/>CPU · ALB req] --> POL{{Scaling Policy}}\n  POL -->|Scale Out| ASG[Auto Scaling Group]\n  POL -->|Scale In| ASG\n  ASG --> LT[\"Launch Template<br/>AMI + InstanceType + UserData\"]\n  LT --> E1[EC2-1]\n  LT --> E2[EC2-2]\n  LT --> E3[EC2-N]\n  subgraph ZONE[Multi-AZ 분산]\n    E1\n    E2\n    E3\n  end\n  ALB[ALB] --> E1\n  ALB --> E2\n  ALB --> E3\n  HC[Health Check] -.실패.-> ASG",
+
+  "flowchart TB\n  subgraph GW[\"Gateway Endpoint (무료)\"]\n    direction LR\n    EC2A[EC2 · Private Subnet] -->|Route Table<br/>prefix list| GWE[Gateway Endpoint]\n    GWE --> S3[(S3 · DynamoDB)]\n  end\n  subgraph IF[\"Interface Endpoint (유료 · ENI)\"]\n    direction LR\n    EC2B[EC2 · Private Subnet] -->|Private DNS<br/>PrivateLink| ENI[ENI in Subnet]\n    ENI --> SVC[Kinesis · SSM · SNS<br/>ECR · CloudWatch 등]\n  end\n  NOTE1[[S3 · DynamoDB 전용]]\n  NOTE2[[그 외 대부분 AWS 서비스]]\n  GWE -.-> NOTE1\n  ENI -.-> NOTE2"
+]

@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/animations.css" />
   <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="../css/mermaid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
   <style>
     .perm-chip{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.85em;font-weight:700;margin-right:.3rem}
@@ -161,53 +162,19 @@ echo 'export PATH=$PATH:/opt/myapp/bin' &gt;&gt; ~/.bashrc</code></pre>
             <p>패스워드보다 안전하고 자동화(CI/CD·앤서블)에 필수. 개인키는 <em>절대</em> 서버에 올리지 않는다.</p>
 
             <div style="margin:1.5rem 0;text-align:center">
-              <svg viewBox="0 0 760 280" style="max-width:100%;height:auto">
-                <defs>
-                  <marker id="arrSsh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
-                  </marker>
-                  <linearGradient id="gradPriv" x1="0" x2="1">
-                    <stop offset="0" stop-color="#e2b714"/><stop offset="1" stop-color="#ff9900"/>
-                  </linearGradient>
-                  <linearGradient id="gradPub" x1="0" x2="1">
-                    <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#00d4ff"/>
-                  </linearGradient>
-                </defs>
-
-                <!-- Client box -->
-                <rect x="30" y="40" width="220" height="200" rx="10" fill="rgba(0,212,255,.05)" stroke="#00d4ff" stroke-width="2"/>
-                <text x="140" y="62" text-anchor="middle" fill="#00d4ff" font-weight="700">🖥️ Client</text>
-                <rect x="55" y="85" width="170" height="40" rx="6" fill="url(#gradPriv)" opacity=".85"/>
-                <text x="140" y="110" text-anchor="middle" fill="#111" font-weight="700" font-family="JetBrains Mono" font-size="12">🔒 id_rsa (Private)</text>
-                <rect x="55" y="140" width="170" height="40" rx="6" fill="url(#gradPub)" opacity=".85"/>
-                <text x="140" y="165" text-anchor="middle" fill="#111" font-weight="700" font-family="JetBrains Mono" font-size="12">🔓 id_rsa.pub</text>
-                <text x="140" y="215" text-anchor="middle" fill="#999" font-size="11">~/.ssh/ (chmod 700)</text>
-
-                <!-- Server box -->
-                <rect x="510" y="40" width="220" height="200" rx="10" fill="rgba(123,47,247,.08)" stroke="#7b2ff7" stroke-width="2"/>
-                <text x="620" y="62" text-anchor="middle" fill="#b69cff" font-weight="700">🖧 Server</text>
-                <rect x="535" y="85" width="170" height="70" rx="6" fill="rgba(74,222,128,.1)" stroke="#4ade80" stroke-dasharray="4 2"/>
-                <text x="620" y="108" text-anchor="middle" fill="#4ade80" font-weight="700" font-family="JetBrains Mono" font-size="11">~/.ssh/authorized_keys</text>
-                <text x="620" y="128" text-anchor="middle" fill="#ccc" font-size="10">(공개키 저장)</text>
-                <text x="620" y="145" text-anchor="middle" fill="#ccc" font-size="10">chmod 644</text>
-                <text x="620" y="200" text-anchor="middle" fill="#999" font-size="11">sshd: 챌린지 생성</text>
-                <text x="620" y="217" text-anchor="middle" fill="#999" font-size="11">→ 공개키로 검증</text>
-
-                <!-- Flow arrows -->
-                <line x1="250" y1="160" x2="508" y2="120" stroke="#4ade80" stroke-width="2" marker-end="url(#arrSsh)"/>
-                <text x="355" y="135" fill="#4ade80" font-size="11" font-weight="700">① ssh-copy-id (공개키 전송)</text>
-
-                <!-- Animated challenge dots -->
-                <circle r="5" fill="#e2b714">
-                  <animateMotion dur="2.4s" repeatCount="indefinite" path="M 250,100 Q 380,30 508,100"/>
-                </circle>
-                <text x="350" y="55" fill="#e2b714" font-size="11" font-weight="700">② 챌린지 ⇄ 서명</text>
-                <circle r="5" fill="#00d4ff">
-                  <animateMotion dur="2.4s" repeatCount="indefinite" begin="1.2s" path="M 508,100 Q 380,30 250,100"/>
-                </circle>
-
-                <text x="380" y="265" text-anchor="middle" fill="#999" font-size="11" font-style="italic">개인키는 절대 전송되지 않는다 — 서명만 전송</text>
-              </svg>
+              <div class="mermaid">
+sequenceDiagram
+  actor C as Client
+  participant S as Server (sshd)
+  Note over C: ssh-keygen 으로 키 쌍 생성<br/>~/.ssh/id_rsa (개인키) + id_rsa.pub (공개키)
+  C->>S: ssh-copy-id user@host<br/>(공개키를 ~/.ssh/authorized_keys 에 등록)
+  C->>S: ssh user@host (접속 요청)
+  S-->>C: 난수 challenge
+  C->>C: 개인키로 서명 (passphrase 필요 시 입력)
+  C->>S: 서명 전송
+  S->>S: authorized_keys 공개키로 서명 검증
+  S-->>C: 접속 허용 (암호 없이)
+            </div>
             </div>
 
             <h3>키 쌍 생성 & 배포</h3>
@@ -493,93 +460,34 @@ echo '/swapfile none swap defaults 0 0' &gt;&gt; /etc/fstab</code></pre>
             <p>물리 디스크 경계를 넘어 <em>유연하게 볼륨을 확장·축소</em>할 수 있는 계층. PV → VG → LV 3단 구조.</p>
 
             <div style="margin:1.5rem 0;text-align:center">
-              <svg viewBox="0 0 760 340" style="max-width:100%;height:auto">
-                <defs>
-                  <marker id="arrLvm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#b69cff"/>
-                  </marker>
-                </defs>
-
-                <!-- PV Layer -->
-                <text x="30" y="40" fill="#4ade80" font-weight="700" font-size="14">PV · Physical Volume</text>
-                <g>
-                  <rect x="30" y="55" width="130" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
-                  <text x="95" y="78" text-anchor="middle" fill="#4ade80" font-family="JetBrains Mono" font-size="12">/dev/sdc1</text>
-                  <text x="95" y="95" text-anchor="middle" fill="#ccc" font-size="10">500GB</text>
-                </g>
-                <g>
-                  <rect x="180" y="55" width="130" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
-                  <text x="245" y="78" text-anchor="middle" fill="#4ade80" font-family="JetBrains Mono" font-size="12">/dev/sdd1</text>
-                  <text x="245" y="95" text-anchor="middle" fill="#ccc" font-size="10">500GB</text>
-                </g>
-                <g>
-                  <rect x="330" y="55" width="130" height="50" rx="6" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
-                  <text x="395" y="78" text-anchor="middle" fill="#4ade80" font-family="JetBrains Mono" font-size="12">/dev/sde1</text>
-                  <text x="395" y="95" text-anchor="middle" fill="#ccc" font-size="10">500GB</text>
-                </g>
-
-                <!-- Flow to VG -->
-                <line x1="95" y1="108" x2="220" y2="145" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
-                <line x1="245" y1="108" x2="260" y2="145" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
-                <line x1="395" y1="108" x2="300" y2="145" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
-                <text x="490" y="85" fill="#999" font-size="11">pvcreate</text>
-
-                <!-- VG Layer -->
-                <text x="30" y="170" fill="#7b2ff7" font-weight="700" font-size="14">VG · Volume Group</text>
-                <rect x="100" y="180" width="360" height="55" rx="8" fill="rgba(123,47,247,.12)" stroke="#7b2ff7" stroke-width="2"/>
-                <text x="280" y="203" text-anchor="middle" fill="#b69cff" font-family="JetBrains Mono" font-size="13" font-weight="700">vg_data (1.5 TB)</text>
-                <text x="280" y="222" text-anchor="middle" fill="#ccc" font-size="11">물리 디스크를 하나의 큰 저장풀로 합침</text>
-                <text x="490" y="215" fill="#999" font-size="11">vgcreate</text>
-
-                <!-- Flow to LV -->
-                <line x1="180" y1="238" x2="120" y2="275" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
-                <line x1="280" y1="238" x2="280" y2="275" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
-                <line x1="380" y1="238" x2="440" y2="275" stroke="#b69cff" stroke-width="2" marker-end="url(#arrLvm)"/>
-                <text x="490" y="255" fill="#999" font-size="11">lvcreate</text>
-
-                <!-- LV Layer -->
-                <text x="30" y="298" fill="#00d4ff" font-weight="700" font-size="14">LV · Logical Volume</text>
-                <g>
-                  <rect x="55" y="290" width="130" height="40" rx="6" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
-                  <text x="120" y="308" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11">lv_home</text>
-                  <text x="120" y="322" text-anchor="middle" fill="#ccc" font-size="10">200 GB / xfs</text>
-                </g>
-                <g>
-                  <rect x="210" y="290" width="140" height="40" rx="6" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
-                  <text x="280" y="308" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11">lv_db</text>
-                  <text x="280" y="322" text-anchor="middle" fill="#ccc" font-size="10">800 GB / ext4</text>
-                </g>
-                <g>
-                  <rect x="375" y="290" width="130" height="40" rx="6" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
-                  <text x="440" y="308" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="11">lv_logs</text>
-                  <text x="440" y="322" text-anchor="middle" fill="#ccc" font-size="10">500 GB / xfs</text>
-                </g>
-
-                <!-- Data flow particle -->
-                <circle r="4" fill="#e2b714">
-                  <animateMotion dur="3s" repeatCount="indefinite" path="M 95,80 L 260,205 L 280,310"/>
-                </circle>
-                <circle r="4" fill="#4ade80">
-                  <animateMotion dur="3s" repeatCount="indefinite" begin="1s" path="M 395,80 L 260,205 L 120,310"/>
-                </circle>
-
-                <!-- Right side legend -->
-                <g transform="translate(560, 60)">
-                  <rect x="0" y="0" width="180" height="260" rx="8" fill="#0f0f0f" stroke="#2a2a2a"/>
-                  <text x="90" y="22" text-anchor="middle" fill="#f0f0f0" font-weight="700" font-size="13">확장 시나리오</text>
-                  <text x="12" y="48" fill="#4ade80" font-size="11" font-weight="700">① 디스크 추가</text>
-                  <text x="20" y="63" fill="#ccc" font-family="JetBrains Mono" font-size="10">vgextend vg_data /dev/sdf1</text>
-                  <text x="12" y="90" fill="#e2b714" font-size="11" font-weight="700">② LV 확장</text>
-                  <text x="20" y="105" fill="#ccc" font-family="JetBrains Mono" font-size="10">lvextend -L +100G</text>
-                  <text x="20" y="119" fill="#ccc" font-family="JetBrains Mono" font-size="10">   /dev/vg_data/lv_db</text>
-                  <text x="12" y="146" fill="#00d4ff" font-size="11" font-weight="700">③ FS 재조정</text>
-                  <text x="20" y="161" fill="#ccc" font-family="JetBrains Mono" font-size="10">resize2fs (ext4)</text>
-                  <text x="20" y="175" fill="#ccc" font-family="JetBrains Mono" font-size="10">xfs_growfs (xfs)</text>
-                  <text x="12" y="205" fill="#ff4757" font-size="11" font-weight="700">⚠ 주의</text>
-                  <text x="20" y="222" fill="#ccc" font-size="10">xfs는 축소 불가</text>
-                  <text x="20" y="237" fill="#ccc" font-size="10">ext4는 축소 전 umount</text>
-                </g>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  subgraph DISK["물리 디스크"]
+    SDB["/dev/sdb"]
+    SDC["/dev/sdc"]
+    SDD["/dev/sdd"]
+  end
+  subgraph PV["Physical Volume"]
+    PV1["PV: sdb1"]
+    PV2["PV: sdc1"]
+    PV3["PV: sdd1"]
+  end
+  subgraph VG["Volume Group vg_data"]
+    VGP["PE Physical Extent 풀"]
+  end
+  subgraph LV["Logical Volume"]
+    LV1["lv_home<br/>50G"]
+    LV2["lv_app<br/>30G"]
+    LV3["lv_backup<br/>20G"]
+  end
+  SDB --> PV1 --> VGP
+  SDC --> PV2 --> VGP
+  SDD --> PV3 --> VGP
+  VGP --> LV1
+  VGP --> LV2
+  VGP --> LV3
+  LV1 --> FS["mkfs.xfs · mount /home"]
+            </div>
             </div>
 
             <h3>생성 파이프라인</h3>
@@ -623,161 +531,31 @@ xfs_growfs /home/data              # xfs는 xfs_growfs (축소 불가)</code></p
             <h2>🗃️ RAID — mdadm 소프트웨어 RAID</h2>
             <p>여러 디스크를 하나의 논리 장치로 묶어 <strong>성능·가용성</strong>을 확보. Linux에서는 <code>mdadm</code>으로 소프트RAID를 구성한다.</p>
 
-            <svg viewBox="0 0 780 540" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="RAID 레벨 블록 배치 다이어그램">
-              <defs>
-                <linearGradient id="raidBlkA" x1="0" x2="1"><stop offset="0" stop-color="#00d4ff"/><stop offset="1" stop-color="#0099cc"/></linearGradient>
-                <linearGradient id="raidBlkB" x1="0" x2="1"><stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#22a055"/></linearGradient>
-                <linearGradient id="raidBlkC" x1="0" x2="1"><stop offset="0" stop-color="#e2b714"/><stop offset="1" stop-color="#b4900f"/></linearGradient>
-                <linearGradient id="raidBlkP" x1="0" x2="1"><stop offset="0" stop-color="#ff4757"/><stop offset="1" stop-color="#c2323f"/></linearGradient>
-                <linearGradient id="raidBlkQ" x1="0" x2="1"><stop offset="0" stop-color="#7b2ff7"/><stop offset="1" stop-color="#5220aa"/></linearGradient>
-                <style>
-                  .dlabel{fill:#a0a0a0;font:11px sans-serif}
-                  .rtitle{fill:#fff;font:bold 13px sans-serif}
-                  .rsub{fill:#a0a0a0;font:10px sans-serif}
-                  .blk{stroke:#0a0a0a;stroke-width:1.5}
-                  .blkt{fill:#fff;font:bold 11px sans-serif;text-anchor:middle;dominant-baseline:central}
-                  .disk{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:4;ry:4}
-                </style>
-              </defs>
-
-              <!-- RAID 0 -->
-              <g transform="translate(20,20)">
-                <text class="rtitle" x="0" y="0">RAID 0 — Stripe</text>
-                <text class="rsub" x="0" y="14">블록을 분할·병렬 기록 · 용량 100% · 장애 시 전멸</text>
-                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
-                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="6" y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A1</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A2</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="6" y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B1</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">B2</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="6" y="82" width="52" height="22" rx="3"/><text class="blkt" x="32" y="93">C1</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="86" y="82" width="52" height="22" rx="3"/><text class="blkt" x="112" y="93">C2</text>
-                <!-- animated block traveling between disks -->
-                <rect class="blk" fill="#00d4ff" width="24" height="10" rx="2" opacity=".9">
-                  <animateMotion dur="2.2s" repeatCount="indefinite" path="M 8,116 L 88,116"/>
-                </rect>
-              </g>
-
-              <!-- RAID 1 -->
-              <g transform="translate(220,20)">
-                <text class="rtitle" x="0" y="0">RAID 1 — Mirror</text>
-                <text class="rsub" x="0" y="14">동일 복제본 기록 · 용량 50% · 읽기 분산 가능</text>
-                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
-                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="6" y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="6" y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">B</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="6" y="82" width="52" height="22" rx="3"/><text class="blkt" x="32" y="93">C</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="86" y="82" width="52" height="22" rx="3"/><text class="blkt" x="112" y="93">C</text>
-                <!-- mirror sync arrow -->
-                <path d="M 62,116 L 82,116" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#arrG)"/>
-                <circle r="4" fill="#4ade80">
-                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 62,116 L 82,116"/>
-                </circle>
-                <text class="dlabel" x="72" y="132" text-anchor="middle">sync</text>
-              </g>
-
-              <!-- RAID 5 -->
-              <g transform="translate(420,20)">
-                <text class="rtitle" x="0" y="0">RAID 5 — Stripe + 분산 Parity</text>
-                <text class="rsub" x="0" y="14">패리티(P)를 돌아가며 저장 · 1개 장애 복구 가능</text>
-                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
-                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
-                <rect class="disk" x="160" y="24" width="64" height="120"/><text class="dlabel" x="192" y="158" text-anchor="middle">sdd</text>
-                <!-- row A: P on sdd -->
-                <rect class="blk" fill="url(#raidBlkA)" x="6"  y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A1</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A2</text>
-                <rect class="blk" fill="url(#raidBlkP)" x="166" y="30" width="52" height="22" rx="3"/><text class="blkt" x="192" y="41">Ap</text>
-                <!-- row B: P on sdc -->
-                <rect class="blk" fill="url(#raidBlkB)" x="6"  y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B1</text>
-                <rect class="blk" fill="url(#raidBlkP)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">Bp</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="166" y="56" width="52" height="22" rx="3"/><text class="blkt" x="192" y="67">B2</text>
-                <!-- row C: P on sdb -->
-                <rect class="blk" fill="url(#raidBlkP)" x="6"  y="82" width="52" height="22" rx="3"/><text class="blkt" x="32" y="93">Cp</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="86" y="82" width="52" height="22" rx="3"/><text class="blkt" x="112" y="93">C1</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="166" y="82" width="52" height="22" rx="3"/><text class="blkt" x="192" y="93">C2</text>
-                <!-- parity travels diagonally -->
-                <circle r="5" fill="#ff4757" opacity=".9">
-                  <animateMotion dur="3s" repeatCount="indefinite" path="M 192,41 L 112,67 L 32,93"/>
-                </circle>
-              </g>
-
-              <!-- RAID 10 -->
-              <g transform="translate(20,200)">
-                <text class="rtitle" x="0" y="0">RAID 10 — Stripe of Mirrors (1+0)</text>
-                <text class="rsub" x="0" y="14">미러 페어를 스트라이프 · DB 등 랜덤 I/O에 최적</text>
-                <!-- mirror pair 1 -->
-                <rect class="disk" x="0" y="24" width="64" height="120"/><text class="dlabel" x="32" y="158" text-anchor="middle">sdb</text>
-                <rect class="disk" x="80" y="24" width="64" height="120"/><text class="dlabel" x="112" y="158" text-anchor="middle">sdc</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="6"  y="30" width="52" height="22" rx="3"/><text class="blkt" x="32" y="41">A1</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="86" y="30" width="52" height="22" rx="3"/><text class="blkt" x="112" y="41">A1</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="6"  y="56" width="52" height="22" rx="3"/><text class="blkt" x="32" y="67">B1</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="86" y="56" width="52" height="22" rx="3"/><text class="blkt" x="112" y="67">B1</text>
-                <text class="dlabel" x="72" y="90" text-anchor="middle">Mirror 1</text>
-                <!-- mirror pair 2 -->
-                <rect class="disk" x="180" y="24" width="64" height="120"/><text class="dlabel" x="212" y="158" text-anchor="middle">sdd</text>
-                <rect class="disk" x="260" y="24" width="64" height="120"/><text class="dlabel" x="292" y="158" text-anchor="middle">sde</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="186" y="30" width="52" height="22" rx="3"/><text class="blkt" x="212" y="41">A2</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="266" y="30" width="52" height="22" rx="3"/><text class="blkt" x="292" y="41">A2</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="186" y="56" width="52" height="22" rx="3"/><text class="blkt" x="212" y="67">B2</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="266" y="56" width="52" height="22" rx="3"/><text class="blkt" x="292" y="67">B2</text>
-                <text class="dlabel" x="252" y="90" text-anchor="middle">Mirror 2</text>
-                <!-- stripe arrow across mirrors -->
-                <path d="M 144,116 L 184,116" stroke="#00d4ff" stroke-width="2" fill="none"/>
-                <circle r="4" fill="#00d4ff">
-                  <animateMotion dur="2s" repeatCount="indefinite" path="M 144,116 L 184,116"/>
-                </circle>
-                <text class="dlabel" x="164" y="132" text-anchor="middle">stripe</text>
-              </g>
-
-              <!-- RAID 6 -->
-              <g transform="translate(420,200)">
-                <text class="rtitle" x="0" y="0">RAID 6 — Double Parity (P+Q)</text>
-                <text class="rsub" x="0" y="14">이중 패리티 · 2개 디스크 동시 장애 복구 가능</text>
-                <rect class="disk" x="0" y="24" width="60" height="120"/><text class="dlabel" x="30" y="158" text-anchor="middle">sdb</text>
-                <rect class="disk" x="72" y="24" width="60" height="120"/><text class="dlabel" x="102" y="158" text-anchor="middle">sdc</text>
-                <rect class="disk" x="144" y="24" width="60" height="120"/><text class="dlabel" x="174" y="158" text-anchor="middle">sdd</text>
-                <rect class="disk" x="216" y="24" width="60" height="120"/><text class="dlabel" x="246" y="158" text-anchor="middle">sde</text>
-                <!-- row A -->
-                <rect class="blk" fill="url(#raidBlkA)" x="4"   y="30" width="52" height="22" rx="3"/><text class="blkt" x="30" y="41">A1</text>
-                <rect class="blk" fill="url(#raidBlkA)" x="76"  y="30" width="52" height="22" rx="3"/><text class="blkt" x="102" y="41">A2</text>
-                <rect class="blk" fill="url(#raidBlkP)" x="148" y="30" width="52" height="22" rx="3"/><text class="blkt" x="174" y="41">Ap</text>
-                <rect class="blk" fill="url(#raidBlkQ)" x="220" y="30" width="52" height="22" rx="3"/><text class="blkt" x="246" y="41">Aq</text>
-                <!-- row B -->
-                <rect class="blk" fill="url(#raidBlkB)" x="4"   y="56" width="52" height="22" rx="3"/><text class="blkt" x="30" y="67">B1</text>
-                <rect class="blk" fill="url(#raidBlkP)" x="76"  y="56" width="52" height="22" rx="3"/><text class="blkt" x="102" y="67">Bp</text>
-                <rect class="blk" fill="url(#raidBlkQ)" x="148" y="56" width="52" height="22" rx="3"/><text class="blkt" x="174" y="67">Bq</text>
-                <rect class="blk" fill="url(#raidBlkB)" x="220" y="56" width="52" height="22" rx="3"/><text class="blkt" x="246" y="67">B2</text>
-                <!-- row C -->
-                <rect class="blk" fill="url(#raidBlkP)" x="4"   y="82" width="52" height="22" rx="3"/><text class="blkt" x="30" y="93">Cp</text>
-                <rect class="blk" fill="url(#raidBlkQ)" x="76"  y="82" width="52" height="22" rx="3"/><text class="blkt" x="102" y="93">Cq</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="148" y="82" width="52" height="22" rx="3"/><text class="blkt" x="174" y="93">C1</text>
-                <rect class="blk" fill="url(#raidBlkC)" x="220" y="82" width="52" height="22" rx="3"/><text class="blkt" x="246" y="93">C2</text>
-                <circle r="5" fill="#7b2ff7">
-                  <animateMotion dur="2.6s" repeatCount="indefinite" path="M 246,41 L 174,67 L 102,93"/>
-                </circle>
-              </g>
-
-              <!-- Legend -->
-              <g transform="translate(20,400)">
-                <rect x="0" y="0" width="740" height="120" fill="#111" stroke="#2a2a2a" rx="6"/>
-                <text class="rtitle" x="14" y="22">선택 가이드</text>
-                <g transform="translate(14,36)" font-size="11" fill="#d0d0d0">
-                  <text y="14"><tspan fill="#00d4ff" font-weight="bold">RAID 0</tspan> — 최대 성능·가용성 포기 (임시 캐시, 재생성 가능한 데이터)</text>
-                  <text y="32"><tspan fill="#4ade80" font-weight="bold">RAID 1</tspan> — OS 디스크·중요 로그 (소규모 미러)</text>
-                  <text y="50"><tspan fill="#e2b714" font-weight="bold">RAID 5</tspan> — 용량 효율 + 1중 보호 (일반 파일 서버) · 요즘은 대용량에서 비권장</text>
-                  <text y="68"><tspan fill="#ff4757" font-weight="bold">RAID 6</tspan> — 대용량 NAS·재구축 시간 긴 HDD 어레이</text>
-                  <text y="86"><tspan fill="#7b2ff7" font-weight="bold">RAID 10</tspan> — DB·VM 스토리지 등 랜덤 쓰기 집중 워크로드</text>
-                </g>
-              </g>
-
-              <defs>
-                <marker id="arrG" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-                  <path d="M0,0 L8,3 L0,6 z" fill="#4ade80"/>
-                </marker>
-              </defs>
-            </svg>
+            <div class="mermaid">
+flowchart TB
+  subgraph RAID0["RAID 0 · 스트라이핑"]
+    R0A["Disk1<br/>A1 · A3 · A5"]
+    R0B["Disk2<br/>A2 · A4 · A6"]
+  end
+  subgraph RAID1["RAID 1 · 미러링"]
+    R1A["Disk1<br/>A1 · A2 · A3"]
+    R1B["Disk2<br/>A1 · A2 · A3 사본"]
+  end
+  subgraph RAID5["RAID 5 · 분산 패리티"]
+    R5A["Disk1<br/>A1 · B2 · Cp"]
+    R5B["Disk2<br/>A2 · Bp · C1"]
+    R5C["Disk3<br/>Ap · B1 · C2"]
+  end
+  subgraph RAID10["RAID 10 · 미러 + 스트라이프"]
+    M1["Mirror1<br/>A1 · A1"]
+    M2["Mirror2<br/>A2 · A2"]
+    M1 --- M2
+  end
+  RAID0 -.->|"용량↑ 속도↑ · 내결함성 無 · 최소 2"| R0N["특징"]
+  RAID1 -.->|"안전 · 용량 절반 · 최소 2"| R1N["특징"]
+  RAID5 -.->|"용량 N-1 · 1개 장애 허용 · 최소 3"| R5N["특징"]
+  RAID10 -.->|"속도+안전 · 용량 절반 · 최소 4"| R10N["특징"]
+            </div>
 
             <div class="raid-card">
               <h4>RAID 0 (Stripe)</h4>
@@ -970,101 +748,18 @@ nmcli connection       # NetworkManager</code></pre>
 
             <h3>firewalld (Rocky) · ufw (Ubuntu)</h3>
 
-            <svg viewBox="0 0 780 340" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="방화벽 패킷 흐름 (netfilter 체인)">
-              <defs>
-                <marker id="fwArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                  <path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/>
-                </marker>
-                <marker id="fwArrR" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                  <path d="M0,0 L9,3 L0,6 z" fill="#ff4757"/>
-                </marker>
-                <style>
-                  .fwbox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .fwin{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:6;ry:6}
-                  .fwout{fill:#2a1a1a;stroke:#ff4757;stroke-width:1.5;rx:6;ry:6}
-                  .fwt{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .fws{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .fwh{fill:#00d4ff;font:bold 11px sans-serif}
-                </style>
-              </defs>
-
-              <!-- External network -->
-              <rect class="fwbox" x="10" y="20" width="120" height="60"/>
-              <text class="fwt" x="70" y="44">🌐 외부</text>
-              <text class="fws" x="70" y="62">Internet</text>
-
-              <!-- PREROUTING -->
-              <rect class="fwbox" x="160" y="20" width="110" height="60"/>
-              <text class="fwt" x="215" y="40">PREROUTING</text>
-              <text class="fws" x="215" y="56">nat</text>
-              <text class="fws" x="215" y="70">DNAT·포트포워드</text>
-
-              <!-- Routing decision -->
-              <polygon points="300,50 350,20 400,50 350,80" fill="#2a1f10" stroke="#e2b714" stroke-width="1.5"/>
-              <text class="fwt" x="350" y="46" font-size="11">Routing</text>
-              <text class="fws" x="350" y="60">local? forward?</text>
-
-              <!-- INPUT -->
-              <rect class="fwin" x="430" y="20" width="120" height="60"/>
-              <text class="fwt" x="490" y="44">INPUT ✔</text>
-              <text class="fws" x="490" y="60">로컬 프로세스 향</text>
-
-              <!-- local process -->
-              <rect class="fwbox" x="580" y="20" width="180" height="60"/>
-              <text class="fwt" x="670" y="44">💻 로컬 서비스</text>
-              <text class="fws" x="670" y="60">sshd · httpd · nfsd</text>
-
-              <!-- FORWARD -->
-              <rect class="fwbox" x="300" y="130" width="200" height="50"/>
-              <text class="fwt" x="400" y="150">FORWARD</text>
-              <text class="fws" x="400" y="166">라우터·NAT 게이트웨이 전용</text>
-
-              <!-- OUTPUT -->
-              <rect class="fwout" x="430" y="210" width="120" height="60"/>
-              <text class="fwt" x="490" y="234">OUTPUT</text>
-              <text class="fws" x="490" y="250">로컬 → 외부</text>
-
-              <!-- POSTROUTING -->
-              <rect class="fwbox" x="160" y="210" width="110" height="60"/>
-              <text class="fwt" x="215" y="234">POSTROUTING</text>
-              <text class="fws" x="215" y="250">SNAT·Masquerade</text>
-
-              <!-- external out -->
-              <rect class="fwbox" x="10" y="210" width="120" height="60"/>
-              <text class="fwt" x="70" y="234">🌐 외부</text>
-              <text class="fws" x="70" y="250">Internet</text>
-
-              <!-- Arrows: incoming flow -->
-              <path d="M 130,50 L 158,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
-              <path d="M 270,50 L 298,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
-              <path d="M 400,50 L 428,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
-              <path d="M 550,50 L 578,50" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
-              <!-- routing→forward (diverted) -->
-              <path d="M 350,80 L 350,130" stroke="#e2b714" stroke-width="2" fill="none" marker-end="url(#fwArr)"/>
-              <path d="M 500,155 Q 550,155 550,200 L 490,240 Q 430,240 330,240 L 270,240" stroke="#e2b714" stroke-width="2" fill="none" opacity=".6"/>
-
-              <!-- outgoing: local → OUTPUT → POSTROUTING → net -->
-              <path d="M 670,80 L 670,180 L 550,240" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#fwArrR)"/>
-              <path d="M 430,240 L 270,240" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#fwArrR)"/>
-              <path d="M 160,240 L 130,240" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#fwArrR)"/>
-
-              <!-- animated packets -->
-              <circle r="5" fill="#00d4ff">
-                <animateMotion dur="4s" repeatCount="indefinite" path="M 130,50 L 430,50 L 580,50"/>
-              </circle>
-              <circle r="5" fill="#ff4757">
-                <animateMotion dur="4s" repeatCount="indefinite" begin="2s" path="M 670,80 L 670,180 L 550,240 L 270,240 L 130,240"/>
-              </circle>
-              <circle r="4" fill="#e2b714" opacity=".8">
-                <animateMotion dur="3.6s" repeatCount="indefinite" begin="1s" path="M 350,80 L 350,130 L 500,155"/>
-              </circle>
-
-              <!-- Legend -->
-              <g transform="translate(20,295)">
-                <text class="fwh" x="0" y="0">Zones (firewalld)</text>
-                <text class="fws" text-anchor="start" x="0" y="18">public(기본) · trusted · internal · dmz · drop · block — 인터페이스·원천IP에 존 바인딩</text>
-              </g>
-            </svg>
+            <div class="mermaid">
+flowchart LR
+  NET([외부 네트워크]) --> PRE["PREROUTING<br/>DNAT"]
+  PRE --> RT{라우팅 결정}
+  RT -->|"로컬 대상"| IN["INPUT<br/>필터링"]
+  IN --> LOCAL["로컬 프로세스"]
+  LOCAL --> OUT["OUTPUT<br/>필터링"]
+  RT -->|"포워딩"| FWD["FORWARD<br/>필터링"]
+  FWD --> POST["POSTROUTING<br/>SNAT · 마스커레이드"]
+  OUT --> POST
+  POST --> NETOUT([외부로])
+            </div>
 
 <pre><code class="language-bash"># firewalld
 firewall-cmd --state
@@ -1105,75 +800,23 @@ ufw status verbose</code></pre>
               <strong>chroot jail:</strong> FTP/SFTP 사용자가 자기 홈 밖으로 벗어나지 못하게 루트를 가상 고정하는 보안 기법. vsftpd의 <code>chroot_local_user=YES</code>.
             </div>
 
-            <svg viewBox="0 0 780 320" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="NFS · Samba 클라이언트-서버 토폴로지">
-              <defs>
-                <marker id="shArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                  <path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/>
-                </marker>
-                <style>
-                  .shbox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:8;ry:8}
-                  .shcli{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:8;ry:8}
-                  .shsrv{fill:#1a2030;stroke:#00d4ff;stroke-width:1.5;rx:8;ry:8}
-                  .sht{fill:#fff;font:bold 13px sans-serif;text-anchor:middle}
-                  .shs{fill:#a0a0a0;font:10.5px sans-serif;text-anchor:middle}
-                  .port{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- Server -->
-              <rect class="shsrv" x="300" y="20" width="200" height="90"/>
-              <text class="sht" x="400" y="42">🖥️ Linux 서버</text>
-              <text class="shs" x="400" y="58">/var/nfs · /srv/samba/share</text>
-              <text class="shs" x="400" y="74">nfs-server · smbd/nmbd</text>
-              <text class="shs" x="400" y="90">firewalld: --add-service=nfs,samba</text>
-
-              <!-- NFS client -->
-              <rect class="shcli" x="20" y="200" width="180" height="90"/>
-              <text class="sht" x="110" y="222">🐧 NFS 클라이언트</text>
-              <text class="shs" x="110" y="240">mount -t nfs</text>
-              <text class="shs" x="110" y="256">SRV:/var/nfs → /mnt/nfs</text>
-              <text class="shs" x="110" y="272">fstab: _netdev, hard, bg</text>
-
-              <!-- Samba client (Windows) -->
-              <rect class="shcli" x="580" y="200" width="180" height="90"/>
-              <text class="sht" x="670" y="222">🪟 Windows 클라이언트</text>
-              <text class="shs" x="670" y="240">\\192.168.6.3\share</text>
-              <text class="shs" x="670" y="256">net use Z: ...</text>
-              <text class="shs" x="670" y="272">SMB 3.x 암호화</text>
-
-              <!-- mac/linux samba -->
-              <rect class="shcli" x="300" y="230" width="200" height="60"/>
-              <text class="sht" x="400" y="254">🐧 Linux/Mac (cifs-utils)</text>
-              <text class="shs" x="400" y="272">mount -t cifs -o username=user</text>
-
-              <!-- Lines -->
-              <path d="M 200,230 Q 260,200 320,115" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#shArr)"/>
-              <text class="port" x="240" y="170">TCP 2049 (NFS)</text>
-
-              <path d="M 580,230 Q 540,200 480,115" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#shArr)"/>
-              <text class="port" x="560" y="170">TCP 445 (SMB)</text>
-
-              <path d="M 400,230 L 400,115" stroke="#e2b714" stroke-width="2" fill="none" marker-end="url(#shArr)"/>
-              <text class="port" x="440" y="175">TCP 445 / 139</text>
-
-              <!-- Animated packets -->
-              <circle r="5" fill="#4ade80">
-                <animateMotion dur="2.4s" repeatCount="indefinite" path="M 200,230 Q 260,200 320,115"/>
-              </circle>
-              <circle r="5" fill="#00d4ff">
-                <animateMotion dur="2.4s" repeatCount="indefinite" begin="0.6s" path="M 580,230 Q 540,200 480,115"/>
-              </circle>
-              <circle r="5" fill="#e2b714">
-                <animateMotion dur="2s" repeatCount="indefinite" begin="1.2s" path="M 400,230 L 400,115"/>
-              </circle>
-
-              <!-- Legend -->
-              <g transform="translate(20,140)">
-                <text fill="#00d4ff" font-size="11" font-weight="bold" x="0" y="0">공유 프로토콜 요약</text>
-                <text fill="#d0d0d0" font-size="10.5" x="0" y="18">NFS: Unix 권한 모델·네이티브 속도 · no_root_squash 주의</text>
-                <text fill="#d0d0d0" font-size="10.5" x="0" y="34">Samba: SMB/CIFS · Windows AD 연동 · smbpasswd -a 필수</text>
-              </g>
-            </svg>
+            <div class="mermaid">
+flowchart LR
+  subgraph CLI["NFS / Samba 클라이언트"]
+    LNX["Linux Client<br/>mount -t nfs"]
+    WIN["Windows Client<br/>&#92;&#92;server&#92;share"]
+  end
+  subgraph SRV["파일 서버"]
+    NFSD["nfsd<br/>/etc/exports<br/>TCP·UDP 2049"]
+    SMBD["smbd · nmbd<br/>/etc/samba/smb.conf<br/>TCP 445"]
+    STORE[("/data<br/>공유 디렉터리")]
+    NFSD --> STORE
+    SMBD --> STORE
+  end
+  LNX -->|NFSv4| NFSD
+  WIN -->|SMB3| SMBD
+  LNX -.크로스 클라이언트.-> SMBD
+            </div>
 
             <h3>NFS — 서버 설정 예</h3>
 <pre><code class="language-bash">sudo dnf install nfs-utils
@@ -1299,6 +942,9 @@ curl http://localhost/</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/notes.js"></script>
+
+  <script type="module" src="../js/mermaid-init.js"></script>
+
 
 </body>
 </html>

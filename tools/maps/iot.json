@@ -1,0 +1,5 @@
+[
+  "flowchart LR\n  subgraph KCL[\"KCL · 전류 보존\"]\n    N([접점 N])\n    I1[I1 = 2A] -->|들어옴| N\n    I2[I2 = 3A] -->|들어옴| N\n    N -->|나감| I3[I3 = 5A]\n    NOTE1[\"ΣI_in = ΣI_out<br/>2 + 3 = 5\"]\n  end\n  subgraph KVL[\"KVL · 전압 보존\"]\n    V1[V1 = 12V<br/>전원] --> R1[R1 = 4Ω]\n    R1 --> R2[R2 = 8Ω]\n    R2 --> V1\n    NOTE2[\"ΣV_rise = ΣV_drop<br/>12 = 4I + 8I → I=1A\"]\n  end",
+
+  "flowchart LR\n  BAT([\"전원 Vs = 5V\"]) --> R[\"저항 R<br/>(Vs - Vf) / If\"]\n  R --> LED[\"LED<br/>Vf ≈ 2V · If = 20mA\"]\n  LED --> GND([GND])\n  NOTE[\"예: R = (5 - 2) / 0.02 = 150Ω<br/>시판 표준 저항 220Ω 사용 (안전여유)\"]\n  LED -.-> NOTE"
+]

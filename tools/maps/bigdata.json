@@ -1,0 +1,5 @@
+[
+  "flowchart LR\n  subgraph BEF[\"git reset 전 상태\"]\n    WD1[Working Dir<br/>수정 중]\n    IDX1[Staging<br/>git add]\n    HEAD1[HEAD<br/>C3 커밋]\n  end\n  subgraph SOFT[\"--soft (HEAD만 이동)\"]\n    WD2[Working Dir ✅ 유지]\n    IDX2[Staging ✅ 유지]\n    HEAD2[HEAD → C1]\n  end\n  subgraph MIX[\"--mixed (default)\"]\n    WD3[Working Dir ✅ 유지]\n    IDX3[Staging ❌ 초기화]\n    HEAD3[HEAD → C1]\n  end\n  subgraph HARD[\"--hard (모두 삭제)\"]\n    WD4[Working Dir ❌ 삭제]\n    IDX4[Staging ❌ 삭제]\n    HEAD4[HEAD → C1]\n  end\n  BEF --> SOFT\n  BEF --> MIX\n  BEF --> HARD",
+
+  "flowchart LR\n  subgraph LOOP[\"❌ Python for-loop\"]\n    L1[\"for i in range(N):<br/>total += a[i]\"]\n    L2[인터프리터 오버헤드<br/>~100배 느림]\n    L1 --> L2\n  end\n  subgraph VEC[\"✅ NumPy 벡터화\"]\n    V1[\"np.sum(a)\"]\n    V2[C 레벨 SIMD 실행<br/>연속 메모리 접근]\n    V3[성능 ×100]\n    V1 --> V2 --> V3\n  end\n  LOOP -.같은 결과.-> VEC"
+]

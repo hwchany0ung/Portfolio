@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/animations.css" />
   <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="../css/mermaid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
   <style>
     .tip-card{background:rgba(226,183,20,.08);border-left:3px solid #e2b714;padding:.8rem 1.1rem;margin:.8rem 0;border-radius:4px}
@@ -97,55 +98,33 @@
             </div>
 
             <h3>컨테이너 vs 가상머신 — 계층 비교</h3>
-            <svg viewBox="0 0 780 340" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="컨테이너 vs VM 구조 비교">
-              <defs>
-                <style>
-                  .lyr{stroke:#0a0a0a;stroke-width:1.5;rx:4;ry:4}
-                  .lt{fill:#fff;font:bold 12px sans-serif;text-anchor:middle;dominant-baseline:central}
-                  .ls{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .ht{fill:#00d4ff;font:bold 13px sans-serif;text-anchor:middle}
-                </style>
-                <linearGradient id="hwg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#161616"/></linearGradient>
-                <linearGradient id="osg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7b2ff7"/><stop offset="1" stop-color="#4a1a99"/></linearGradient>
-                <linearGradient id="hvg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff4757"/><stop offset="1" stop-color="#a01f2b"/></linearGradient>
-                <linearGradient id="dkg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#00d4ff"/><stop offset="1" stop-color="#0077aa"/></linearGradient>
-                <linearGradient id="apg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#22a055"/></linearGradient>
-              </defs>
-
-              <!-- VM side -->
-              <text class="ht" x="195" y="22">가상머신 (VM)</text>
-              <rect class="lyr" fill="url(#hwg)" x="30" y="290" width="330" height="32"/><text class="lt" x="195" y="306">Physical Hardware (CPU · RAM · NIC · Disk)</text>
-              <rect class="lyr" fill="url(#osg)" x="30" y="254" width="330" height="32"/><text class="lt" x="195" y="270">Host OS</text>
-              <rect class="lyr" fill="url(#hvg)" x="30" y="218" width="330" height="32"/><text class="lt" x="195" y="234">Hypervisor (VMware · Hyper-V · KVM)</text>
-              <!-- VM1 -->
-              <rect class="lyr" fill="url(#osg)" x="40" y="150" width="150" height="64"/><text class="lt" x="115" y="170">Guest OS #1</text><text class="ls" x="115" y="186">full kernel</text><text class="ls" x="115" y="200">~GB · 분 단위 부팅</text>
-              <rect class="lyr" fill="url(#apg)" x="48" y="100" width="134" height="46"/><text class="lt" x="115" y="116">App + Libs</text><text class="ls" x="115" y="132">node · python …</text>
-              <!-- VM2 -->
-              <rect class="lyr" fill="url(#osg)" x="200" y="150" width="150" height="64"/><text class="lt" x="275" y="170">Guest OS #2</text><text class="ls" x="275" y="186">full kernel</text><text class="ls" x="275" y="200">각자 다른 OS 가능</text>
-              <rect class="lyr" fill="url(#apg)" x="208" y="100" width="134" height="46"/><text class="lt" x="275" y="116">App + Libs</text><text class="ls" x="275" y="132">앱별 중복 OS</text>
-
-              <!-- divider -->
-              <line x1="390" y1="10" x2="390" y2="330" stroke="#2a2a2a" stroke-dasharray="4 4"/>
-
-              <!-- Docker side -->
-              <text class="ht" x="585" y="22">Docker Container</text>
-              <rect class="lyr" fill="url(#hwg)" x="420" y="290" width="330" height="32"/><text class="lt" x="585" y="306">Physical Hardware</text>
-              <rect class="lyr" fill="url(#osg)" x="420" y="238" width="330" height="48"/><text class="lt" x="585" y="256">Host OS + Linux Kernel</text><text class="ls" x="585" y="274">namespace · cgroup · overlay2</text>
-              <rect class="lyr" fill="url(#dkg)" x="420" y="198" width="330" height="32"/><text class="lt" x="585" y="214">Docker Engine (containerd + runc)</text>
-              <!-- containers -->
-              <rect class="lyr" fill="url(#apg)" x="430" y="130" width="100" height="60"/><text class="lt" x="480" y="150">Container A</text><text class="ls" x="480" y="166">App + libs</text><text class="ls" x="480" y="180">MB · 초 부팅</text>
-              <rect class="lyr" fill="url(#apg)" x="540" y="130" width="100" height="60"/><text class="lt" x="590" y="150">Container B</text><text class="ls" x="590" y="166">App + libs</text><text class="ls" x="590" y="180">격리 PID/NET ns</text>
-              <rect class="lyr" fill="url(#apg)" x="650" y="130" width="100" height="60"/><text class="lt" x="700" y="150">Container C</text><text class="ls" x="700" y="166">App + libs</text><text class="ls" x="700" y="180">커널 공유</text>
-
-              <!-- animated spin-up indicators -->
-              <circle r="4" fill="#4ade80"><animate attributeName="opacity" dur="2s" repeatCount="indefinite" values="0;1;0"/><animateMotion dur="2s" repeatCount="indefinite" path="M 480,130 L 480,100"/></circle>
-              <circle r="4" fill="#4ade80"><animate attributeName="opacity" dur="2s" repeatCount="indefinite" begin=".6s" values="0;1;0"/><animateMotion dur="2s" repeatCount="indefinite" begin=".6s" path="M 590,130 L 590,100"/></circle>
-              <circle r="4" fill="#4ade80"><animate attributeName="opacity" dur="2s" repeatCount="indefinite" begin="1.2s" values="0;1;0"/><animateMotion dur="2s" repeatCount="indefinite" begin="1.2s" path="M 700,130 L 700,100"/></circle>
-
-              <!-- comparison labels -->
-              <text x="195" y="42" fill="#a0a0a0" font-size="11" text-anchor="middle">각 VM이 독립 커널 → 무겁다</text>
-              <text x="585" y="42" fill="#a0a0a0" font-size="11" text-anchor="middle">커널 공유 → 가볍고 빠르다</text>
-            </svg>
+            <div class="mermaid">
+flowchart TB
+  subgraph VM["🖥️ 가상머신 (VM)"]
+    direction BT
+    A1[하드웨어 Hardware]
+    A2[Host OS]
+    A3[Hypervisor]
+    A4["Guest OS 1<br/>Bins/Libs + App"]
+    A5["Guest OS 2<br/>Bins/Libs + App"]
+    A1 --> A2 --> A3
+    A3 --> A4
+    A3 --> A5
+  end
+  subgraph DK["🐳 Docker"]
+    direction BT
+    B1[하드웨어 Hardware]
+    B2[Host OS · Linux Kernel]
+    B3[Docker Engine]
+    B4["Container 1<br/>Bins/Libs + App"]
+    B5["Container 2<br/>Bins/Libs + App"]
+    B6["Container 3<br/>Bins/Libs + App"]
+    B1 --> B2 --> B3
+    B3 --> B4
+    B3 --> B5
+    B3 --> B6
+  end
+            </div>
 
             <table class="data-table">
               <thead><tr><th>항목</th><th>컨테이너</th><th>VM</th></tr></thead>
@@ -168,93 +147,24 @@
             <h2>🏗️ 아키텍처 — CLI부터 리눅스 커널까지</h2>
             <p>Docker는 단일 바이너리가 아니다. <strong>클라이언트-서버 구조</strong>로, <code>docker</code> CLI가 REST API로 <code>dockerd</code>(데몬)에 명령을 보내면, dockerd는 <code>containerd</code>(표준 런타임)에 위임하고, containerd는 <code>runc</code>(OCI 런타임)를 호출해 리눅스 커널의 격리 기능(namespace·cgroup)으로 컨테이너를 만든다.</p>
 
-            <svg viewBox="0 0 780 400" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="Docker 아키텍처 컴포넌트 스택">
-              <defs>
-                <marker id="aArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <style>
-                  .abox{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .ac{fill:#1a2030;stroke:#00d4ff;stroke-width:1.5;rx:6;ry:6}
-                  .ad{fill:#2a1a2a;stroke:#7b2ff7;stroke-width:1.5;rx:6;ry:6}
-                  .ak{fill:#1a2a1a;stroke:#4ade80;stroke-width:1.5;rx:6;ry:6}
-                  .at{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .as{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .acode{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- CLI -->
-              <rect class="ac" x="20" y="20" width="140" height="60"/>
-              <text class="at" x="90" y="42">👤 docker CLI</text>
-              <text class="as" x="90" y="58">docker run · build · ps</text>
-              <text class="acode" x="90" y="72">/var/run/docker.sock</text>
-
-              <!-- dockerd -->
-              <rect class="ad" x="220" y="20" width="160" height="60"/>
-              <text class="at" x="300" y="42">🐳 dockerd (daemon)</text>
-              <text class="as" x="300" y="58">REST API · 이미지 관리</text>
-              <text class="as" x="300" y="72">네트워크 · 볼륨 orchestration</text>
-
-              <!-- containerd -->
-              <rect class="ad" x="440" y="20" width="160" height="60"/>
-              <text class="at" x="520" y="42">📦 containerd</text>
-              <text class="as" x="520" y="58">CNCF 표준 런타임</text>
-              <text class="as" x="520" y="72">이미지 pull · snapshot</text>
-
-              <!-- runc -->
-              <rect class="ad" x="640" y="20" width="120" height="60"/>
-              <text class="at" x="700" y="42">⚙️ runc</text>
-              <text class="as" x="700" y="58">OCI runtime</text>
-              <text class="as" x="700" y="72">spec → syscall</text>
-
-              <path d="M 160,50 L 218,50" stroke="#00d4ff" stroke-width="2" marker-end="url(#aArr)"/>
-              <path d="M 380,50 L 438,50" stroke="#00d4ff" stroke-width="2" marker-end="url(#aArr)"/>
-              <path d="M 600,50 L 638,50" stroke="#00d4ff" stroke-width="2" marker-end="url(#aArr)"/>
-
-              <!-- animated command flow -->
-              <circle r="5" fill="#00d4ff"><animateMotion dur="3s" repeatCount="indefinite" path="M 90,80 L 90,50 L 700,50 L 700,100"/></circle>
-
-              <!-- Kernel layer -->
-              <rect class="ak" x="20" y="130" width="740" height="80"/>
-              <text class="at" x="390" y="154" fill="#4ade80">🐧 Linux Kernel</text>
-              <text class="as" x="390" y="174">namespace (격리) · cgroup (자원 제한) · capabilities · seccomp · overlay2</text>
-
-              <!-- namespaces detail -->
-              <g transform="translate(30,185)">
-                <rect x="0" y="0" width="90" height="18" fill="#112a1a" stroke="#4ade80" rx="3"/><text class="acode" x="45" y="12" fill="#4ade80">pid ns</text>
-                <rect x="100" y="0" width="90" height="18" fill="#112a1a" stroke="#4ade80" rx="3"/><text class="acode" x="145" y="12" fill="#4ade80">net ns</text>
-                <rect x="200" y="0" width="90" height="18" fill="#112a1a" stroke="#4ade80" rx="3"/><text class="acode" x="245" y="12" fill="#4ade80">mnt ns</text>
-                <rect x="300" y="0" width="90" height="18" fill="#112a1a" stroke="#4ade80" rx="3"/><text class="acode" x="345" y="12" fill="#4ade80">uts ns</text>
-                <rect x="400" y="0" width="90" height="18" fill="#112a1a" stroke="#4ade80" rx="3"/><text class="acode" x="445" y="12" fill="#4ade80">ipc ns</text>
-                <rect x="500" y="0" width="90" height="18" fill="#112a1a" stroke="#4ade80" rx="3"/><text class="acode" x="545" y="12" fill="#4ade80">user ns</text>
-                <rect x="600" y="0" width="120" height="18" fill="#2a2010" stroke="#e2b714" rx="3"/><text class="acode" x="660" y="12">cgroup v2 (cpu·mem·io)</text>
-              </g>
-
-              <!-- Container processes born from kernel -->
-              <path d="M 390,210 L 390,250" stroke="#4ade80" stroke-width="2" marker-end="url(#aArr)"/>
-              <text class="as" x="430" y="232" fill="#4ade80">clone(CLONE_NEWPID|NEWNET|…)</text>
-
-              <rect class="abox" x="60" y="260" width="180" height="60"/>
-              <text class="at" x="150" y="282">🟢 Container 1</text>
-              <text class="as" x="150" y="300">PID 1 · own network · rootfs</text>
-              <text class="as" x="150" y="314">cgroup: cpu=1, mem=512M</text>
-
-              <rect class="abox" x="300" y="260" width="180" height="60"/>
-              <text class="at" x="390" y="282">🟢 Container 2</text>
-              <text class="as" x="390" y="300">각자의 / · /proc · IP</text>
-              <text class="as" x="390" y="314">호스트에선 한 프로세스</text>
-
-              <rect class="abox" x="540" y="260" width="200" height="60"/>
-              <text class="at" x="640" y="282">🟢 Container 3 (privileged)</text>
-              <text class="as" x="640" y="300">caps=ALL · 호스트 장치 접근</text>
-              <text class="as" x="640" y="314" fill="#ff4757">위험 — 최소화</text>
-
-              <!-- Legend -->
-              <g transform="translate(20,340)">
-                <rect x="0" y="0" width="740" height="50" fill="#111" stroke="#2a2a2a" rx="6"/>
-                <text class="at" x="370" y="18" fill="#00d4ff" text-anchor="middle">핵심: dockerd ≠ containerd ≠ runc — 각자 독립 교체 가능 (K8s는 dockerd 대신 직접 containerd 호출)</text>
-                <text class="as" x="370" y="36" text-anchor="middle">namespace = 무엇이 보이는가 (격리) · cgroup = 얼마나 쓸 수 있는가 (제한)</text>
-              </g>
-            </svg>
+            <div class="mermaid">
+flowchart TB
+  CLI["docker CLI"] -->|"REST /var/run/docker.sock"| D[dockerd]
+  D --> C[containerd]
+  C --> R1[runc]
+  C --> R2[runc]
+  C --> R3[runc]
+  R1 --> CT1["Container A"]
+  R2 --> CT2["Container B"]
+  R3 --> CT3["Container C (priv)"]
+  subgraph K["Linux Kernel"]
+    NS["namespaces<br/>pid · net · mnt · uts · ipc · user"]
+    CG["cgroup v2<br/>cpu · memory · io · pids"]
+  end
+  CT1 -.-> NS
+  CT2 -.-> NS
+  CT3 -.-> CG
+            </div>
 
             <div class="info-card">
               <strong>왜 K8s는 dockerd를 버렸나?</strong> K8s 1.24부터 dockershim 제거. dockerd는 K8s가 필요하지 않은 기능(빌드·이미지 push 등)까지 끼워놓은 구조라, containerd·CRI-O로 직접 가면 <em>중간 홉·버그·메모리</em>가 줄어든다. 일반 개발자가 <code>docker</code> CLI를 쓰는 건 변함없음.
@@ -265,64 +175,35 @@
             <h2>🧱 이미지 & 레이어 — Copy-on-Write 스택</h2>
             <p>Docker 이미지는 <strong>읽기 전용 레이어의 스택</strong>이다. 각 Dockerfile 명령(<code>FROM · RUN · COPY · ADD</code>)이 하나의 레이어가 되고, 레이어는 SHA-256 해시로 식별되며 <em>여러 이미지가 공유</em>한다. 컨테이너 실행 시 맨 위에 쓰기 가능한 레이어가 얹혀 Copy-on-Write로 동작한다.</p>
 
-            <svg viewBox="0 0 780 380" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="이미지 레이어 스택 (overlay2)">
-              <defs>
-                <style>
-                  .ly{stroke:#0a0a0a;stroke-width:1.5;rx:4;ry:4}
-                  .lyL{fill:#1a2030;stroke:#00d4ff;stroke-width:1.2;rx:4;ry:4}
-                  .lyW{fill:#2a2010;stroke:#e2b714;stroke-width:1.5;stroke-dasharray:4 2;rx:4;ry:4}
-                  .lyt{fill:#fff;font:bold 12px sans-serif}
-                  .lys{fill:#a0a0a0;font:10px sans-serif}
-                  .lyh{fill:#e2b714;font:bold 10px monospace}
-                </style>
-              </defs>
-
-              <!-- Image A (nginx) -->
-              <text class="lyt" x="60" y="20" fill="#00d4ff">📦 nginx:1.25</text>
-              <rect class="lyL" x="40" y="40" width="200" height="34"/><text class="lyt" x="140" y="60" text-anchor="middle">CMD ["nginx","-g","daemon off;"]</text><text class="lys" x="45" y="72">레이어 4 · 0B</text>
-              <rect class="lyL" x="40" y="80" width="200" height="34"/><text class="lyt" x="140" y="100" text-anchor="middle">EXPOSE 80</text><text class="lys" x="45" y="112">레이어 3 · 0B</text>
-              <rect class="lyL" x="40" y="120" width="200" height="34"/><text class="lyt" x="140" y="140" text-anchor="middle">COPY nginx.conf /etc/nginx/</text><text class="lys" x="45" y="152">레이어 2 · 2 KB</text>
-              <rect class="lyL" x="40" y="160" width="200" height="34"/><text class="lyt" x="140" y="180" text-anchor="middle">RUN apt install nginx</text><text class="lys" x="45" y="192">레이어 1 · 58 MB</text>
-              <rect class="lyL" x="40" y="200" width="200" height="34"/><text class="lyt" x="140" y="220" text-anchor="middle">FROM debian:bookworm-slim</text><text class="lys" x="45" y="232">Base · 74 MB</text>
-
-              <!-- Image B (custom-nginx) shares base -->
-              <text class="lyt" x="320" y="20" fill="#00d4ff">📦 my-app (내 앱)</text>
-              <rect class="lyL" x="300" y="40" width="200" height="34"/><text class="lyt" x="400" y="60" text-anchor="middle">CMD ["./server"]</text><text class="lys" x="305" y="72">레이어 6 · 0B</text>
-              <rect class="lyL" x="300" y="80" width="200" height="34"/><text class="lyt" x="400" y="100" text-anchor="middle">COPY ./dist /app</text><text class="lys" x="305" y="112">레이어 5 · 18 MB</text>
-              <rect class="lyL" x="300" y="120" width="200" height="34"/><text class="lyt" x="400" y="140" text-anchor="middle">RUN apt install nginx</text><text class="lys" x="305" y="152">공유 ⇦</text>
-              <rect class="lyL" x="300" y="160" width="200" height="34"/><text class="lyt" x="400" y="180" text-anchor="middle">RUN apt install nginx</text><text class="lys" x="305" y="192">공유 ⇦</text>
-              <rect class="lyL" x="300" y="200" width="200" height="34"/><text class="lyt" x="400" y="220" text-anchor="middle">FROM debian:bookworm-slim</text><text class="lys" x="305" y="232">공유 ⇦</text>
-
-              <!-- shared base arrows -->
-              <path d="M 240,217 Q 270,217 300,217" stroke="#4ade80" stroke-width="2" fill="none" stroke-dasharray="4 2"/>
-              <path d="M 240,177 Q 270,177 300,177" stroke="#4ade80" stroke-width="2" fill="none" stroke-dasharray="4 2"/>
-              <text class="lys" x="270" y="193" text-anchor="middle" fill="#4ade80">shared</text>
-
-              <!-- Container from Image B -->
-              <text class="lyt" x="600" y="20" fill="#4ade80">🟢 Running Container</text>
-              <rect class="lyW" x="580" y="40" width="180" height="34"/><text class="lyt" x="670" y="60" text-anchor="middle">Writable Layer (R/W)</text><text class="lys" x="585" y="72">로그·세션·캐시 → 컨테이너 삭제 시 소멸</text>
-              <rect class="lyL" x="580" y="80" width="180" height="154" opacity=".7"/>
-              <text class="lyt" x="670" y="100" text-anchor="middle">All image layers</text>
-              <text class="lys" x="670" y="118" text-anchor="middle">(read-only · overlay2 lower)</text>
-              <text class="lys" x="670" y="150" text-anchor="middle">파일 수정 시 CoW로</text>
-              <text class="lys" x="670" y="166" text-anchor="middle">쓰기 레이어에 복사됨</text>
-
-              <!-- CoW animation -->
-              <circle r="4" fill="#e2b714"><animateMotion dur="2.5s" repeatCount="indefinite" path="M 670,200 L 670,57"/></circle>
-              <text class="lyh" x="760" y="150" text-anchor="end">CoW ↑</text>
-
-              <!-- Legend -->
-              <g transform="translate(20,260)">
-                <rect x="0" y="0" width="740" height="110" fill="#111" stroke="#2a2a2a" rx="6"/>
-                <text class="lyt" x="14" y="22" fill="#00d4ff">레이어링 이점</text>
-                <g font-size="11" fill="#d0d0d0">
-                  <text x="14" y="42">· 디스크 절약: 같은 베이스 이미지를 쓰는 100개 컨테이너 = 베이스는 1벌만 저장</text>
-                  <text x="14" y="60">· 빌드 캐시: 변경 없는 상위 명령은 캐시 재사용 (상→하로 명령 정렬 팁)</text>
-                  <text x="14" y="78">· 풀/푸시 효율: 레지스트리는 새 레이어만 전송 (이미 있는 건 skip)</text>
-                  <text x="14" y="96">· 불변성: 같은 해시 = 같은 내용 → <tspan fill="#e2b714">supply chain 보안</tspan> 기반</text>
-                </g>
-              </g>
-            </svg>
+            <div class="mermaid">
+flowchart BT
+  subgraph IA["📦 nginx:1.25"]
+    direction BT
+    A1["FROM debian:bookworm-slim · 74MB"]
+    A2["RUN apt install nginx · 58MB"]
+    A3["COPY nginx.conf · 2KB"]
+    A4["EXPOSE 80 · 0B"]
+    A5["CMD nginx -g 'daemon off;'"]
+    A1 --> A2 --> A3 --> A4 --> A5
+  end
+  subgraph IB["📦 my-app"]
+    direction BT
+    B1["FROM debian (공유)"]
+    B2["RUN apt install nginx (공유)"]
+    B3["COPY ./dist /app · 18MB"]
+    B4["CMD ./server"]
+    B1 --> B2 --> B3 --> B4
+  end
+  subgraph RC["🟢 Running Container"]
+    direction BT
+    C1["모든 image layers (R/O)"]
+    C2["Writable Layer (R/W)<br/>로그 · 세션 · 캐시"]
+    C1 --> C2
+  end
+  A1 -.공유.-> B1
+  A2 -.공유.-> B2
+  B4 -.run.-> C1
+            </div>
 
 <pre><code class="language-bash"># 이미지 탐색
 docker images                       # 로컬 이미지 목록
@@ -384,77 +265,18 @@ HEALTHCHECK --interval=30s --timeout=3s \
 CMD ["node", "dist/server.js"]</code></pre>
 
             <h3>빌드 흐름 — Dockerfile → 이미지 → 컨테이너</h3>
-            <svg viewBox="0 0 780 280" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="Docker 빌드 파이프라인">
-              <defs>
-                <marker id="bArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <style>
-                  .bx{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .bt{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .bs{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .bcode{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- context -->
-              <rect class="bx" x="20" y="20" width="140" height="90" stroke="#00d4ff"/>
-              <text class="bt" x="90" y="42">📁 Build Context</text>
-              <text class="bs" x="90" y="60">Dockerfile</text>
-              <text class="bs" x="90" y="74">src/ · package.json</text>
-              <text class="bs" x="90" y="88">.dockerignore 필수</text>
-              <text class="bcode" x="90" y="104">./</text>
-
-              <!-- buildkit -->
-              <rect class="bx" x="210" y="20" width="160" height="90" stroke="#7b2ff7"/>
-              <text class="bt" x="290" y="42">⚙️ BuildKit</text>
-              <text class="bs" x="290" y="60">DAG 분석 → 병렬 실행</text>
-              <text class="bs" x="290" y="74">레이어 캐시 재사용</text>
-              <text class="bs" x="290" y="88">시크릿 마운트 지원</text>
-              <text class="bcode" x="290" y="104">DOCKER_BUILDKIT=1</text>
-
-              <!-- image -->
-              <rect class="bx" x="420" y="20" width="160" height="90" stroke="#4ade80"/>
-              <text class="bt" x="500" y="42">📦 Image</text>
-              <text class="bs" x="500" y="60">SHA-256 digest</text>
-              <text class="bs" x="500" y="74">레이어 스택 (불변)</text>
-              <text class="bs" x="500" y="88">태그: myapp:1.0</text>
-              <text class="bcode" x="500" y="104">/var/lib/docker/overlay2</text>
-
-              <!-- registry -->
-              <rect class="bx" x="620" y="10" width="140" height="50" stroke="#e2b714"/>
-              <text class="bt" x="690" y="30">☁️ Registry</text>
-              <text class="bs" x="690" y="46">Hub · ECR · GHCR</text>
-              <!-- container -->
-              <rect class="bx" x="620" y="70" width="140" height="50" stroke="#4ade80"/>
-              <text class="bt" x="690" y="90">🟢 Container</text>
-              <text class="bs" x="690" y="106">docker run</text>
-
-              <path d="M 160,65 L 208,65" stroke="#00d4ff" stroke-width="2" marker-end="url(#bArr)"/>
-              <path d="M 370,65 L 418,65" stroke="#00d4ff" stroke-width="2" marker-end="url(#bArr)"/>
-              <path d="M 580,50 L 618,35" stroke="#00d4ff" stroke-width="2" marker-end="url(#bArr)"/>
-              <path d="M 580,80 L 618,95" stroke="#00d4ff" stroke-width="2" marker-end="url(#bArr)"/>
-
-              <text class="bcode" x="184" y="58">docker build</text>
-              <text class="bcode" x="394" y="58">produces</text>
-              <text class="bcode" x="600" y="28">push</text>
-              <text class="bcode" x="600" y="112">run</text>
-
-              <!-- animated flow -->
-              <circle r="5" fill="#00d4ff"><animateMotion dur="4s" repeatCount="indefinite" path="M 90,65 L 290,65 L 500,65 L 690,35"/></circle>
-              <circle r="5" fill="#4ade80"><animateMotion dur="4s" repeatCount="indefinite" begin="2s" path="M 500,65 L 690,95"/></circle>
-
-              <!-- cache hit indicator -->
-              <g transform="translate(230,130)">
-                <rect x="0" y="0" width="520" height="130" fill="#111" stroke="#2a2a2a" rx="6"/>
-                <text class="bt" x="260" y="22" fill="#e2b714">캐시 최적화 규칙</text>
-                <g font-size="11" fill="#d0d0d0">
-                  <text x="20" y="46">1️⃣ 자주 안 바뀌는 명령을 위로 (베이스·의존성 설치)</text>
-                  <text x="20" y="64">2️⃣ 변경 잦은 소스 복사는 맨 아래 (<tspan fill="#00d4ff">COPY package*.json</tspan> 먼저, <tspan fill="#00d4ff">COPY . .</tspan> 나중)</text>
-                  <text x="20" y="82">3️⃣ RUN 명령은 <tspan fill="#e2b714">&&</tspan>로 묶어 레이어 수 최소화 (apt → install → clean)</text>
-                  <text x="20" y="100">4️⃣ .dockerignore에 <tspan fill="#e2b714">node_modules·.git·*.log</tspan> 반드시 제외</text>
-                  <text x="20" y="118">5️⃣ 멀티스테이지로 빌드 도구는 최종 이미지에 담지 않기</text>
-                </g>
-              </g>
-            </svg>
+            <div class="mermaid">
+flowchart LR
+  DF[Dockerfile] --> BC["Build Context<br/>.dockerignore 제외"]
+  BC --> BK[BuildKit]
+  BK -->|step 1| L1["Layer 1<br/>FROM"]
+  BK -->|step 2| L2["Layer 2<br/>COPY · RUN"]
+  BK -->|step N| LN["Layer N<br/>CMD · ENTRYPOINT"]
+  L1 --> IMG["Image<br/>SHA-256"]
+  L2 --> IMG
+  LN --> IMG
+  IMG --> REG[("Registry<br/>Docker Hub · ECR · GHCR")]
+            </div>
 
 <pre><code class="language-bash"># 기본 빌드
 docker build -t myapp:1.0 .
@@ -479,75 +301,19 @@ docker history myapp:1.0                     # 어떤 명령이 몇 MB?</code></
             <h2>▶️ 컨테이너 실행 — 상태 머신과 수명 주기</h2>
             <p>컨테이너는 단순히 "떠 있다"가 아니라, 명령에 따라 여러 상태를 오가는 <strong>유한 상태 머신</strong>이다. <code>create → start → pause → stop → rm</code> 흐름을 그림으로 보자.</p>
 
-            <svg viewBox="0 0 780 340" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="컨테이너 수명 주기 상태 머신">
-              <defs>
-                <marker id="sArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <style>
-                  .st{fill:#fff;font:bold 13px sans-serif;text-anchor:middle;dominant-baseline:central}
-                  .ss{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .sl{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
-                  .scre{fill:#1a2030;stroke:#00d4ff;stroke-width:2}
-                  .srun{fill:#112a1a;stroke:#4ade80;stroke-width:2}
-                  .spau{fill:#2a2010;stroke:#e2b714;stroke-width:2}
-                  .sstp{fill:#2a1a1a;stroke:#ff4757;stroke-width:2}
-                  .sdel{fill:#161616;stroke:#666;stroke-width:2;stroke-dasharray:4 2}
-                </style>
-              </defs>
-
-              <!-- states -->
-              <ellipse class="scre" cx="130" cy="80" rx="70" ry="40"/>
-              <text class="st" x="130" y="72">Created</text>
-              <text class="ss" x="130" y="92">docker create</text>
-
-              <ellipse class="srun" cx="390" cy="80" rx="70" ry="40"/>
-              <text class="st" x="390" y="72">Running</text>
-              <text class="ss" x="390" y="92">PID 1 살아있음</text>
-
-              <ellipse class="spau" cx="620" cy="80" rx="70" ry="40"/>
-              <text class="st" x="620" y="72">Paused</text>
-              <text class="ss" x="620" y="92">SIGSTOP</text>
-
-              <ellipse class="sstp" cx="390" cy="220" rx="70" ry="40"/>
-              <text class="st" x="390" y="212">Stopped (Exited)</text>
-              <text class="ss" x="390" y="232">code: 0/139/137</text>
-
-              <ellipse class="sdel" cx="130" cy="220" rx="70" ry="40"/>
-              <text class="st" x="130" y="212" fill="#a0a0a0">Removed</text>
-              <text class="ss" x="130" y="232">docker rm</text>
-
-              <!-- transitions -->
-              <path d="M 200,80 L 318,80" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#sArr)"/>
-              <text class="sl" x="260" y="70">start / run</text>
-
-              <path d="M 460,80 L 548,80" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#sArr)"/>
-              <text class="sl" x="504" y="70">pause</text>
-
-              <path d="M 550,95 Q 505,110 462,95" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#sArr)"/>
-              <text class="sl" x="505" y="112">unpause</text>
-
-              <path d="M 390,120 L 390,178" stroke="#ff4757" stroke-width="2" fill="none" marker-end="url(#sArr)"/>
-              <text class="sl" x="430" y="150" fill="#ff4757">stop · SIGTERM → SIGKILL</text>
-
-              <path d="M 335,220 Q 220,220 172,235" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#sArr)"/>
-              <text class="sl" x="250" y="248">rm</text>
-
-              <path d="M 325,200 Q 200,180 132,118" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#sArr)" stroke-dasharray="4 2"/>
-              <text class="sl" x="220" y="150" fill="#4ade80">restart policy</text>
-
-              <!-- Restart particles -->
-              <circle r="4" fill="#4ade80"><animateMotion dur="3s" repeatCount="indefinite" path="M 325,200 Q 200,180 132,118"/></circle>
-              <circle r="5" fill="#00d4ff"><animateMotion dur="2.5s" repeatCount="indefinite" path="M 200,80 L 318,80"/></circle>
-
-              <!-- Legend -->
-              <g transform="translate(20,280)">
-                <rect x="0" y="0" width="740" height="54" fill="#111" stroke="#2a2a2a" rx="6"/>
-                <text class="st" x="14" y="18" text-anchor="start" fill="#00d4ff">종료 코드 의미</text>
-                <g font-size="11" fill="#d0d0d0">
-                  <text x="14" y="36">· 0 = 정상  · 1 = 일반 오류  · 125 = docker run 자체 실패  · 126 = 커맨드 실행 권한 없음</text>
-                  <text x="14" y="50">· 127 = 명령 없음  · 137 = SIGKILL (OOM·강제 종료)  · 139 = SIGSEGV (세그폴트)  · 143 = SIGTERM</text>
-                </g>
-              </g>
-            </svg>
+            <div class="mermaid">
+stateDiagram-v2
+  [*] --> Created: docker create
+  Created --> Running: docker start
+  Running --> Paused: docker pause
+  Paused --> Running: docker unpause
+  Running --> Stopped: docker stop<br/>(SIGTERM → SIGKILL)
+  Running --> Exited: 프로세스 종료<br/>(exit code)
+  Stopped --> Running: docker start
+  Stopped --> Removed: docker rm
+  Exited --> Removed: docker rm
+  Removed --> [*]
+            </div>
 
 <pre><code class="language-bash"># 가장 흔한 run 플래그
 docker run -d \                       # detach (백그라운드)
@@ -588,79 +354,25 @@ docker container prune               # stopped 일괄 삭제</code></pre>
             <h2>🌐 네트워크 드라이버 — bridge · host · overlay · none · macvlan</h2>
             <p>컨테이너는 기본적으로 <strong>별도의 네트워크 네임스페이스</strong>를 가진다. 어떤 드라이버에 attach하느냐에 따라 외부 접근 방식이 달라진다.</p>
 
-            <svg viewBox="0 0 780 380" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="Docker 네트워크 4종 토폴로지">
-              <defs>
-                <marker id="nArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <style>
-                  .nbx{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .nbr{fill:#1a2030;stroke:#00d4ff;stroke-width:1.5;rx:6;ry:6}
-                  .nhs{fill:#2a1a2a;stroke:#7b2ff7;stroke-width:1.5;rx:6;ry:6}
-                  .nov{fill:#2a2010;stroke:#e2b714;stroke-width:1.5;rx:6;ry:6}
-                  .nct{fill:#112a1a;stroke:#4ade80;stroke-width:1.2;rx:4;ry:4}
-                  .ntx{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .nsm{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .nlab{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- bridge -->
-              <g transform="translate(10,10)">
-                <text class="ntx" x="190" y="16" fill="#00d4ff">bridge (기본)</text>
-                <rect class="nbx" x="0" y="24" width="380" height="150"/>
-                <rect class="nbr" x="90" y="90" width="200" height="28"/>
-                <text class="ntx" x="190" y="108">docker0 (172.17.0.0/16)</text>
-                <rect class="nct" x="30" y="40" width="90" height="40"/><text class="ntx" x="75" y="60">Cont A</text><text class="nsm" x="75" y="74">172.17.0.2</text>
-                <rect class="nct" x="140" y="40" width="90" height="40"/><text class="ntx" x="185" y="60">Cont B</text><text class="nsm" x="185" y="74">172.17.0.3</text>
-                <rect class="nct" x="250" y="40" width="100" height="40"/><text class="ntx" x="300" y="60">Cont C</text><text class="nsm" x="300" y="74">172.17.0.4</text>
-                <path d="M 75,80 L 140,90" stroke="#4ade80" stroke-width="1.5"/>
-                <path d="M 185,80 L 190,90" stroke="#4ade80" stroke-width="1.5"/>
-                <path d="M 300,80 L 240,90" stroke="#4ade80" stroke-width="1.5"/>
-                <rect class="nbx" x="130" y="128" width="120" height="34"/>
-                <text class="ntx" x="190" y="148">Host iptables NAT</text>
-                <text class="nlab" x="190" y="162">host:8080 → cont:80</text>
-                <circle r="4" fill="#00d4ff"><animateMotion dur="2.4s" repeatCount="indefinite" path="M 75,60 L 190,104 L 190,145"/></circle>
-              </g>
-
-              <!-- host -->
-              <g transform="translate(400,10)">
-                <text class="ntx" x="180" y="16" fill="#7b2ff7">host</text>
-                <rect class="nhs" x="0" y="24" width="370" height="150"/>
-                <text class="nsm" x="185" y="46">컨테이너가 호스트 net ns를 공유</text>
-                <rect class="nct" x="100" y="64" width="170" height="44"/><text class="ntx" x="185" y="84">Container</text><text class="nsm" x="185" y="100">호스트 IP 그대로 사용</text>
-                <text class="nlab" x="185" y="132">-p 불필요 · 포트 충돌 주의</text>
-                <text class="nsm" x="185" y="152">성능 최고 · 격리 최소 → 관제·IDS용</text>
-              </g>
-
-              <!-- overlay -->
-              <g transform="translate(10,195)">
-                <text class="ntx" x="190" y="16" fill="#e2b714">overlay (Swarm / K8s weave)</text>
-                <rect class="nov" x="0" y="24" width="380" height="150"/>
-                <rect class="nbx" x="20" y="60" width="160" height="80"/>
-                <text class="nsm" x="100" y="80">Host A</text>
-                <rect class="nct" x="40" y="94" width="120" height="34"/><text class="ntx" x="100" y="116">Cont 10.0.0.2</text>
-                <rect class="nbx" x="200" y="60" width="160" height="80"/>
-                <text class="nsm" x="280" y="80">Host B</text>
-                <rect class="nct" x="220" y="94" width="120" height="34"/><text class="ntx" x="280" y="116">Cont 10.0.0.3</text>
-                <path d="M 160,110 Q 190,60 220,110" stroke="#e2b714" stroke-width="2" fill="none" stroke-dasharray="4 2"/>
-                <text class="nlab" x="190" y="54">VXLAN tunnel (UDP 4789)</text>
-                <circle r="4" fill="#e2b714"><animateMotion dur="2.2s" repeatCount="indefinite" path="M 160,110 Q 190,60 220,110"/></circle>
-              </g>
-
-              <!-- none / macvlan -->
-              <g transform="translate(400,195)">
-                <text class="ntx" x="180" y="16" fill="#ff4757">none · macvlan</text>
-                <rect class="nbx" x="0" y="24" width="370" height="150"/>
-                <rect class="nct" x="20" y="46" width="160" height="44"/>
-                <text class="ntx" x="100" y="66">none</text>
-                <text class="nsm" x="100" y="82">루프백만 · 완전 격리</text>
-                <rect class="nct" x="190" y="46" width="160" height="44"/>
-                <text class="ntx" x="270" y="66">macvlan</text>
-                <text class="nsm" x="270" y="82">물리 LAN에 직접 MAC 할당</text>
-                <text class="nsm" x="180" y="110">· none: 외부 통신 자체 차단 (sandbox)</text>
-                <text class="nsm" x="180" y="128">· macvlan: 레거시 DHCP·VLAN 통합 환경</text>
-                <text class="nsm" x="180" y="148">· ipvlan: macvlan의 L3 버전</text>
-              </g>
-            </svg>
+            <div class="mermaid">
+flowchart TB
+  subgraph BR["🌉 bridge (기본)"]
+    H1[Host eth0] --> B0["docker0<br/>172.17.0.1"]
+    B0 --> BC1["Container1<br/>172.17.0.2"]
+    B0 --> BC2["Container2<br/>172.17.0.3"]
+  end
+  subgraph HO["🖥️ host"]
+    HH[Host Network] --- HC["Container<br/>호스트 NIC 직접 사용"]
+  end
+  subgraph OV["🌐 overlay (멀티호스트)"]
+    N1["Node1<br/>VXLAN"] --- N2["Node2<br/>VXLAN"]
+    N1 --> OC1["Container A"]
+    N2 --> OC2["Container B"]
+  end
+  subgraph NN["🚫 none"]
+    NC["Container<br/>lo 만 존재"]
+  end
+            </div>
 
             <div class="net-card">
               <h4>bridge — 기본값 · 단일 호스트</h4>
@@ -695,71 +407,21 @@ docker exec web cat /etc/resolv.conf     # Docker DNS (127.0.0.11) 사용</code>
             <h2>💾 볼륨 vs 바인드 마운트 vs tmpfs</h2>
             <p>컨테이너는 기본적으로 <strong>휘발성</strong>이다 (<code>docker rm</code> 시 쓰기 레이어 소멸). 영속 데이터는 반드시 볼륨이나 바인드 마운트로 <em>컨테이너 밖</em>에 저장해야 한다.</p>
 
-            <svg viewBox="0 0 780 320" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="Docker 스토리지 3종 비교">
-              <defs>
-                <marker id="vArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <style>
-                  .vbx{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .vvol{fill:#1a2030;stroke:#00d4ff;stroke-width:2;rx:6;ry:6}
-                  .vbnd{fill:#112a1a;stroke:#4ade80;stroke-width:2;rx:6;ry:6}
-                  .vtmp{fill:#2a2010;stroke:#e2b714;stroke-width:2;rx:6;ry:6;stroke-dasharray:4 2}
-                  .vct{fill:#2a1a1a;stroke:#ff4757;stroke-width:1.5;rx:4;ry:4}
-                  .vtx{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .vsm{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .vlab{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- Host -->
-              <rect class="vbx" x="20" y="20" width="740" height="280"/>
-              <text class="vtx" x="390" y="40" fill="#00d4ff">🖥️ Host System</text>
-
-              <!-- Volume -->
-              <rect class="vvol" x="40" y="60" width="220" height="100"/>
-              <text class="vtx" x="150" y="80">Volume (권장)</text>
-              <text class="vsm" x="150" y="96">/var/lib/docker/volumes/NAME/_data</text>
-              <text class="vsm" x="150" y="112">Docker가 관리 · 백업·복구 용이</text>
-              <text class="vsm" x="150" y="128">드라이버 교체 가능 (local, NFS, EFS)</text>
-              <text class="vlab" x="150" y="148">-v mydata:/var/lib/postgresql/data</text>
-
-              <!-- Bind mount -->
-              <rect class="vbnd" x="280" y="60" width="220" height="100"/>
-              <text class="vtx" x="390" y="80">Bind Mount</text>
-              <text class="vsm" x="390" y="96">호스트의 임의 경로 직접 마운트</text>
-              <text class="vsm" x="390" y="112">개발 중 hot reload 유용</text>
-              <text class="vsm" x="390" y="128">경로·권한(SELinux) 이슈 주의</text>
-              <text class="vlab" x="390" y="148">-v $(pwd)/src:/app/src</text>
-
-              <!-- tmpfs -->
-              <rect class="vtmp" x="520" y="60" width="220" height="100"/>
-              <text class="vtx" x="630" y="80">tmpfs</text>
-              <text class="vsm" x="630" y="96">RAM에만 존재 · 호스트 저장 X</text>
-              <text class="vsm" x="630" y="112">시크릿·세션 일시 저장</text>
-              <text class="vsm" x="630" y="128">컨테이너 종료 시 증발</text>
-              <text class="vlab" x="630" y="148">--tmpfs /tmp:size=64m</text>
-
-              <!-- Containers -->
-              <rect class="vct" x="40" y="200" width="220" height="60"/>
-              <text class="vtx" x="150" y="222">🐘 Postgres</text>
-              <text class="vsm" x="150" y="240">/var/lib/postgresql/data</text>
-              <path d="M 150,200 L 150,162" stroke="#00d4ff" stroke-width="2" marker-end="url(#vArr)"/>
-
-              <rect class="vct" x="280" y="200" width="220" height="60"/>
-              <text class="vtx" x="390" y="222">🟩 Node dev</text>
-              <text class="vsm" x="390" y="240">/app/src (코드)</text>
-              <path d="M 390,200 L 390,162" stroke="#4ade80" stroke-width="2" marker-end="url(#vArr)"/>
-
-              <rect class="vct" x="520" y="200" width="220" height="60"/>
-              <text class="vtx" x="630" y="222">🔐 Sensitive</text>
-              <text class="vsm" x="630" y="240">/run/secrets</text>
-              <path d="M 630,200 L 630,162" stroke="#e2b714" stroke-width="2" marker-end="url(#vArr)"/>
-
-              <!-- animated data -->
-              <circle r="4" fill="#00d4ff"><animateMotion dur="2s" repeatCount="indefinite" path="M 150,200 L 150,110"/></circle>
-              <circle r="4" fill="#4ade80"><animateMotion dur="2s" repeatCount="indefinite" begin=".5s" path="M 390,200 L 390,110"/></circle>
-
-              <text class="vsm" x="390" y="290">💡 컨테이너를 삭제해도 볼륨·바인드 마운트 데이터는 남는다 (tmpfs는 증발)</text>
-            </svg>
+            <div class="mermaid">
+flowchart LR
+  C([Container]) --> V1["/var/lib/docker/volumes/"]
+  C --> B1["호스트 경로<br/>/home/user/src"]
+  C --> T1["메모리 tmpfs"]
+  subgraph V["📦 Volume (권장)"]
+    V1 --> V2["Docker 관리<br/>이식성·백업 용이"]
+  end
+  subgraph B["🔗 Bind Mount"]
+    B1 --> B2["개발 중 소스 공유"]
+  end
+  subgraph T["⚡ tmpfs"]
+    T1 --> T2["시크릿·임시 캐시<br/>재시작 시 소멸"]
+  end
+            </div>
 
 <pre><code class="language-bash"># 볼륨 수명주기
 docker volume create pg-data
@@ -791,74 +453,21 @@ docker run --rm \
             <h2>🧩 Docker Compose — "스택을 YAML 한 장으로"</h2>
             <p>여러 컨테이너(웹·DB·캐시·워커)를 <strong>하나의 YAML</strong>로 정의하고 <code>docker compose up</code> 한 방에 띄우는 도구. 개발 환경의 표준.</p>
 
-            <svg viewBox="0 0 780 340" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="Docker Compose 서비스 토폴로지">
-              <defs>
-                <marker id="cArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <style>
-                  .cbx{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .cweb{fill:#1a2030;stroke:#00d4ff;stroke-width:2;rx:8;ry:8}
-                  .capp{fill:#112a1a;stroke:#4ade80;stroke-width:2;rx:8;ry:8}
-                  .cdb{fill:#2a1a2a;stroke:#7b2ff7;stroke-width:2;rx:8;ry:8}
-                  .crdc{fill:#2a1a1a;stroke:#ff4757;stroke-width:2;rx:8;ry:8}
-                  .cnet{fill:none;stroke:#00d4ff;stroke-width:1.5;stroke-dasharray:6 4;rx:10;ry:10}
-                  .ct{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .cs{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .ck{fill:#e2b714;font:bold 10px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- External -->
-              <rect class="cbx" x="20" y="140" width="80" height="60"/>
-              <text class="ct" x="60" y="164">🌐 User</text>
-              <text class="cs" x="60" y="180">:8080</text>
-
-              <!-- Network boundary -->
-              <rect class="cnet" x="130" y="20" width="630" height="300"/>
-              <text class="ck" x="445" y="40">docker network: myapp_default (bridge)</text>
-
-              <!-- web (nginx) -->
-              <rect class="cweb" x="160" y="130" width="150" height="80"/>
-              <text class="ct" x="235" y="154">🌐 web</text>
-              <text class="cs" x="235" y="172">nginx:alpine</text>
-              <text class="cs" x="235" y="188">ports: 8080:80</text>
-              <text class="cs" x="235" y="202">depends_on: app</text>
-
-              <!-- app -->
-              <rect class="capp" x="350" y="80" width="150" height="80"/>
-              <text class="ct" x="425" y="104">⚙️ app</text>
-              <text class="cs" x="425" y="122">myapp:1.0</text>
-              <text class="cs" x="425" y="138">env: DATABASE_URL</text>
-              <text class="cs" x="425" y="154">replicas: 3</text>
-
-              <!-- db -->
-              <rect class="cdb" x="350" y="200" width="150" height="80"/>
-              <text class="ct" x="425" y="224">🐘 db</text>
-              <text class="cs" x="425" y="242">postgres:16</text>
-              <text class="cs" x="425" y="258">volume: pg-data</text>
-              <text class="cs" x="425" y="274">healthcheck: pg_isready</text>
-
-              <!-- redis -->
-              <rect class="crdc" x="550" y="140" width="150" height="80"/>
-              <text class="ct" x="625" y="164">🔴 cache</text>
-              <text class="cs" x="625" y="182">redis:7-alpine</text>
-              <text class="cs" x="625" y="198">volume: redis-data</text>
-
-              <!-- connections -->
-              <path d="M 100,170 L 158,170" stroke="#00d4ff" stroke-width="2" marker-end="url(#cArr)"/>
-              <path d="M 310,160 L 348,130" stroke="#00d4ff" stroke-width="2" marker-end="url(#cArr)"/>
-              <path d="M 500,140 L 548,160" stroke="#00d4ff" stroke-width="2" marker-end="url(#cArr)"/>
-              <path d="M 425,160 L 425,198" stroke="#00d4ff" stroke-width="2" marker-end="url(#cArr)"/>
-
-              <!-- labels on edges -->
-              <text class="ck" x="128" y="160">HTTP</text>
-              <text class="ck" x="335" y="145">proxy_pass</text>
-              <text class="ck" x="524" y="155">get/set</text>
-              <text class="ck" x="455" y="184">SQL</text>
-
-              <!-- animated requests -->
-              <circle r="4" fill="#00d4ff"><animateMotion dur="3s" repeatCount="indefinite" path="M 100,170 L 235,170 L 425,120 L 425,240"/></circle>
-              <circle r="4" fill="#ff4757"><animateMotion dur="3s" repeatCount="indefinite" begin="1.5s" path="M 425,120 L 625,180"/></circle>
-            </svg>
+            <div class="mermaid">
+flowchart LR
+  USER([사용자]) -->|:80| WEB
+  subgraph NET["app-network (bridge)"]
+    WEB["web<br/>nginx:alpine<br/>:80"]
+    API["api<br/>node:20<br/>:3000"]
+    DB[("db<br/>postgres:16<br/>:5432")]
+    CACHE[("cache<br/>redis:7<br/>:6379")]
+    WEB -->|proxy_pass| API
+    API -->|db:5432| DB
+    API -->|cache:6379| CACHE
+  end
+  VOL1[(pg-data)] -.volume.-> DB
+  VOL2[(redis-data)] -.volume.-> CACHE
+            </div>
 
             <h3>docker-compose.yml 예제 — 위 토폴로지 그대로</h3>
 <pre><code class="language-yaml">services:
@@ -929,71 +538,25 @@ docker compose config             # 최종 병합된 YAML 덤프</code></pre>
             <h2>📦 Registry — 이미지 저장·배포</h2>
             <p>Registry는 이미지를 저장·배포하는 HTTP 기반 저장소다. 공개: <strong>Docker Hub</strong>(기본값), 비공개: <strong>ECR · GCR · ACR · GHCR · Harbor(사내)</strong>.</p>
 
-            <svg viewBox="0 0 780 300" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="이미지 push/pull 흐름">
-              <defs>
-                <marker id="rArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <marker id="rArrG" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#4ade80"/></marker>
-                <style>
-                  .rbx{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .rdev{fill:#1a2030;stroke:#00d4ff;stroke-width:1.5;rx:6;ry:6}
-                  .rreg{fill:#2a2010;stroke:#e2b714;stroke-width:1.5;rx:6;ry:6}
-                  .rprd{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:6;ry:6}
-                  .rt{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .rs{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .rlab{fill:#e2b714;font:bold 11px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- Dev -->
-              <rect class="rdev" x="20" y="100" width="160" height="100"/>
-              <text class="rt" x="100" y="124">👨‍💻 Dev Machine</text>
-              <text class="rs" x="100" y="142">docker build</text>
-              <text class="rs" x="100" y="158">docker tag</text>
-              <text class="rs" x="100" y="174">docker push</text>
-
-              <!-- CI -->
-              <rect class="rdev" x="20" y="20" width="160" height="60"/>
-              <text class="rt" x="100" y="42">🔁 CI (Actions)</text>
-              <text class="rs" x="100" y="58">build + push 자동화</text>
-
-              <!-- Registry -->
-              <rect class="rreg" x="290" y="60" width="200" height="180"/>
-              <text class="rt" x="390" y="84">☁️ Registry</text>
-              <text class="rs" x="390" y="102">Docker Hub · ECR · GHCR</text>
-              <rect class="rbx" x="310" y="120" width="160" height="26"/><text class="rs" x="390" y="137">myapp:1.0  →  sha256:ab…</text>
-              <rect class="rbx" x="310" y="152" width="160" height="26"/><text class="rs" x="390" y="169">myapp:1.1  →  sha256:cd…</text>
-              <rect class="rbx" x="310" y="184" width="160" height="26"/><text class="rs" x="390" y="201">myapp:latest → sha256:cd…</text>
-              <text class="rs" x="390" y="230">blob store + manifest</text>
-
-              <!-- Production -->
-              <rect class="rprd" x="600" y="40" width="160" height="80"/>
-              <text class="rt" x="680" y="64">🟢 Production</text>
-              <text class="rs" x="680" y="82">docker pull · run</text>
-              <text class="rs" x="680" y="98">ECS · K8s · Compose</text>
-
-              <rect class="rprd" x="600" y="140" width="160" height="80"/>
-              <text class="rt" x="680" y="164">🟢 Staging</text>
-              <text class="rs" x="680" y="182">docker pull myapp:1.1</text>
-
-              <!-- Arrows -->
-              <path d="M 180,140 L 288,140" stroke="#00d4ff" stroke-width="2" marker-end="url(#rArr)"/>
-              <text class="rlab" x="234" y="130">push</text>
-              <path d="M 180,50 Q 250,60 300,90" stroke="#00d4ff" stroke-width="2" fill="none" marker-end="url(#rArr)"/>
-              <text class="rlab" x="240" y="55">push</text>
-
-              <path d="M 490,110 L 598,80" stroke="#4ade80" stroke-width="2" marker-end="url(#rArrG)"/>
-              <text class="rlab" x="544" y="88" fill="#4ade80">pull</text>
-              <path d="M 490,180 L 598,180" stroke="#4ade80" stroke-width="2" marker-end="url(#rArrG)"/>
-              <text class="rlab" x="544" y="172" fill="#4ade80">pull</text>
-
-              <!-- animated -->
-              <circle r="5" fill="#00d4ff"><animateMotion dur="3s" repeatCount="indefinite" path="M 100,140 L 300,140"/></circle>
-              <circle r="5" fill="#4ade80"><animateMotion dur="2.5s" repeatCount="indefinite" begin="1.5s" path="M 470,140 L 680,80"/></circle>
-              <circle r="5" fill="#4ade80"><animateMotion dur="2.5s" repeatCount="indefinite" begin="2s" path="M 470,180 L 680,180"/></circle>
-
-              <!-- Bottom: layer dedup -->
-              <text class="rt" x="390" y="272" fill="#00d4ff">💡 레지스트리는 레이어 단위 중복 제거 — 이미 있는 레이어는 업로드 생략</text>
-            </svg>
+            <div class="mermaid">
+sequenceDiagram
+  actor Dev as Developer
+  participant CLI as docker CLI
+  participant D as dockerd
+  participant R as Registry
+  participant S as Object Storage
+  Dev->>CLI: docker push myapp:1.0
+  CLI->>D: push 요청
+  D->>R: POST /v2/auth
+  R-->>D: Bearer token
+  D->>R: HEAD 각 layer digest
+  R-->>D: 존재 여부 (있으면 skip)
+  D->>R: PUT 새 layer blob
+  R->>S: 저장
+  D->>R: PUT manifest
+  R-->>D: 201 Created
+  Note over R,S: pull 시 역방향 흐름
+            </div>
 
 <pre><code class="language-bash"># 로그인 & 태그
 docker login                                 # Hub (또는 ghcr.io, 123456789.dkr.ecr.ap-northeast-2.amazonaws.com)
@@ -1024,50 +587,20 @@ aws ecr get-login-password --region ap-northeast-2 | \
             <h2>🔒 보안 · 최적화 — "작고, non-root, 서명된 이미지"</h2>
 
             <h3>이미지 크기 줄이기 — 멀티스테이지 빌드</h3>
-            <svg viewBox="0 0 780 280" style="max-width:100%;height:auto;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;padding:.6rem" aria-label="멀티스테이지 빌드 전후 비교">
-              <defs>
-                <marker id="mArr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#00d4ff"/></marker>
-                <style>
-                  .mbx{fill:#161616;stroke:#2a2a2a;stroke-width:1.5;rx:6;ry:6}
-                  .mb{fill:#1a2030;stroke:#00d4ff;stroke-width:1.5;rx:6;ry:6}
-                  .mbad{fill:#2a1a1a;stroke:#ff4757;stroke-width:1.5;rx:6;ry:6}
-                  .mgood{fill:#112a1a;stroke:#4ade80;stroke-width:1.5;rx:6;ry:6}
-                  .mt{fill:#fff;font:bold 12px sans-serif;text-anchor:middle}
-                  .ms{fill:#a0a0a0;font:10px sans-serif;text-anchor:middle}
-                  .mlab{fill:#e2b714;font:bold 12px monospace;text-anchor:middle}
-                </style>
-              </defs>
-
-              <!-- Single stage -->
-              <text class="mt" x="190" y="20" fill="#ff4757">❌ 단일 스테이지</text>
-              <rect class="mbad" x="40" y="40" width="300" height="140"/>
-              <rect class="mbx" x="60" y="60" width="260" height="24"/><text class="mt" x="190" y="77">FROM node:20</text>
-              <rect class="mbx" x="60" y="90" width="260" height="24"/><text class="mt" x="190" y="107">RUN npm ci (devDeps 포함)</text>
-              <rect class="mbx" x="60" y="120" width="260" height="24"/><text class="mt" x="190" y="137">COPY . .</text>
-              <rect class="mbx" x="60" y="150" width="260" height="24"/><text class="mt" x="190" y="167">RUN npm run build · CMD node dist</text>
-              <text class="mlab" x="190" y="210" fill="#ff4757">~1.2 GB · npm·tsc·소스 전부 포함</text>
-              <text class="ms" x="190" y="230">공격면 ↑ · 배포 느림 · 노드 모듈 빌드 산출물 동거</text>
-
-              <!-- Multistage -->
-              <text class="mt" x="590" y="20" fill="#4ade80">✅ 멀티스테이지</text>
-              <rect class="mb" x="440" y="40" width="300" height="70"/>
-              <text class="mt" x="590" y="60">Builder: node:20</text>
-              <text class="ms" x="590" y="78">npm ci · npm run build</text>
-              <text class="ms" x="590" y="94">tsc, webpack 빌드 산출물 생성</text>
-
-              <rect class="mgood" x="440" y="120" width="300" height="70"/>
-              <text class="mt" x="590" y="140">Runtime: node:20-alpine</text>
-              <text class="ms" x="590" y="158">COPY --from=builder /app/dist</text>
-              <text class="ms" x="590" y="174">USER app · CMD node dist/server.js</text>
-
-              <path d="M 590,110 L 590,118" stroke="#00d4ff" stroke-width="2" marker-end="url(#mArr)"/>
-              <circle r="4" fill="#00d4ff"><animateMotion dur="2s" repeatCount="indefinite" path="M 590,110 L 590,118"/></circle>
-
-              <text class="mlab" x="590" y="218" fill="#4ade80">~120 MB · 실행 산출물만</text>
-              <text class="ms" x="590" y="236">공격면 ↓ · pull 빠름 · 빌드 도구 부재 (공급망 차단)</text>
-
-              <text class="mlab" x="390" y="262">📉 10× 작고, 보안 리스크 10× 감소 — multistage는 기본값</text>
-            </svg>
+            <div class="mermaid">
+flowchart LR
+  subgraph BEF["❌ Before (단일 스테이지)"]
+    B1["node:20<br/>SDK + 소스 + node_modules<br/>+ 빌드 도구"]
+    B2["최종 이미지 ≈ 1.2 GB"]
+    B1 --> B2
+  end
+  subgraph AFT["✅ After (멀티스테이지)"]
+    A1["builder: node:20<br/>빌드 전담"]
+    A2["runner: node:20-alpine<br/>--from=builder /app/dist"]
+    A3["최종 이미지 ≈ 120 MB"]
+    A1 --> A2 --> A3
+  end
+            </div>
 
             <h3>보안 체크리스트 (8개)</h3>
             <table class="data-table">
@@ -1160,6 +693,9 @@ docker builder prune               # BuildKit 캐시</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/notes.js"></script>
+
+  <script type="module" src="../js/mermaid-init.js"></script>
+
 
 </body>
 </html>

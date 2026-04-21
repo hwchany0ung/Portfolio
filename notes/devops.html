@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/animations.css" />
   <link rel="stylesheet" href="../css/notes.css" />
+  <link rel="stylesheet" href="../css/mermaid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
 </head>
 <body>
@@ -83,43 +84,16 @@
             <p>여러 개발자가 작업한 코드를 <strong>하루에도 여러 번</strong> 공유 저장소에 합치고, 합칠 때마다 <strong>자동으로 빌드와 테스트</strong>를 실행한다.</p>
 
             <div style="margin:1rem 0;text-align:center">
-              <svg viewBox="0 0 700 160" style="max-width:100%;height:auto">
-                <defs>
-                  <marker id="arrCi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#00d4ff"/>
-                  </marker>
-                </defs>
-                <rect x="20" y="55" width="110" height="50" rx="8" fill="rgba(0,212,255,.15)" stroke="#00d4ff" stroke-width="2"/>
-                <text x="75" y="80" text-anchor="middle" fill="#00d4ff" font-weight="700">git push</text>
-                <text x="75" y="97" text-anchor="middle" fill="#ccc" font-size="11">개발자 코드 업로드</text>
-
-                <rect x="160" y="55" width="110" height="50" rx="8" fill="rgba(74,222,128,.15)" stroke="#4ade80" stroke-width="2"/>
-                <text x="215" y="80" text-anchor="middle" fill="#4ade80" font-weight="700">Build</text>
-                <text x="215" y="97" text-anchor="middle" fill="#ccc" font-size="11">컴파일/패키징</text>
-
-                <rect x="300" y="55" width="110" height="50" rx="8" fill="rgba(226,183,20,.15)" stroke="#e2b714" stroke-width="2"/>
-                <text x="355" y="80" text-anchor="middle" fill="#e2b714" font-weight="700">Test</text>
-                <text x="355" y="97" text-anchor="middle" fill="#ccc" font-size="11">단위/통합 테스트</text>
-
-                <rect x="440" y="55" width="110" height="50" rx="8" fill="rgba(123,47,247,.2)" stroke="#7b2ff7" stroke-width="2"/>
-                <text x="495" y="80" text-anchor="middle" fill="#b69cff" font-weight="700">Report</text>
-                <text x="495" y="97" text-anchor="middle" fill="#ccc" font-size="11">결과 알림</text>
-
-                <rect x="580" y="55" width="100" height="50" rx="8" fill="rgba(255,71,87,.15)" stroke="#ff4757" stroke-width="2"/>
-                <text x="630" y="80" text-anchor="middle" fill="#ff4757" font-weight="700">Feedback</text>
-                <text x="630" y="97" text-anchor="middle" fill="#ccc" font-size="11">성공/실패</text>
-
-                <line x1="130" y1="80" x2="160" y2="80" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrCi)"/>
-                <line x1="270" y1="80" x2="300" y2="80" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrCi)"/>
-                <line x1="410" y1="80" x2="440" y2="80" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrCi)"/>
-                <line x1="550" y1="80" x2="580" y2="80" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrCi)"/>
-
-                <circle r="5" fill="#e2b714">
-                  <animateMotion dur="4s" repeatCount="indefinite" path="M 75 80 L 215 80 L 355 80 L 495 80 L 630 80"/>
-                </circle>
-
-                <text x="350" y="30" text-anchor="middle" fill="#00d4ff" font-size="14" font-weight="700">CI 자동 흐름 — 빠른 피드백이 핵심</text>
-              </svg>
+              <div class="mermaid">
+flowchart LR
+  DEV([개발자]) -->|git push| REPO[(Git Repository)]
+  REPO -->|webhook 트리거| CI[CI Server<br/>GitHub Actions · Jenkins]
+  CI --> BLD[Build<br/>컴파일·번들]
+  BLD --> TST[Test<br/>unit · lint]
+  TST --> PKG[Package<br/>Docker image · artifact]
+  PKG -->|성공| OK([✅ 통합 완료])
+  TST -.실패.-> NOTIFY[❌ 개발자 알림]
+            </div>
             </div>
 
             <h3>🚢 CD — Delivery vs Deployment</h3>
@@ -491,5 +465,7 @@ stage('스테이징') {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/notes.js"></script>
+  <script type="module" src="../js/mermaid-init.js"></script>
+
 </body>
 </html>
