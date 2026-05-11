@@ -1382,6 +1382,98 @@
       </div>
     </section>
 
+    
+    <!-- ++ Ouroboros Patterns ++++++++++++++++++++++++++++++++ -->
+    <section class="orch-section">
+      <div class="orch-container">
+        <div class="section-header reveal">
+          <span class="section-tag">// ouroboros</span>
+          <h2 class="section-title">워크플로우 <span class="highlight">업그레이드</span></h2>
+          <p class="section-desc">오픈소스 <a href="https://github.com/Q00/ouroboros" target="_blank" style="color:var(--ai-amber);text-decoration:none">Ouroboros</a> Agent OS에서 채택한 7개 패턴. 외부 CLI 없이 CLAUDE.md만으로 통합됩니다.</p>
+        </div>
+
+        <div class="reveal" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-top:2rem">
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem;transition:border-color var(--transition)" onmouseenter="this.style.borderColor='rgba(245,166,35,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">
+              <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--ai-amber);background:rgba(245,166,35,0.1);padding:0.2rem 0.5rem;border-radius:4px">01</span>
+              <span style="font-weight:700;font-size:0.9rem">Ambiguity Score</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;margin:0">코딩 전 모호성 수치화 게이트. Ambiguity ≤ 0.2 달성해야만 plan 진행.</p>
+          </div>
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem;transition:border-color var(--transition)" onmouseenter="this.style.borderColor='rgba(245,166,35,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">
+              <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--ai-amber);background:rgba(245,166,35,0.1);padding:0.2rem 0.5rem;border-radius:4px">02</span>
+              <span style="font-weight:700;font-size:0.9rem">Locked Seed</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;margin:0">PDCA Plan 승인 후 핵심 결정을 LOCKED 마커로 고정. 변경 시 사용자 확인 필수.</p>
+          </div>
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem;transition:border-color var(--transition)" onmouseenter="this.style.borderColor='rgba(245,166,35,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">
+              <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--ai-amber);background:rgba(245,166,35,0.1);padding:0.2rem 0.5rem;border-radius:4px">03</span>
+              <span style="font-weight:700;font-size:0.9rem">Contrarian Check</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;margin:0">QA 단계에서 구현의 핵심 가정을 역으로 검증. "반대가 맞다면?" 관점 강제 적용.</p>
+          </div>
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem;transition:border-color var(--transition)" onmouseenter="this.style.borderColor='rgba(0,212,255,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">
+              <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent-cyan);background:rgba(0,212,255,0.1);padding:0.2rem 0.5rem;border-radius:4px">04</span>
+              <span style="font-weight:700;font-size:0.9rem">Stagnation Detection</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;margin:0">iterate 간 출력 비교. 변화 없으면 retry 차감 없이 Unstuck으로 바로 이동.</p>
+          </div>
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem;transition:border-color var(--transition)" onmouseenter="this.style.borderColor='rgba(0,212,255,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">
+              <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent-cyan);background:rgba(0,212,255,0.1);padding:0.2rem 0.5rem;border-radius:4px">05</span>
+              <span style="font-weight:700;font-size:0.9rem">Unstuck 5-Step</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;margin:0">retry 3회 소진 후 Socratic·Contrarian·Simplifier·Researcher·Architect 5 Mind로 회복 시도.</p>
+          </div>
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem;transition:border-color var(--transition)" onmouseenter="this.style.borderColor='rgba(167,139,250,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">
+              <span style="font-family:var(--font-mono);font-size:0.7rem;color:#a78bfa;background:rgba(167,139,250,0.1);padding:0.2rem 0.5rem;border-radius:4px">06</span>
+              <span style="font-weight:700;font-size:0.9rem">Wonder / Reflect</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;margin:0">/pdca iterate 구조화. Wonder(가설 발산) → Reflect(최적 가설 수렴) 순서 강제.</p>
+          </div>
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem;transition:border-color var(--transition)" onmouseenter="this.style.borderColor='rgba(40,202,65,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">
+              <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--ai-green);background:rgba(40,202,65,0.1);padding:0.2rem 0.5rem;border-radius:4px">07</span>
+              <span style="font-weight:700;font-size:0.9rem">PAL Router</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;margin:0">태스크 복잡도 기반 3-tier 모델 선택. Haiku(단순)·Sonnet(구현)·Opus(판단) 자동 배정.</p>
+          </div>
+
+        </div>
+
+        <!-- Unstuck loop flow -->
+        <div class="reveal" style="margin-top:2rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem">
+          <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-bottom:0.8rem">// unstuck loop flow</div>
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;font-family:var(--font-mono);font-size:0.8rem">
+            <span style="padding:0.3rem 0.7rem;border:1px solid #333;border-radius:6px;color:var(--text-secondary)">retry 1</span>
+            <span style="color:#444">→</span>
+            <span style="padding:0.3rem 0.7rem;border:1px solid #333;border-radius:6px;color:var(--text-secondary)">retry 2</span>
+            <span style="color:#444">→</span>
+            <span style="padding:0.3rem 0.7rem;border:1px solid #333;border-radius:6px;color:var(--text-secondary)">retry 3</span>
+            <span style="color:#444">→</span>
+            <span style="padding:0.3rem 0.7rem;border:1px solid rgba(245,166,35,0.5);border-radius:6px;color:var(--ai-amber);background:rgba(245,166,35,0.06)">stagnation?</span>
+            <span style="color:#444">→</span>
+            <span style="padding:0.3rem 0.7rem;border:1px solid rgba(0,212,255,0.5);border-radius:6px;color:var(--accent-cyan);background:rgba(0,212,255,0.06)">[unstuck 5]</span>
+            <span style="color:#444">→</span>
+            <span style="padding:0.3rem 0.7rem;border:1px solid rgba(40,202,65,0.5);border-radius:6px;color:var(--ai-green);background:rgba(40,202,65,0.06)">new dir?</span>
+            <span style="color:#444">→</span>
+            <span style="padding:0.3rem 0.7rem;border:1px solid #333;border-radius:6px;color:var(--text-muted)">user</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Agents ─────────────────────────────────────────── -->
     <section class="agents-section">
       <div class="agents-container">
