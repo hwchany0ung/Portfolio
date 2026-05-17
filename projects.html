@@ -282,6 +282,14 @@
     .project-card.featured-wide .project-tags  { grid-column: 2; align-content: start; }
     .project-card.featured-wide .project-links { grid-column: span 2; }
 
+    /* Stacked body variant — desc/points 가 한 컬럼 전체를 쓰는 wide 카드 */
+    .project-card.featured-wide.body-stacked .project-body { grid-template-columns: 1fr; }
+    .project-card.featured-wide.body-stacked .project-desc,
+    .project-card.featured-wide.body-stacked .project-tags,
+    .project-card.featured-wide.body-stacked .project-meta,
+    .project-card.featured-wide.body-stacked .project-title,
+    .project-card.featured-wide.body-stacked .project-links { grid-column: span 1; }
+
     /* Key point list inside desc */
     .project-points {
       list-style: none;
@@ -362,7 +370,7 @@
       <div class="projects-grid stagger-children">
 
         <!-- ── 한반도감 / BioGuard (Hackathon Finalist) ── -->
-        <div class="project-card featured-wide reveal" data-category="ai cloud" data-project="hanbando">
+        <div class="project-card featured-wide body-stacked reveal" data-category="ai cloud" data-project="hanbando">
           <div class="project-thumb" style="background:linear-gradient(135deg,#0a1a0e,#0d2a18,#0a1f2e,#1a0a2e);height:200px;">
             <span class="project-thumb-icon" style="font-size:3.5rem;">🌿</span>
             <span class="project-badge team">팀 프로젝트</span>
@@ -374,14 +382,14 @@
               <span class="project-period">2026. 04 ~ 05 · 본선 5. 16~17</span>
             </div>
             <div class="project-title">한반도감 (BioGuard) — 한국 토종/외래 생물 AI 판별 도감</div>
-            <p class="project-desc">
-              사진 한 장으로 한국 토종 여부와 생태 정보를 즉시 알려주는 시민과학 도감 서비스입니다. 국립중앙과학관 AI Hack Camp 2026 디지털 교육 분야 <strong style="color:#ffd700">본선 진출 작품</strong>입니다.
+            <div class="project-desc">
+              <p style="margin:0 0 0.7rem;">사진 한 장으로 한국 토종 여부와 생태 정보를 즉시 알려주는 시민과학 도감 서비스입니다. 국립중앙과학관 AI Hack Camp 2026 디지털 교육 분야 <strong style="color:#ffd700">본선 진출 작품</strong>입니다.</p>
               <ul class="project-points">
                 <li>3인 팀에서 <strong>기획안 작성부터 PM · 로직 설계 · AI 파이프라인 설계 · QA · 인프라 설계</strong>까지 폭넓게 담당</li>
                 <li>팀원의 백엔드 구현 · 발표 준비를 함께 진행하며 본선까지 마무리</li>
                 <li>한국 생물 102종 도감 DB · 희귀도/법적 보호 등급 자동 판정 (멸종위기 I/II급 · 생태계교란 39종)</li>
               </ul>
-            </p>
+            </div>
             <div class="project-tags">
               <span class="tag">Claude Sonnet Vision</span>
               <span class="tag">Upstage Solar Pro 2</span>
@@ -393,12 +401,18 @@
               <span class="tag">시민과학</span>
             </div>
             <div class="project-links">
-              <a href="https://github.com/hwchany0ung" target="_blank" class="project-link">
+              <a href="https://hanban-do.com/" target="_blank" class="project-link" style="color:var(--accent-cyan);border-color:rgba(0,212,255,0.3);">
+                🌐 hanban-do.com
+              </a>
+              <a href="https://github.com/hwchany0ung/hanbandogam" target="_blank" class="project-link">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-                GitHub
+                GitHub Repo
+              </a>
+              <a href="downloads/hanbando-presentation.zip" download class="project-link" style="color:#ffd700;border-color:rgba(255,215,0,0.35);background:rgba(255,215,0,0.06);">
+                📎 발표자료 (.zip · 7MB)
               </a>
               <span class="project-link" style="color:#ffd700;border-color:rgba(255,215,0,0.35);background:rgba(255,215,0,0.08);">
-                🏅 본선 마침 · 2026. 05
+                🏅 본선 마침 · 2026. 05. 17
               </span>
             </div>
           </div>
