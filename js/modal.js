@@ -10,6 +10,44 @@
 
   // ── Project Data ────────────────────────────────────────────────
   const PROJECTS = {
+    'hanbando': {
+      type: 'AI Vision / Fullstack / AWS',
+      badge: 'team',
+      period: '2026. 04 ~ 05 · 본선 5. 16~17',
+      title: '한반도감 (BioGuard) — 한국 토종/외래 생물 AI 판별 도감',
+      subtitle:
+        '사진 한 장으로 한국 토종 여부와 생태 정보를 즉시 알려주는 시민과학 도감 서비스입니다. 국립중앙과학관 AI Hack Camp 2026 디지털 교육 분야 본선 진출 작품입니다.',
+      roles: [
+        '3인 팀에서 기획안 작성 · PM · 로직 설계 · AI 파이프라인 설계 · QA · 인프라 설계까지 폭넓게 담당',
+        '팀원의 백엔드 구현 · 발표 준비를 함께 진행하며 본선까지 마무리',
+        'AI 파이프라인 설계 — Claude Sonnet Vision 종 식별 + Upstage Solar Pro 2 한국어 후처리 (실패 시 graceful fallback)',
+        '한국 생물 102종 도감 DB 구축 · 국립생물자원관 공공데이터 연동',
+        '희귀도/법적 보호 등급 자동 판정 (멸종위기 I/II급 · 생태계교란 39종)',
+        'AWS 인프라 설계 · 배포 운영 (hanban-do.com)',
+      ],
+      achievements: [
+        { value: '본선', label: 'AI Hack Camp 2026' },
+        { value: '102종', label: '한국 생물 도감' },
+        { value: '3인', label: '팀 규모' },
+        { value: 'LIVE', label: 'hanban-do.com' },
+      ],
+      tags: [
+        'Claude Sonnet Vision',
+        'Upstage Solar Pro 2',
+        'FastAPI',
+        'React',
+        'AWS',
+        'PostgreSQL',
+        '국립생물자원관 API',
+        '시민과학',
+      ],
+      diagram: null,
+      links: {
+        live: 'https://hanban-do.com/',
+        github: 'https://github.com/hwchany0ung/hanbandogam',
+        download: 'downloads/hanbando-presentation.zip',
+      },
+    },
     'devnavi': {
       type: 'AI / Fullstack / AWS Serverless',
       badge: 'personal',
@@ -532,6 +570,9 @@
     }
     if (project.links.live) {
       linksHTML += `<a href="${project.links.live}" target="_blank" class="modal-link">&#127760; Live Site</a>`;
+    }
+    if (project.links.download) {
+      linksHTML += `<a href="${project.links.download}" download class="modal-link">&#128206; 발표자료 다운로드</a>`;
     }
     linksEl.innerHTML = linksHTML;
 
