@@ -1,4 +1,154 @@
 /* ========================
+   Awards Section (index.html)
+   ======================== */
+.awards-section {
+  padding: 4rem 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.awards-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.award-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.award-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700);
+}
+
+.award-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.award-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.award-info {
+  flex: 1;
+}
+
+.award-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.award-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.award-meta-row {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.award-date {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.award-org {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.award-prize-badge {
+  flex-shrink: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.award-project-name {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.4rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.award-slide-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.award-slide-open {
+  color: #ffd700;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity var(--transition);
+}
+
+.award-slide-open:hover { opacity: 1; }
+
+.award-slide-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.award-slide-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .award-card { padding: 1.5rem 1.2rem; }
+  .award-card-header { flex-wrap: wrap; gap: 0.8rem; }
+  .award-prize-badge { order: -1; }
+  .award-icon { font-size: 2rem; }
+}
+
+@media (max-width: 480px) {
+  .awards-section { padding: 3rem 1rem; }
+}
+
+/* ========================
    Certificate Badges Section (index.html)
    ======================== */
 .cert-badges-section {
