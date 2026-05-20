@@ -767,23 +767,55 @@
         </div>
 
         <div class="award-card reveal">
+          <!-- 상단 골드 하이라이트 바 -->
+          <div class="award-card-glow"></div>
+
           <div class="award-card-header">
-            <div class="award-icon">🏅</div>
+            <!-- 좌: 메달 아이콘 -->
+            <div class="award-medal-wrap">
+              <div class="award-medal-ring"></div>
+              <div class="award-medal-icon">🏅</div>
+            </div>
+
+            <!-- 중앙: 이벤트 정보 -->
             <div class="award-info">
-              <div class="award-title">국립중앙과학관 AI Hack Camp 2026</div>
-              <div class="award-subtitle">디지털 교육 분야</div>
+              <div class="award-event-name">국립중앙과학관 AI Hack Camp 2026</div>
+              <div class="award-field-tag">디지털 교육 분야</div>
               <div class="award-meta-row">
-                <span class="award-date">2026. 05. 17</span>
-                <span class="award-org">국립중앙과학관 주최</span>
+                <span class="award-date-chip">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  2026. 05. 17
+                </span>
+                <span class="award-org-text">국립중앙과학관 주최</span>
               </div>
             </div>
-            <div class="award-prize-badge">🏅 장려상</div>
+
+            <!-- 우: 장려상 스탬프 -->
+            <div class="award-stamp">
+              <div class="award-stamp-inner">
+                <span class="award-stamp-en">PRIZE</span>
+                <span class="award-stamp-kr">장려상</span>
+              </div>
+            </div>
           </div>
-          <div class="award-project-name">한반도감 (BioGuard) — 한국 토종/외래 생물 AI 판별 도감</div>
+
+          <!-- 프로젝트명 배너 -->
+          <div class="award-project-banner">
+            <span class="award-project-dot"></span>
+            <span class="award-project-text">한반도감 (BioGuard) — 한국 토종/외래 생물 AI 판별 도감</span>
+          </div>
+
+          <!-- 슬라이드 뷰어 -->
           <div class="award-slide-wrap">
-            <div class="award-slide-label">
-              <span>발표자료 슬라이드</span>
-              <a href="slides/hanbando/hanbando-deck.html" target="_blank" class="award-slide-open">↗ 전체화면</a>
+            <div class="award-slide-toolbar">
+              <span class="award-slide-toolbar-dot"></span>
+              <span class="award-slide-toolbar-dot"></span>
+              <span class="award-slide-toolbar-dot"></span>
+              <span class="award-slide-toolbar-label">발표자료 슬라이드</span>
+              <a href="slides/hanbando/hanbando-deck.html" target="_blank" class="award-slide-open">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                전체화면
+              </a>
             </div>
             <div class="award-slide-frame">
               <iframe

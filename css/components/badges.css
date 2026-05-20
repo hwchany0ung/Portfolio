@@ -11,121 +11,273 @@
   margin: 0 auto;
 }
 
+/* ── Card Shell ── */
 .award-card {
-  background: var(--bg-card);
-  border: 1px solid rgba(255, 215, 0, 0.25);
+  background: linear-gradient(135deg,
+    rgba(18, 14, 2, 0.98) 0%,
+    rgba(24, 19, 4, 0.95) 50%,
+    rgba(14, 11, 2, 0.98) 100%
+  );
+  border: 1px solid rgba(255, 215, 0, 0.22);
   border-radius: var(--radius-lg);
-  padding: 2rem;
+  padding: 2rem 2rem 0;
   position: relative;
   overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,215,0,0.06),
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 80px rgba(255,215,0,0.04) inset;
 }
 
-.award-card::before {
-  content: '';
+.award-card-glow {
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700);
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,215,0,0.6) 20%,
+    #ffd700 50%,
+    rgba(255,215,0,0.6) 80%,
+    transparent 100%
+  );
 }
 
+/* ── Card Header: 3-column grid ── */
 .award-card-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.2rem;
-  margin-bottom: 1.2rem;
+  display: grid;
+  grid-template-columns: 80px 1fr 96px;
+  gap: 1.6rem;
+  align-items: center;
+  margin-bottom: 1.6rem;
 }
 
-.award-icon {
-  font-size: 2.4rem;
-  line-height: 1;
+/* 좌: 메달 원형 */
+.award-medal-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
+.award-medal-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 215, 0, 0.4);
+  background: radial-gradient(circle at 35% 35%,
+    rgba(255,215,0,0.18) 0%,
+    rgba(255,170,0,0.06) 60%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 16px rgba(255,215,0,0.15),
+    inset 0 0 12px rgba(255,215,0,0.08);
+}
+
+.award-medal-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));
+}
+
+/* 중앙: 이벤트 정보 */
 .award-info {
-  flex: 1;
+  min-width: 0;
 }
 
-.award-title {
-  font-size: 1rem;
+.award-event-name {
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.35rem;
+  line-height: 1.35;
 }
 
-.award-subtitle {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+.award-field-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: rgba(255,215,0,0.8);
+  background: rgba(255,215,0,0.08);
+  border: 1px solid rgba(255,215,0,0.2);
+  padding: 0.18rem 0.6rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.7rem;
 }
 
 .award-meta-row {
   display: flex;
-  gap: 0.8rem;
   align-items: center;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-.award-date {
+.award-date-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: #ffd700;
-  background: rgba(255, 215, 0, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.25);
-  padding: 0.2rem 0.6rem;
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.2rem 0.65rem;
   border-radius: 999px;
 }
 
-.award-org {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
+.award-date-chip svg { opacity: 0.6; }
 
-.award-prize-badge {
-  flex-shrink: 0;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #ffd700;
-  background: rgba(255, 215, 0, 0.12);
-  border: 1px solid rgba(255, 215, 0, 0.35);
-  padding: 0.4rem 1rem;
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-}
-
-.award-project-name {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  margin-bottom: 1.4rem;
-  padding-bottom: 1.2rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.award-slide-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.78rem;
+.award-org-text {
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.38);
   font-family: var(--font-mono);
-  color: var(--text-muted);
+}
+
+/* 우: 장려상 스탬프 원형 */
+.award-stamp {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,215,0,0.55);
+  background: radial-gradient(circle at 40% 40%,
+    rgba(255,215,0,0.12) 0%,
+    rgba(255,170,0,0.04) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow:
+    0 0 20px rgba(255,215,0,0.12),
+    0 0 40px rgba(255,215,0,0.06),
+    inset 0 0 16px rgba(255,215,0,0.06);
+  position: relative;
+}
+
+.award-stamp::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,215,0,0.25);
+}
+
+.award-stamp-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.award-stamp-en {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+  color: rgba(255,215,0,0.6);
+  text-transform: uppercase;
+}
+
+.award-stamp-kr {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffd700;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 12px rgba(255,215,0,0.5);
+}
+
+/* ── Project Banner ── */
+.award-project-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.2rem;
+  margin: 0 -2rem;
+  background: rgba(255,255,255,0.03);
+  border-top: 1px solid rgba(255,215,0,0.1);
+  border-bottom: 1px solid rgba(255,215,0,0.1);
+}
+
+.award-project-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffd700;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(255,215,0,0.6);
+}
+
+.award-project-text {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Slide Viewer ── */
+.award-slide-wrap {
+  padding: 1.2rem 0 0;
+}
+
+.award-slide-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   margin-bottom: 0.6rem;
 }
 
-.award-slide-open {
-  color: #ffd700;
-  text-decoration: none;
-  opacity: 0.8;
-  transition: opacity var(--transition);
+.award-slide-toolbar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  flex-shrink: 0;
 }
 
-.award-slide-open:hover { opacity: 1; }
+.award-slide-toolbar-label {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.3);
+  margin-left: 0.4rem;
+}
+
+.award-slide-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: rgba(255,215,0,0.7);
+  text-decoration: none;
+  border: 1px solid rgba(255,215,0,0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.award-slide-open:hover {
+  color: #ffd700;
+  border-color: rgba(255,215,0,0.5);
+}
 
 .award-slide-frame {
   position: relative;
-  width: 100%;
+  width: calc(100% + 4rem);
+  margin: 0 -2rem;
   aspect-ratio: 16 / 9;
-  border-radius: var(--radius-md);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255,215,0,0.12);
+  border-top: none;
 }
 
 .award-slide-frame iframe {
@@ -134,18 +286,32 @@
   width: 100%;
   height: 100%;
   border: none;
+  display: block;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .award-card { padding: 1.5rem 1.2rem; }
-  .award-card-header { flex-wrap: wrap; gap: 0.8rem; }
-  .award-prize-badge { order: -1; }
-  .award-icon { font-size: 2rem; }
+  .award-card { padding: 1.5rem 1.5rem 0; }
+  .award-card-header { grid-template-columns: 64px 1fr 76px; gap: 1rem; }
+  .award-medal-wrap { width: 64px; height: 64px; }
+  .award-medal-icon { font-size: 1.9rem; }
+  .award-stamp { width: 76px; height: 76px; }
+  .award-stamp-kr { font-size: 0.95rem; }
+  .award-event-name { font-size: 0.92rem; }
+  .award-project-banner { margin: 0 -1.5rem; }
+  .award-slide-frame { margin: 0 -1.5rem; width: calc(100% + 3rem); }
+}
+
+@media (max-width: 540px) {
+  .award-card-header { grid-template-columns: 56px 1fr; }
+  .award-stamp { display: none; }
 }
 
 @media (max-width: 480px) {
   .awards-section { padding: 3rem 1rem; }
+  .award-card { padding: 1.2rem 1.2rem 0; }
+  .award-project-banner { margin: 0 -1.2rem; }
+  .award-slide-frame { margin: 0 -1.2rem; width: calc(100% + 2.4rem); }
 }
 
 /* ========================
