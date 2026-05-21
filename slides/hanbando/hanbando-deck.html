@@ -2432,7 +2432,7 @@
   <button class="nav-btn" onclick="goPrev()">‹</button>
   <div class="nav-counter" id="counter">01 / 14</div>
   <button class="nav-btn" onclick="goNext()">›</button>
-  <span class="nav-help">← → SPACE · F=전체화면</span>
+  <span class="nav-help">← → SPACE · F=전체화면 · 스와이프</span>
 </div>
 
 <script>
@@ -2461,6 +2461,19 @@
       else document.exitFullscreen();
     }
   });
+  // Touch swipe
+  let tx = 0, ty = 0;
+  document.addEventListener('touchstart', e => {
+    tx = e.changedTouches[0].clientX;
+    ty = e.changedTouches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    const dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+    if (dx < 0) goNext(); else goPrev();
+  }, { passive: true });
+
   go(0);
 </script>
 </body>
