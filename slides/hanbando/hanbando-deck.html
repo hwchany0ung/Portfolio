@@ -54,6 +54,7 @@
       inset: 0;
       width: 100vw;
       height: 100vh;
+      touch-action: pan-y;
     }
 
     .slide {
@@ -2462,17 +2463,28 @@
     }
   });
   // Touch swipe
-  let tx = 0, ty = 0;
+  let tx = 0, ty = 0, swiping = false;
   document.addEventListener('touchstart', e => {
     tx = e.changedTouches[0].clientX;
     ty = e.changedTouches[0].clientY;
+    swiping = true;
   }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!swiping) return;
+    const dx = e.touches[0].clientX - tx;
+    const dy = e.touches[0].clientY - ty;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
+      e.preventDefault();
+    }
+  }, { passive: false });
   document.addEventListener('touchend', e => {
+    if (!swiping) return;
+    swiping = false;
     const dx = e.changedTouches[0].clientX - tx;
     const dy = e.changedTouches[0].clientY - ty;
     if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
     if (dx < 0) goNext(); else goPrev();
-  }, { passive: true });
+  });
 
   go(0);
 </script>
