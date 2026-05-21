@@ -217,12 +217,19 @@
   height: 100%;
   border: none;
   display: block;
+  touch-action: pan-y;
 }
 
 /* Responsive */
 @media (max-width: 900px) {
   .award-layout { grid-template-columns: 1fr; }
   .award-slide-frame { aspect-ratio: 16 / 9; }
+  /* reveal 애니메이션이 모바일에서 늦게 트리거되면 카드가 opacity:0 상태로 멈춤 — 항상 표시 */
+  .award-info-card,
+  .award-slide-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 480px) {
